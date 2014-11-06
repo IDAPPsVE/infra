@@ -1,4 +1,4 @@
-app.route('/login')
+/*app.route('/login')
 
 	// show the form (GET http://localhost:8080/login)
 	.get(function(req, res) {
@@ -10,3 +10,4 @@ app.route('/login')
 		console.log('processing');
 		res.send('processing the login form!');
 	});
+*/

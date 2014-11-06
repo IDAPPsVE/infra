@@ -8,12 +8,34 @@ var express    = require('express'); 		// call express
 var app        = express(); 				// define our app using express
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
+var passport = require('passport');
+var flash    = require('connect-flash');
+var morgan       = require('morgan');
+var cookieParser = require('cookie-parser');
+var session      = require('express-session');
+
+
+var configDB = require('./config/database.js');
+mongoose.connect(configDB.url); // connect to our database
+
+require('./config/passport')(passport);
+// set up our express application
+    app.use(morgan('dev')); // log every request to the console
+    app.use(cookieParser()); // read cookies (needed for auth)
+    app.use(bodyParser.json()); // get information from html forms
+    app.use(bodyParser.urlencoded({ extended: true }));
+
+    app.set('view engine', 'ejs'); // set up ejs for templating
+
+    // required for passport
+    app.use(session({ secret: 'The Super Powerful Session Key' })); // session secret
+    app.use(passport.initialize());
+    app.use(passport.session()); // persistent login sessions
+    app.use(flash()); // use connect-flash for flash messages stored in session
 
 //call Models
-var User = require('./app/models/user');
 
-// Connect to a Mongolab database
-mongoose.connect('mongodb://idapp-develop:IDAPP-Javier-Carlos@ds051160.mongolab.com:51160/idapp');
+var User = require('./app/models/user');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
