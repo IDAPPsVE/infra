@@ -1,31 +1,40 @@
+/*
+ * For the Infrastructure API, all the response will be given in JSON format.
+ */
+ var Usuario            = require('../models/user');
 module.exports = function(app, passport) {
 
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
     app.get('/', function(req, res) {
-        res.render('index.ejs'); // load the index.ejs file
+        res.json({ message: 'Welcome to my API' });
     });
 
     // =====================================
     // LOGIN ===============================
     // =====================================
-    // show the login form
+    // Esta ruta no va a mostrar vista para los usuarios finales al menos que sea interno de la empres
     app.get('/login', function(req, res) {
+        Usuario.find(function(err, usuario) {
+          if (err)
+            res.send(err);
 
+          res.json(usuario);
+      });
         // render the page and pass in any flash data if it exists
-        res.render('login.ejs', { message: req.flash('loginMessage') });
     });
 
+
+
     // process the login form
-    app.post('/login', passport.authenticate('local-login', {
-        successRedirect : '/profile', // redirect to the secure profile section
-        failureRedirect : '/login', // redirect back to the signup page if there is an error
-        failureFlash : true // allow flash messages
-    }));
-    
-    // process the login form
-    // app.post('/login', do all our passport stuff here);
+    app.post('/login', function(req, res,next) {
+      passport.authenticate('local-login', function(err, user, info) {
+        return res.json({'err':err,'user':user,'info':info});
+
+      })(req, res, next);
+    });
+
 
     // =====================================
     // SIGNUP ==============================
@@ -33,17 +42,14 @@ module.exports = function(app, passport) {
     // show the signup form
     app.get('/signup', function(req, res) {
 
-        // render the page and pass in any flash data if it exists
-        res.render('signup.ejs', { message: req.flash('signupMessage') });
     });
 
-     app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect : '/profile', // redirect to the secure profile section
-        failureRedirect : '/signup', // redirect back to the signup page if there is an error
-        failureFlash : true // allow flash messages
-    }));
-    // process the signup form
-    // app.post('/signup', do all our passport stuff here);
+    app.post('/signup', function(req, res,next) {
+      passport.authenticate('local-signup', function(err, user, info) {
+        return res.json({'err':err,'user':user,'info':info});
+
+      })(req, res, next);
+    });
 
     // =====================================
     // PROFILE SECTION =====================
@@ -61,7 +67,7 @@ module.exports = function(app, passport) {
     // =====================================
     app.get('/logout', function(req, res) {
         req.logout();
-        res.redirect('/');
+        res.json({ code : '200', message: 'Sesio terminada' });
     });
 };
 
@@ -73,5 +79,5 @@ function isLoggedIn(req, res, next) {
         return next();
 
     // if they aren't redirect them to the home page
-    res.redirect('/');
+    res.json({ code : '-5000', message: 'Debes iniciar sesion para ingresar' });
 }

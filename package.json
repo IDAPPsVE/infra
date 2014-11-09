@@ -3,15 +3,16 @@
   "description": "",
 	"main": "server.js",
 	"dependencies": {
-		"express": "~4.0.0",
-		"mongoose": "~3.6.13",
-		"morgan": "~1.0.0",
-		"body-parser": "~1.0.1",
-		"passport": "~0.2.0",
-		"passport-local": "~1.0.0",
-		"express-session": "~1.9.1",
-		"cookie-parser": "~1.0.0",
-		"connect-flash": "~0.1.1",
-		"bcrypt-nodejs": "bcrypt-nodejs"
+		"express": "latest",
+		"ejs" : "latest", 
+		"mongoose": "latest",
+		"morgan": "latest",
+		"body-parser": "latest",
+		"passport": "latest",
+		"passport-local": "latest",
+		"express-session": "latest",
+		"cookie-parser": "latest",
+		"connect-flash": "latest",
+		"bcrypt-nodejs": "latest"
 	}
 }
