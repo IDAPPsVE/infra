@@ -29,7 +29,15 @@ app.use(morgan('dev')); // log every request to the console
     app.set('view engine', 'ejs'); // set up ejs for templating
 
     // required for passport
-    app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+    app.use(session({
+      secret: 'TheSuperPowerfulSessionKey',
+      resave: true,
+      saveUninitialized: true,
+      cookie: {
+        maxAge: 1800000, //previously set to just 1800 - which was too low
+        httpOnly: true
+      }
+    }));
     app.use(passport.initialize());
     app.use(passport.session()); // persistent login sessions
     app.use(flash()); // use connect-flash for flash messages stored in session

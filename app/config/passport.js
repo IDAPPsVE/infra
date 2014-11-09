@@ -40,8 +40,7 @@ module.exports = function(passport) {
 
             // check to see if theres already a user with that email
             if (usuario) {
-              console.log({ code : '-5000', message: 'El correo electrónico ingresado ya estánregistrado' });
-              return done(null, false, { code : '-5000', message: 'El correo electrónico ingresado ya estánregistrado' });
+              return done(null, false, { code : '-5000', message: 'El correo electrónico ingresado ya está registrado' });
             } else {
 
                 // if there is no user with that email
@@ -58,7 +57,6 @@ module.exports = function(passport) {
                       {
                         throw err;
                       }
-                    console.log({ code : '200'});
                     return done(null, newUser, { code : '200'});
                 });
             }
@@ -81,13 +79,13 @@ module.exports = function(passport) {
 
     // used to serialize the user for the session
     passport.serializeUser(function(usuario, done) {
-      done(null, Usuario.id);
+      done(null, usuario);
     });
 
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
       Usuario.findById(id, function(err, usuario) {
-          done(err, user);
+          done(err, usuario);
       });
     });
 
@@ -115,7 +113,9 @@ module.exports = function(passport) {
                 return done(null, false, { code : '-2000', message: 'Password errado' });
 
             // all is well, return successful user
-            return done(null, Usuario,{ code : '200' });
+            return done(null, usuario._id,{ code : '200' });
+
+
         });
 
     }));

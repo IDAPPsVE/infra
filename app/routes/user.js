@@ -15,7 +15,8 @@ module.exports = function(app, passport) {
     // LOGIN ===============================
     // =====================================
     // Esta ruta no va a mostrar vista para los usuarios finales al menos que sea interno de la empres
-    app.get('/login', function(req, res) {
+    app.get('/login', isLoggedIn, function(req, res) {
+
         Usuario.find(function(err, usuario) {
           if (err)
             res.send(err);
@@ -30,7 +31,12 @@ module.exports = function(app, passport) {
     // process the login form
     app.post('/login', function(req, res,next) {
       passport.authenticate('local-login', function(err, user, info) {
-        return res.json({'err':err,'user':user,'info':info});
+
+        req.login(user, function(err) {
+          if (err) { return next(err); }
+            return res.json({'err':err,'user':user,'info':info, 'isLoggedIn':'1'});
+        });
+
 
       })(req, res, next);
     });
@@ -67,7 +73,7 @@ module.exports = function(app, passport) {
     // =====================================
     app.get('/logout', function(req, res) {
         req.logout();
-        res.json({ code : '200', message: 'Sesio terminada' });
+        res.json({ code : '200', message: 'Sesion terminada' });
     });
 };
 
@@ -79,5 +85,5 @@ function isLoggedIn(req, res, next) {
         return next();
 
     // if they aren't redirect them to the home page
-    res.json({ code : '-5000', message: 'Debes iniciar sesion para ingresar' });
+    return res.json({ code : '-5000', message: 'Debes iniciar sesion para ingresar' });
 }
