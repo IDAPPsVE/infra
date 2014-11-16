@@ -14,14 +14,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
-var configDB = require('./app/config/database.js');
+var configDB = require('./IDAPP/config/database.js');
 
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
 var router = express.Router();
 
-require('./app/config/passport.js')(passport); // pass passport for configuration
+require('./IDAPP/config/passport.js')(passport); // pass passport for configuration
 
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
@@ -45,9 +45,10 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./app/routes/user.js')(router, passport); // load our routes and pass in our app and fully configured passport
+require('./IDAPP/routes/user.js')(router, passport); // load our routes and pass in our app and fully configured passport
+require('./IDAPP/routes/infra.js')(router);
 
-app.use('/api', router);
+app.use('/', router);
+
 // launch ======================================================================
 app.listen(port);
-console.log('The magic happens on port ' + port);

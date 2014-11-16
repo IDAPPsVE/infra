@@ -1,29 +1,23 @@
 /*
  * For the Infrastructure API, all the response will be given in JSON format.
  */
- var Usuario            = require('../models/user');
+ 
 module.exports = function(app, passport) {
 
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
     app.get('/', function(req, res) {
-        res.render('../app/views/index.ejs');
+        res.render('../IDAPP/views/index.ejs');
     });
 
     // =====================================
     // LOGIN ===============================
     // =====================================
     // Esta ruta no va a mostrar vista para los usuarios finales al menos que sea interno de la empres
-    app.get('/login', isLoggedIn, function(req, res) {
+    app.get('/login', function(req, res) {
 
-        Usuario.find(function(err, usuario) {
-          if (err)
-            res.send(err);
-
-          res.json(usuario);
-      });
-        // render the page and pass in any flash data if it exists
+        res.render('../IDAPP/views/login.ejs', { message: req.flash('loginMessage') });
     });
 
 
@@ -47,7 +41,7 @@ module.exports = function(app, passport) {
     // =====================================
     // show the signup form
     app.get('/signup', function(req, res) {
-
+      res.render('../IDAPP/views/signup.ejs', { message: req.flash('loginMessage') });
     });
 
     app.post('/signup', function(req, res,next) {
@@ -57,16 +51,6 @@ module.exports = function(app, passport) {
       })(req, res, next);
     });
 
-    // =====================================
-    // PROFILE SECTION =====================
-    // =====================================
-    // we will want this protected so you have to be logged in to visit
-    // we will use route middleware to verify this (the isLoggedIn function)
-    app.get('/profile', isLoggedIn, function(req, res) {
-        res.render('profile.ejs', {
-            user : req.user // get the user out of session and pass to template
-        });
-    });
 
     // =====================================
     // LOGOUT ==============================

@@ -4,7 +4,7 @@
 	"main": "server.js",
 	"dependencies": {
 		"express": "latest",
-		"ejs" : "latest", 
+		"ejs" : "latest",
 		"mongoose": "latest",
 		"morgan": "latest",
 		"body-parser": "latest",
@@ -13,6 +13,7 @@
 		"express-session": "latest",
 		"cookie-parser": "latest",
 		"connect-flash": "latest",
-		"bcrypt-nodejs": "latest"
+		"bcrypt-nodejs": "latest",
+		"glob": "latest"
 	}
 }
