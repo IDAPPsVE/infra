@@ -1,7 +1,8 @@
 /*
  * For the Infrastructure API, all the response will be given in JSON format.
  */
- 
+var email = require('../controllers/mailController');
+
 module.exports = function(app, passport) {
 
     // =====================================
@@ -26,9 +27,13 @@ module.exports = function(app, passport) {
     app.post('/login', function(req, res,next) {
       passport.authenticate('local-login', function(err, user, info) {
 
-        req.login(user, function(err) {
+        var userNeededData = {'id':user._id,
+                              'Email':user.local.Email,
+                              'Tipo':user.local.Tipo,
+                              'isLoggedIn':'1'};
+        req.login(userNeededData, function(err) {
           if (err) { return next(err); }
-            return res.json({'err':err,'user':user,'info':info, 'isLoggedIn':'1'});
+            return res.json({'err':err,'user':userNeededData,'info':info});
         });
 
 
@@ -46,6 +51,7 @@ module.exports = function(app, passport) {
 
     app.post('/signup', function(req, res,next) {
       passport.authenticate('local-signup', function(err, user, info) {
+        //email.sendValidationCode('carloslopez8613@gmail.com');
         return res.json({'err':err,'user':user,'info':info});
 
       })(req, res, next);

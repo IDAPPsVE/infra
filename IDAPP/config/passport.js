@@ -117,7 +117,7 @@ module.exports = function(passport) {
                 return done(null, false, { code : '-2000', message: 'Password errado' });
 
             // all is well, return successful user
-            return done(null, usuario._id,{ code : '200' });
+            return done(null, usuario,{ code : '200' });
 
 
         });
