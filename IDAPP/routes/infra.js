@@ -39,7 +39,33 @@ module.exports = function(app) {
       res.send('hello ' + req.params.app_id + '!');
     });
 
+    // ===========================================
+    // CONTABILIDAD
+    app.get('/dashboard', function(req, res) {
+        res.render('../IDAPP/views/admin/admin.ejs', { message:'' });
+    });
+
+    /*app.post('/contacto',function(req, res) {
+
+      var contacto = new Contacto(); 		// create a new instance of the Bear model
+      contacto.local.Nombre = req.body.nombre;
+      contacto.local.Apellido = req.body.apellido;
+      contacto.local.Email = req.body.email;
+      contacto.local.Mensaje = req.body.mensaje;
+      contacto.local.Fecha = new Date();
+
+      // save the bear and check for errors
+      contacto.save(function(err) {
+        if (err)
+          res.render('../IDAPP/views/contacto.ejs', { message:'Su petición no pudo ser enviada correctamente, por favor intente nuevamente' });
+
+        res.render('../IDAPP/views/contacto.ejs', { message:'Gracias por contactarnos, pronto le responderemos su mensaje' });
+      });
+
+    })*/
+
 };
+
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {

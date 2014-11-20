@@ -33,7 +33,12 @@ module.exports = function(app, passport) {
                               'isLoggedIn':'1'};
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
-            return res.json({'err':err,'user':userNeededData,'info':info});
+            //return res.json({'err':err,'user':userNeededData,'info':info});
+            if(user.local.Tipo == 10)
+            {
+              res.redirect('/dashboard');
+            }
+
         });
 
 

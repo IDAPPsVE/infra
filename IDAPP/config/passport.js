@@ -88,7 +88,7 @@ module.exports = function(passport) {
 
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
-      Usuario.findById(id, function(err, usuario) {
+      Usuario.findById(id.id, function(err, usuario) {
           done(err, usuario);
       });
     });
