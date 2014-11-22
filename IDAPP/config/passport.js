@@ -33,9 +33,8 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'local.Email' :  email }, function(err, usuario) {
+        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
 
-          console.log(req.body.contrato, email, password);
             // if there are any errors, return the error
             if (err)
                 return done(err);
@@ -50,10 +49,10 @@ module.exports = function(passport) {
                 var newUser            = new Usuario();
 
                 // set the user's local credentials
-                newUser.local.Contrato = req.body.contrato;
-                newUser.local.Email    = email;
-                newUser.local.Tipo     = 10;
-                newUser.local.Password = newUser.generateHash(password);
+                newUser.Contrato = req.body.contrato;
+                newUser.Email    = email;
+                newUser.Tipo     = 10;
+                newUser.Password = newUser.generateHash(password);
 
                 // save the user
                 newUser.save(function(err) {
@@ -103,13 +102,13 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'local.Email' :  email }, function(err, usuario) {
+        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
 
             // if no user is found, return the message
-            if (usuario.local.Email != email)
+            if (usuario.Email != email)
               return done(null, false, { code : '-5000', message: 'Usuario no registrado' });
 
             // if the user is found but the password is wrong

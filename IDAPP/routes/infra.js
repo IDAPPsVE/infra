@@ -13,11 +13,11 @@ module.exports = function(app) {
     app.post('/contacto',function(req, res) {
 
       var contacto = new Contacto(); 		// create a new instance of the Bear model
-      contacto.local.Nombre = req.body.nombre;
-      contacto.local.Apellido = req.body.apellido;
-      contacto.local.Email = req.body.email;
-      contacto.local.Mensaje = req.body.mensaje;
-      contacto.local.Fecha = new Date();
+      contacto.Nombre = req.body.nombre;
+      contacto.Apellido = req.body.apellido;
+      contacto.Email = req.body.email;
+      contacto.Mensaje = req.body.mensaje;
+      contacto.Fecha = new Date();
 
       // save the bear and check for errors
       contacto.save(function(err) {
@@ -33,6 +33,11 @@ module.exports = function(app) {
     // =====================================
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
+
+    app.get('/:validationCode', function(req, res) {
+      //  res.render('../IDAPP/views/index.ejs');
+      res.send('hello, your email was already validated with the code' + req.params.validationCode + '!');
+    });
 
     app.get('/:app_id/dashboard', isLoggedIn, function(req, res) {
     //  res.render('../IDAPP/views/index.ejs');

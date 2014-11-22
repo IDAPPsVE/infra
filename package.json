@@ -15,6 +15,7 @@
 		"connect-flash": "latest",
 		"bcrypt-nodejs": "latest",
 		"glob": "latest",
-		"nodemailer" : "latest"
+		"nodemailer" : "latest",
+		"email-templates" : "latest"
 	}
 }

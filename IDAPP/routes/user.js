@@ -28,13 +28,13 @@ module.exports = function(app, passport) {
       passport.authenticate('local-login', function(err, user, info) {
 
         var userNeededData = {'id':user._id,
-                              'Email':user.local.Email,
-                              'Tipo':user.local.Tipo,
+                              'Email':user.Email,
+                              'Tipo':user.Tipo,
                               'isLoggedIn':'1'};
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
             //return res.json({'err':err,'user':userNeededData,'info':info});
-            if(user.local.Tipo == 10)
+            if(user.Tipo == 10)
             {
               res.redirect('/dashboard');
             }
@@ -56,7 +56,7 @@ module.exports = function(app, passport) {
 
     app.post('/signup', function(req, res,next) {
       passport.authenticate('local-signup', function(err, user, info) {
-        //email.sendValidationCode('carloslopez8613@gmail.com');
+        email.sendValidationCode('vjfs18@gmail.com');
         return res.json({'err':err,'user':user,'info':info});
 
       })(req, res, next);
