@@ -14,6 +14,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
+var Usuario            = require('./IDAPP/models/user');
+
 var configDB = require('./IDAPP/config/database.js');
 
 // configuration ===============================================================
@@ -49,6 +51,7 @@ require('./IDAPP/routes/user.js')(router, passport); // load our routes and pass
 require('./IDAPP/routes/infra.js')(router);
 
 app.use('/', router);
+
 
 // launch ======================================================================
 app.listen(port);

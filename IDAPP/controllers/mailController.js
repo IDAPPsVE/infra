@@ -1,4 +1,3 @@
-var rs = require('../helpers/randomString');
 var fs = require('fs');
 var ejs = require('ejs');
 var nodemailer = require('nodemailer');
@@ -13,15 +12,14 @@ var transporter = nodemailer.createTransport({
 
 var from = "vjfs18@gmail.com";
 
-exports.sendValidationCode = function(to){
+exports.sendValidationCode = function(to,Validacion){
 
   var path = process.cwd() + '/IDAPP/views/email/emailValidation.ejs';
   var str = fs.readFileSync(path, 'utf8');
-  var randomString = rs.randomString(20);
 
   console.log(randomString);
   var renderedHtml = ejs.render(str, {
-    validationURL : randomString,
+    validationURL : Validacion,
     filename : path
   });
 

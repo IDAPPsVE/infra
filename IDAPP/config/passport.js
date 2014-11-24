@@ -40,18 +40,21 @@ module.exports = function(passport) {
                 return done(err);
 
             // check to see if theres already a user with that email
-            if (usuario) {
+            if (verificarValidezContrato(req.body.contrato)){
+              return done(null, false, { code : '-5000', message: 'El Código del contrato ya está registrado' });
+            } else if (usuario) {
               return done(null, false, { code : '-5000', message: 'El correo electrónico ingresado ya está registrado' });
             } else {
 
                 // if there is no user with that email
                 // create the user
+
                 var newUser            = new Usuario();
 
                 // set the user's local credentials
                 newUser.Contrato = req.body.contrato;
                 newUser.Email    = email;
-                newUser.Tipo     = 10;
+                newUser.Tipo     = 4;
                 newUser.Password = newUser.generateHash(password);
 
                 // save the user
@@ -69,6 +72,110 @@ module.exports = function(passport) {
         });
 
     }));
+
+    passport.use('local-signupIDAPP', new LocalStrategy({
+      // by default, local strategy uses username and password, we will override with email
+      usernameField : 'email',
+      passwordField : 'password',
+      passReqToCallback : true // allows us to pass back the entire request to the callback
+    },
+    function(req, email, password, done) {
+
+      // asynchronous
+      // User.findOne wont fire unless data is sent back
+      process.nextTick(function() {
+
+
+        // find a user whose email is the same as the forms email
+        // we are checking to see if the user trying to login already exists
+        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+
+          // if there are any errors, return the error
+          if (err)
+            return done(err);
+
+            // check to see if theres already a user with that email
+            if (usuario) {
+              return done(null, false, { code : '-5000', message: 'El correo electrónico ingresado ya está registrado' });
+            } else {
+
+              // if there is no user with that email
+              // create the user
+
+              var newUser            = new Usuario();
+
+              // set the user's local credential
+              newUser.Email    = "vjfs18@gmail.com";
+              newUser.Tipo     = 2;
+              newUser.Password = newUser.generateHash("IDAPP");
+
+              // save the user
+              newUser.save(function(err) {
+                if (err)
+                  {
+                    throw err;
+                  }
+                  return done(null, newUser, { code : '200'});
+                });
+              }
+
+            });
+
+          });
+
+        }));
+
+    passport.use('local-signupAdminSys', new LocalStrategy({
+      // by default, local strategy uses username and password, we will override with email
+      usernameField : 'email',
+      passwordField : 'password',
+      passReqToCallback : true // allows us to pass back the entire request to the callback
+    },
+    function(req, email, password, done) {
+
+      // asynchronous
+      // User.findOne wont fire unless data is sent back
+      process.nextTick(function() {
+
+
+        // find a user whose email is the same as the forms email
+        // we are checking to see if the user trying to login already exists
+        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+
+          // if there are any errors, return the error
+          if (err)
+            return done(err);
+
+            // check to see if theres already a user with that email
+            if (usuario) {
+              return done(null, false, { code : '-5000', message: 'El correo electrónico ingresado ya está registrado' });
+            } else {
+
+              // if there is no user with that email
+              // create the user
+              var newUser            = new Usuario();
+
+              // set the user's local credentials
+              newUser.Contrato = req.body.contrato;
+              newUser.Email    = email;
+              newUser.Tipo     = 5;
+              newUser.Password = newUser.generateHash(password);
+
+              // save the user
+              newUser.save(function(err) {
+                if (err)
+                  {
+                    throw err;
+                  }
+                  return done(null, newUser, { code : '200'});
+                });
+              }
+
+            });
+
+          });
+
+        }));
 
 
      // =========================================================================
@@ -124,3 +231,22 @@ module.exports = function(passport) {
     }));
 
 };
+
+function verificarValidezContrato(contrato)
+{
+  Contratos.findOne({ 'Contrato' :  contrato }, function(err, c) {
+
+    // if there are any errors, return the error
+    if (err)
+      return done(err);
+
+      if(c)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    });
+}
