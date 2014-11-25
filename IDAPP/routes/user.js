@@ -65,8 +65,9 @@ module.exports = function(app, passport) {
     app.post('/signup', function(req, res,next) {
       passport.authenticate('local-signup', function(err, user, info) {
         var randomString = rs.randomString(20);
-        email.sendValidationCode(user.Email,randomString);
         guardarCodigoValidacion(user._id, randomString);
+        email.sendValidationCode(user.Email,randomString);
+        
         return res.json({'err':err,'user':user,'info':info});
 
       })(req, res, next);

@@ -17,7 +17,6 @@ exports.sendValidationCode = function(to,Validacion){
   var path = process.cwd() + '/IDAPP/views/email/emailValidation.ejs';
   var str = fs.readFileSync(path, 'utf8');
 
-  console.log(randomString);
   var renderedHtml = ejs.render(str, {
     validationURL : Validacion,
     filename : path
