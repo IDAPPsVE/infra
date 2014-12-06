@@ -251,3 +251,7 @@ function verificarValidezContrato(contrato)
       }
     });
 }
+
+function verificarVariablesConIDAPP{
+  
+}

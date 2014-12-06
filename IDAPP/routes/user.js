@@ -36,6 +36,8 @@ module.exports = function(app, passport) {
                               'isLoggedIn':'1'};
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
+          
+          console.log(req.session);
             //return res.json({'err':err,'user':userNeededData,'info':info});
             if((user.Tipo == 1) || (user.Tipo == 2))
               {
