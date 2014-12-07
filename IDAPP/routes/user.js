@@ -2,8 +2,8 @@
  * For the Infrastructure API, all the response will be given in JSON format.
  */
 var email = require('../controllers/mailController');
-var Validacion  = require('../models/validacion');
-var Contratos   = require('../models/contratos');
+var Validacion  = require('../models/ValidacionBox');
+var Contratos   = require('../models/Contratos');
 var rs = require('../helpers/randomString');
 
 module.exports = function(app, passport) {
@@ -15,7 +15,7 @@ module.exports = function(app, passport) {
         res.render('../IDAPP/views/index.ejs');
     });
 
-    // =====================================
+    // ===============================h======
     // LOGIN ===============================
     // =====================================
     // Esta ruta no va a mostrar vista para los usuarios finales al menos que sea interno de la empres
@@ -37,7 +37,8 @@ module.exports = function(app, passport) {
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
           
-          console.log(req.session);
+          console.log(req.session, req.headers['x-access-token']);
+          
             //return res.json({'err':err,'user':userNeededData,'info':info});
             if((user.Tipo == 1) || (user.Tipo == 2))
               {

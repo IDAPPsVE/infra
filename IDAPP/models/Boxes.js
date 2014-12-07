@@ -1,9 +1,11 @@
 var mongoose     = require('mongoose');
 
 var BoxesSchema = mongoose.Schema({
-
-  Nombre           : String,
-  idContrato       : String
+  IDAPP : {
+    Nombre           : String,
+    idContrato       : String
+  }
+  
 });
 
 

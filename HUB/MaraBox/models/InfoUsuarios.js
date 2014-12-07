@@ -2,13 +2,15 @@ var mongoose     = require('mongoose');
 
 var InfoUsuarioSchema = mongoose.Schema({
 
-  Nombres           : String,
-  Apellidos         : String,
-  Ciudad            : String,
-  Estado            : String,
-  Direccion         : String,
-  Telefono          : Number,
-  FechaNacimiento   : Date,
+  MaraBox : {
+    Nombres           : String,
+    Apellidos         : String,
+    Ciudad            : String,
+    Estado            : String,
+    Direccion         : String,
+    Telefono          : Number,
+    FechaNacimiento   : Date,
+  }
   
 });
 

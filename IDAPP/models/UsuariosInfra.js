@@ -3,28 +3,27 @@ var mongoose     = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 
 // define the schema for our user model
-var UsuarioAppSchema = mongoose.Schema({
+var UsuarioInfraSchema = mongoose.Schema({
 
-    MaraBox : {
-        Cedula       : Number,
-        Email        : String,
-        Password     : String,
-        idBox        : String,
-        idBoxCode    : String,
-        Tipo         : Number,
-    }
+        IDAPP : {
+            Email        : String,
+            Password     : String,
+            Contrato     : String,
+            Tipo         : Number,
+        }
+        
 });
 
 // methods ======================
 // generating a hash
-UsuarioAppSchema.methods.generateHash = function(password) {
+UsuarioInfraSchema.methods.generateHash = function(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
 // checking if password is valid
-UsuarioAppSchema.methods.validPassword = function(password) {
+UsuarioInfraSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.Password);
 };
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('UsuarioApp', UsuarioAppSchema);
+module.exports = mongoose.model('UsuarioInfra', UsuarioInfraSchema);

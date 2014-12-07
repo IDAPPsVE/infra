@@ -8,7 +8,6 @@ var UsuarioAppSchema = mongoose.Schema({
         Cedula       : Number,
         Email        : String,
         Password     : String,
-        Contrato     : String,
         idBox        : String,
         idBoxCode    : String,
         Tipo         : Number,

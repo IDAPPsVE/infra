@@ -67,13 +67,14 @@ module.exports = function(app) {
 
     });
     app.get('/MaraBox/logout', function(req, res) {
-
+        req.logout();
+        res.json({ code : '200', message: 'Sesion terminada' });
     });
     app.post('/MaraBox/uploadUserPic', function(req, res) {
 
     });
     app.get('/MaraBox/getUserPic', function(req, res) {
-
+        res.json({ message: 'hooray! welcome to our api!' });
     });
     app.post('/MaraBox/asistencia', function(req, res) {
 
@@ -85,19 +86,19 @@ module.exports = function(app) {
 
     });
     app.get('/MaraBox/progreso', function(req, res) {
-
+        res.json({ message: 'hooray! welcome to our api!' });
     });
     app.get('/MaraBox/:idEjercicio', function(req, res) {
-
+        res.json({ message: req.params.idEjercicio });
     });
     app.get('/MaraBox/ejercicios', function(req, res) {
-
+        res.json({ message: 'hooray! welcome to our api!' });
     });
     app.get('/MaraBox/WOD/:fecha', function(req, res) {
-
+        res.json({ message: 'hooray! welcome to our api!' });
     });
     app.get('/MaraBox/eventos', function(req, res) {
-
+        res.json({ message: 'hooray! welcome to our api!' });
     });
     
     /*app.post('/login', function(req, res,next) {

@@ -1,10 +1,12 @@
 var mongoose     = require('mongoose');
 
 var ValidacionUsuarioSchema = mongoose.Schema({
-  Codigo    : String,
-  Validado  : Number,
-  idBox     : String,
-  isUsuario : String,
+  MaraBox : {
+    Codigo    : String,
+    Validado  : Number,
+    idBox     : String,
+    isUsuario : String,
+  }
 });
 
 

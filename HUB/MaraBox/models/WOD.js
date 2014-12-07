@@ -2,11 +2,14 @@ var mongoose     = require('mongoose');
 
 var WODSchema = mongoose.Schema({
 
-  idBox    : String,
-  WarmUp   : [],
-  WOD      : [],
-  BuyOut   : [],
-  Fecha    : Date,
+  MaraBox : {
+    idBox    : String,
+    WarmUp   : [],
+    WOD      : [],
+    BuyOut   : [],
+    Fecha    : Date,
+  }
+  
 });
 
 

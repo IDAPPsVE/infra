@@ -2,7 +2,9 @@ var mongoose     = require('mongoose');
 
 var EjerciciosSchema = mongoose.Schema({
 
-  Nombre       : String,
+    MaraBox : {
+        Nombre       : String,
+    }
   
 });
 

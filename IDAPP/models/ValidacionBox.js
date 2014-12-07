@@ -1,9 +1,11 @@
 var mongoose     = require('mongoose');
 
 var ValidacionBoxSchema = mongoose.Schema({
-  Codigo : String,
-  Validado : Number,
-  idBox : String
+  IDAPP : {
+    Codigo : String,
+    Validado : Number,
+    idBox : String
+  }
 });
 
 

@@ -1,6 +1,6 @@
-var Contacto    = require('../models/contacto');
-var Contrato   = require('../models/contratos');
-var Validacion  = require('../models/validacion');
+var Contacto    = require('../models/Contacto');
+var Contrato   = require('../models/Contratos');
+var Validacion  = require('../models/ValidacionBox');
 
 module.exports = function(app) {
 
