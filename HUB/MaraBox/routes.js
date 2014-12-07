@@ -1,10 +1,14 @@
-module.exports = function(app) {
-    app.get('/MaraBox/', function(req, res) {
+var Validacion  = require('./models/ValidacionUsuario');
+var rs = require('../helpers/randomString');
+var email = require('../controllers/mailController');
 
+module.exports = function(app,passport) {
+    app.get('/MaraBox/', function(req, res) {
+        res.json({ message: 'MaraBox' });
     });
     
     app.get('/MaraBox/atletas/:id', function(req, res) {
-
+      res.json({ message: 'MaraBox ' + req.params.id });
     });
     
     app.get('/MaraBox/admin/registroNuevoUsuario', function(req, res) {
@@ -60,12 +64,37 @@ module.exports = function(app) {
     //////////////////////////////////////////////////////
     // API
     //////////////////////////////////////////////////////
-    app.post('/MaraBox/registroUsuario', function(req, res) {
+    app.post('/MaraBox/signup', function(req, res,next) {
+      passport.authenticate('local-signupMaraBox', function(err, user, info) {
+        var randomString = rs.randomString(10);
+        guardarCodigoValidacion(user._id, randomString);
+        email.sendValidationCodeMaraBox(user.Email,randomString);
+        
+        return res.json({'err':err,'user':user,'info':info});
 
+      })(req, res, next);
     });
-    app.post('/MaraBox/login', function(req, res) {
+    
+    app.post('/MaraBox/login', function(req, res,next) {
+      passport.authenticate('local-loginMarabox', function(err, user, info) {
 
+        var userNeededData = {'id':user._id,
+                              'Email':user.Email,
+                              'Tipo':user.Tipo,
+                              'isLoggedIn':'1'};
+        req.login(userNeededData, function(err) {
+          if (err) { return next(err); }
+          
+          console.log(req.session, req.headers['x-access-token']);
+
+            if(user.Tipo == 10)
+            {
+              return res.json({'err':err,'data':userNeededData});
+            }
+        });
+      })(req, res, next);
     });
+    
     app.get('/MaraBox/logout', function(req, res) {
         req.logout();
         res.json({ code : '200', message: 'Sesion terminada' });
@@ -144,4 +173,13 @@ module.exports = function(app) {
       });
 
     });*/
+}
+
+function guardarCodigoValidacion(id,validacion)
+{
+  var v = new Validacion(); 		// create a new instance of the Bear model
+  v.user_id = id;
+  v.Validacion = validacion;
+  // save the bear and check for errors
+  v.save(function(err) {});
 }

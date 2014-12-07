@@ -47,7 +47,7 @@ module.exports = function(app) {
       //res.send('hello, estas en la vista de registro de contacto');
     });
 
-    app.get('/:validationCode', function(req, res) {
+    app.get('/val/:validationCode', function(req, res) {
       //  res.render('../IDAPP/views/index.ejs');
       res.send('hello, your email was already validated with the code' + req.params.validationCode + '!');
     });

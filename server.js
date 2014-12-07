@@ -49,6 +49,8 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 // routes ======================================================================
 require('./IDAPP/routes/user.js')(router, passport); // load our routes and pass in our app and fully configured passport
 require('./IDAPP/routes/infra.js')(router);
+require('./HUB/Boxes/routes.js')(router);
+require('./HUB/MaraBox/routes.js')(router, passport);
 
 app.use('/', router);
 

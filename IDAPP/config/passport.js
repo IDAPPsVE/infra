@@ -3,7 +3,8 @@ var Contratos   = require('../models/Contratos');
 var LocalStrategy   = require('passport-local').Strategy;
 
 // load up the user model
-var Usuario            = require('../models/UsuariosIDAPP');
+var UsuarioIDAPP            = require('../models/UsuariosIDAPP');
+var UsuarioInfra            = require('../models/UsuariosInfra');
 
 // expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -34,7 +35,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
 
             // if there are any errors, return the error
             if (err)
@@ -50,7 +51,7 @@ module.exports = function(passport) {
                 // if there is no user with that email
                 // create the user
 
-                var newUser            = new Usuario();
+                var newUser            = new UsuarioIDAPP();
 
                 // set the user's local credentials
                 newUser.Contrato = req.body.contrato;
@@ -89,7 +90,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
 
           // if there are any errors, return the error
           if (err)
@@ -103,7 +104,7 @@ module.exports = function(passport) {
               // if there is no user with that email
               // create the user
 
-              var newUser            = new Usuario();
+              var newUser            = new UsuarioInfra();
 
               // set the user's local credential
               newUser.Email    = "vjfs18@gmail.com";
@@ -141,7 +142,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
 
           // if there are any errors, return the error
           if (err)
@@ -154,7 +155,7 @@ module.exports = function(passport) {
 
               // if there is no user with that email
               // create the user
-              var newUser            = new Usuario();
+              var newUser            = new UsuarioInfra();
 
               // set the user's local credentials
               newUser.Contrato = req.body.contrato;
@@ -195,7 +196,7 @@ module.exports = function(passport) {
 
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
-      Usuario.findById(id.id, function(err, usuario) {
+      UsuarioInfra.findById(id.id, function(err, usuario) {
           done(err, usuario);
       });
     });
@@ -210,7 +211,38 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
+            // if there are any errors, return the error before anything else
+            if (err)
+                return done(err);
+
+            // if no user is found, return the message
+            if (usuario.Email != email)
+              return done(null, false, { code : '-5000', message: 'Usuario no registrado' });
+
+            // if the user is found but the password is wrong
+            if (!usuario.validPassword(password))
+                return done(null, false, { code : '-2000', message: 'Password errado' });
+
+            // all is well, return successful user
+            return done(null, usuario,{ code : '200' });
+
+
+        });
+
+    }));
+    
+    passport.use('local-loginCliente', new LocalStrategy({
+        // by default, local strategy uses username and password, we will override with email
+        usernameField : 'email',
+        passwordField : 'password',
+        passReqToCallback : true // allows us to pass back the entire request to the callback
+    },
+    function(req, email, password, done) { // callback with email and password from our form
+
+        // find a user whose email is the same as the forms email
+        // we are checking to see if the user trying to login already exists
+        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);

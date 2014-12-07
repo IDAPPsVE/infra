@@ -1,6 +1,7 @@
 /*
  * For the Infrastructure API, all the response will be given in JSON format.
  */
+ 
 var email = require('../controllers/mailController');
 var Validacion  = require('../models/ValidacionBox');
 var Contratos   = require('../models/Contratos');
