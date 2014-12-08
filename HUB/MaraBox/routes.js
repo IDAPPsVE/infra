@@ -1,6 +1,12 @@
 var Validacion  = require('./models/ValidacionUsuario');
-var rs = require('../helpers/randomString');
-var email = require('../controllers/mailController');
+var base = process.env.PWD;
+
+var rs = require(base + '/IDAPP/helpers/randomString');
+var email = require(base + '/IDAPP/controllers/mailController');
+
+var Asistencia = require(base + '/HUB/MaraBox/models/Asistencia');
+var Usuario = require(base + '/HUB/MaraBox/models/Usuarios');
+var Box = require(base + '/IDAPP/models/Boxes');
 
 module.exports = function(app,passport) {
     app.get('/MaraBox/', function(req, res) {
@@ -12,11 +18,18 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/admin/registroNuevoUsuario', function(req, res) {
-
+        res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: req.flash('loginMessage') });
     });
     
-    app.post('/MaraBox/admin/registroNuevoUsuario', function(req, res) {
+    app.post('/MaraBox/admin/registroNuevoUsuario', function(req, res, next) {
+        passport.authenticate('local-signupMaraBox', function(err, user, info) {
+        var randomString = rs.randomString(10);
+        guardarCodigoValidacion(user._id, randomString);
+        email.sendValidationCodeMaraBox(user.Email,randomString);
+        
+        return res.json({'err':err,'user':user,'info':info});
 
+      })(req, res, next);
     });
     
     app.get('/MaraBox/admin/nuevoWod', function(req, res) {
@@ -44,11 +57,34 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/admin/:fecha/:hora/registroAsistencia', function(req, res) {
-
+      
+        res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage') });
     });
     
     app.post('/MaraBox/admin/:fecha/:hora/registroAsistencia', function(req, res) {
+        
+        var cedula = getUserId(cedula);
+        if(!cedula)
+        {
+          res.render(base + '/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos' });
+        }
+        else
+        {
+          var asistencia = new Asistencia(); 		// create a new instance of the Bear model
+          asistencia.MaraBox.idUsuario = getUserId(req.body.cedula);
+          asistencia.MaraBox.idBox = getMaraBoxId();
+          asistencia.MaraBox.Hora = req.body.hora;
+          asistencia.MaraBox.Fecha = req.body.fecha;
 
+          // save the bear and check for errors
+          asistencia.save(function(err) {
+            if (err) 
+              res.render(base + '/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no pudo ser registrado' });
+            else
+              res.render(base + '/MaraBox/views/registroAsistencia.ejs', { message:'Usuario registrado para el entrenamiento del dia '+req.body.fecha+' hora '+req.body.hora });  
+          }); 
+        }
+        
     });
     
     app.get('/MaraBox/admin/atletas', function(req, res) {
@@ -182,4 +218,29 @@ function guardarCodigoValidacion(id,validacion)
   v.Validacion = validacion;
   // save the bear and check for errors
   v.save(function(err) {});
+}
+
+function getMaraBoxId()
+{
+  Box.findOne({ 'Nombre' : 'MaraBox' }, function(err, box) {
+            // if there are any errors, return the error before anything else
+            if (err)
+                return null;
+
+            return box._id;
+
+        });
+}
+
+function getUserId(cedula)
+{
+  
+  Usuario.findOne({ 'Cedula' :  cedula }, function(err, usuario) {
+            // if there are any errors, return the error before anything else
+            if (err)
+                return null;
+
+            return usuario._id;
+
+        });
 }
