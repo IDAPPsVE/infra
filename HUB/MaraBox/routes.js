@@ -7,9 +7,12 @@ var email = require(base + '/IDAPP/controllers/mailController');
 var Asistencia = require(base + '/HUB/MaraBox/models/Asistencia');
 var Usuario = require(base + '/HUB/MaraBox/models/Usuarios');
 var Box = require(base + '/IDAPP/models/Boxes');
+var Ejercicios = require(base + '/HUB/MaraBox/models/Ejercicios');
 
 module.exports = function(app,passport) {
     app.get('/MaraBox/', function(req, res) {
+
+          
         res.json({ message: 'MaraBox' });
     });
     
@@ -33,7 +36,13 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/admin/nuevoWod', function(req, res) {
-
+      
+        Ejercicios.find(function(err, ejercicios) {
+        if (err) return console.error(err);
+        else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: '', ejercicios:ejercicios });
+          
+        });
+        
     });
     
     app.post('/MaraBox/admin/nuevoWod', function(req, res) {
