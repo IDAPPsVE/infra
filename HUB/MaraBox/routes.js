@@ -14,6 +14,7 @@ var Usuario = require(base + '/HUB/MaraBox/models/Usuarios');
 var Box = require(base + '/IDAPP/models/Boxes');
 var Ejercicios = require(base + '/HUB/MaraBox/models/Ejercicios');
 var WOD = require(base + '/HUB/MaraBox/models/WOD');
+var Evento = require(base + '/HUB/MaraBox/models/Eventos');
 
 
 module.exports = function(app,passport) {
@@ -56,8 +57,6 @@ module.exports = function(app,passport) {
     
     app.post('/MaraBox/admin/nuevoWod', function(req, res) {
       
-      console.log(req.body);
-      
         var wod = new WOD(); 		// create a new instance of the Bear model
       wod.idBox = req.body.nombre;
       wod.WarmUp.push(req.body.warmup);
@@ -89,8 +88,54 @@ module.exports = function(app,passport) {
     
     app.post('/MaraBox/admin/nuevaEvento', function(req, res) {
       
+      var i,n,c,es,d,fi,fc,cos;
       
-      var fstream;
+      req.busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated) {
+        
+        if(fieldname == "base64") i = val;
+        if(fieldname == "nombre") n = val;
+        if(fieldname == "ciudad") c = val;
+        if(fieldname == "estado") es = val;
+        if(fieldname == "direccion") d = val;
+        if(fieldname == "fechaInicio") fi = val;
+        if(fieldname == "fechaCulminacion") fc = val;
+        if(fieldname == "costo") cos = val;
+      });
+      
+      req.busboy.on('finish', function() {
+        console.log(i,n,c,es,d,fi,fc,cos);
+      
+        var e = new Evento();
+      
+        e.MaraBox.Imagen = i;
+        e.MaraBox.Nombre = n;
+        e.MaraBox.Ciudad = c;
+        e.MaraBox.Estado = es; 
+        e.MaraBox.Direccion = d;
+        e.MaraBox.FechaInicio = fi;
+        e.MaraBox.FechaCulminacion = fc;
+        e.MaraBox.Costo = cos;
+      
+        e.save(function(err) {
+          if (err)
+          {
+            res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { message: 'Hubo un error, intente nuevamente' });
+            res.end();
+          }
+          else
+          {
+            res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { message: 'El evento fue guardado con exito' });
+            res.end();
+          }
+        });
+        console.log('Done parsing form!');
+        
+
+    })
+    req.pipe(req.busboy);
+      
+    
+      /*var fstream;
         req.pipe(req.busboy);
         console.log(req.busboy);
         req.busboy.on('file', function (fieldname, file, filename) {
@@ -101,10 +146,10 @@ module.exports = function(app,passport) {
             file.pipe(fstream);
             fstream.on('close', function () {    
                 console.log("Upload Finished of " + filename);              
-                //res.redirect('back');           //where to go next
+                res.redirect('back');           //where to go next
             });
         });
-        
+        */
     });
     
     app.get('/MaraBox/admin/nuevaNotificacion', function(req, res) {

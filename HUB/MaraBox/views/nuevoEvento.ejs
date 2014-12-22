@@ -23,10 +23,9 @@
       <!-- LOGIN FORM -->
       <form action="/MaraBox/admin/nuevaEvento" enctype="multipart/form-data" method="post">
         
-          <input type="hidden" name="fecha" value=<%=fecha%>>
-          <input type="hidden" name="hora" value=<%=hora%>>
-          
-          <div class="form-group">
+        <input type="hidden" id="base" name="base64">
+        
+        <div class="form-group">
               <label>Nombre</label>
               <input type="text" class="form-control" name="nombre">
           </div>
@@ -58,8 +57,6 @@
               <label>Poster</label>
               <input type='file' id="uploadImage" class="form-control" name="poster"/>
               <img id="img" src="" />
-              <div id="base">
-    
           </div>
           <button type="submit" class="btn btn-warning btn-lg">Registrar Evento</button>
       </form>
