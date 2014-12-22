@@ -1,5 +1,10 @@
+var express  = require('express');
+
 var Validacion  = require('./models/ValidacionUsuario');
 var base = process.env.PWD;
+
+var busboy = require('connect-busboy');
+var fs = require('fs-extra');
 
 var rs = require(base + '/IDAPP/helpers/randomString');
 var email = require(base + '/IDAPP/controllers/mailController');
@@ -8,8 +13,13 @@ var Asistencia = require(base + '/HUB/MaraBox/models/Asistencia');
 var Usuario = require(base + '/HUB/MaraBox/models/Usuarios');
 var Box = require(base + '/IDAPP/models/Boxes');
 var Ejercicios = require(base + '/HUB/MaraBox/models/Ejercicios');
+var WOD = require(base + '/HUB/MaraBox/models/WOD');
+
 
 module.exports = function(app,passport) {
+    
+    app.use('/public', express.static(base + '/HUB/MaraBox/public'));
+    
     app.get('/MaraBox/', function(req, res) {
 
           
@@ -40,13 +50,61 @@ module.exports = function(app,passport) {
         Ejercicios.find(function(err, ejercicios) {
         if (err) return console.error(err);
         else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: '', ejercicios:ejercicios });
-          
         });
         
     });
     
     app.post('/MaraBox/admin/nuevoWod', function(req, res) {
+      
+      console.log(req.body);
+      
+        var wod = new WOD(); 		// create a new instance of the Bear model
+      wod.idBox = req.body.nombre;
+      wod.WarmUp.push(req.body.warmup);
+      wod.WOD.push(req.body.wod);
+      wod.BuyOut.push(req.body.buyout);
 
+      // save the bear and check for errors
+      wod.save(function(err) {
+        if (err)
+        {
+          Ejercicios.find(function(errE, ejercicios) {
+            if (errE) return console.error(errE);
+            else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: 'Hubo un error, intente nuevamente', ejercicios:ejercicios });
+          });
+        }
+        else
+        {
+          Ejercicios.find(function(errE, ejercicios) {
+            if (errE) return console.error(errE);
+            else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: 'El WOD fue guardado con exito', ejercicios:ejercicios });
+          });
+        }
+      });
+    });
+    
+    app.get('/MaraBox/admin/nuevaEvento', function(req, res) {
+        res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage') });
+    });
+    
+    app.post('/MaraBox/admin/nuevaEvento', function(req, res) {
+      
+      
+      var fstream;
+        req.pipe(req.busboy);
+        console.log(req.busboy);
+        req.busboy.on('file', function (fieldname, file, filename) {
+            console.log("Uploading: " + filename);
+
+            //Path where image will be uploaded
+            fstream = fs.createWriteStream(base + '/HUB/MaraBox/public/img/' + filename);
+            file.pipe(fstream);
+            fstream.on('close', function () {    
+                console.log("Upload Finished of " + filename);              
+                //res.redirect('back');           //where to go next
+            });
+        });
+        
     });
     
     app.get('/MaraBox/admin/nuevaNotificacion', function(req, res) {
@@ -66,7 +124,6 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/admin/:fecha/:hora/registroAsistencia', function(req, res) {
-      
         res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage') });
     });
     

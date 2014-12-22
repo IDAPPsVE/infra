@@ -13,6 +13,7 @@ var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
+var busboy = require('connect-busboy');
 
 //var Usuario            = require('./IDAPP/models/user');
 
@@ -29,6 +30,7 @@ app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(busboy());
 
 app.set('view engine', 'ejs'); // set up ejs for templating
 

@@ -16,6 +16,8 @@
 		"bcrypt-nodejs": "latest",
 		"glob": "latest",
 		"nodemailer" : "latest",
-		"email-templates" : "latest"
+		"email-templates" : "latest",
+		"connect-busboy" : "latest",
+		"fs-extra" : "latest"
 	}
 }

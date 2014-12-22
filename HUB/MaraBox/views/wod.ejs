@@ -21,9 +21,10 @@
       <% } %>
 
       <!-- LOGIN FORM -->
-      <form action="/MaraBox/admin/registroNuevoUsuario" method="post">
+      <form action="/MaraBox/admin/nuevoWod" method="post">
         
           <div class="form-group">
+            <label>Warm Up</label>
             <select class="warmup" data-style="btn-info" name="warmup">
               <optgroup label="Warm Up">
                 <% ejercicios.forEach(function(ejercicios) { %>
@@ -34,6 +35,7 @@
           </div>
           
           <div class="form-group">
+            <label>WOD</label>
             <select class="wod" data-style="btn-info" name="wod">
               <optgroup label="WOD">
                 <% ejercicios.forEach(function(ejercicios) { %>
@@ -44,6 +46,7 @@
           </div>
           
           <div class="form-group">
+            <label>Buy Out</label>
             <select class="buyout" data-style="btn-info" name="buyout">
               <optgroup label="Buy Out">
                 <% ejercicios.forEach(function(ejercicios) { %>
