@@ -15,6 +15,7 @@ var Box = require(base + '/IDAPP/models/Boxes');
 var Ejercicios = require(base + '/HUB/MaraBox/models/Ejercicios');
 var WOD = require(base + '/HUB/MaraBox/models/WOD');
 var Evento = require(base + '/HUB/MaraBox/models/Eventos');
+var Notificacion =  require(base + '/HUB/MaraBox/models/Notificaciones');
 
 
 module.exports = function(app,passport) {
@@ -153,11 +154,23 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/admin/nuevaNotificacion', function(req, res) {
-
+        res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message: req.flash('loginMessage') });
     });
     
     app.post('/MaraBox/admin/nuevaNotificacion', function(req, res) {
-
+        var notificacion = new Notificacion(); 		// create a new instance of the Bear model
+          notificacion.MaraBox.Titulo = req.body.titulo;
+          notificacion.MaraBox.Mensaje = req.body.mensaje;
+          
+          // save the bear and check for errors
+          notificacion.save(function(err) {
+            if (err) 
+              res.render(base + '/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
+            else
+              res.render(base + '/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje fue enviado con exito' });
+              
+              // Enviar a todas las plataformas via push notifications
+          }); 
     });
     
     app.get('/MaraBox/admin/:fecha', function(req, res) {
