@@ -1,7 +1,10 @@
 var LocalStrategy   = require('passport-local').Strategy;
 
+var base = process.env.PWD;
+
 // load up the user model
 var Usuario            = require('./models/Usuarios');
+var Box = require(base + '/IDAPP/models/Boxes');
 
 // expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -39,9 +42,7 @@ module.exports = function(passport) {
                 return done(err);
 
             // check to see if theres already a user with that email
-            if (verificarValidezContrato(req.body.contrato)){
-              return done(null, false, { code : '-5000', message: 'El Código del contrato ya está registrado' });
-            } else if (usuario) {
+            if (usuario) {
               return done(null, false, { code : '-5000', message: 'El correo electrónico ingresado ya está registrado' });
             } else {
 
@@ -53,8 +54,8 @@ module.exports = function(passport) {
                 // set the user's local credentials
                 newUser.Cedula = req.body.cedula;
                 newUser.Email    = email;
-                newUser.idBox  = "id MaraBox";
-                newUser.idBoxCode = "id BoxCode";
+                newUser.idBox  = getMaraBoxId();
+                newUser.idBoxCode = req.body.idBoxCode;
                 newUser.Tipo     = 10;
                 newUser.Password = newUser.generateHash(password);
 
@@ -128,3 +129,14 @@ module.exports = function(passport) {
     }));
 };
 
+function getMaraBoxId()
+{
+  Box.findOne({ 'Nombre' : 'MaraBox' }, function(err, box) {
+            // if there are any errors, return the error before anything else
+            if (err)
+                return null;
+
+            return box._id;
+
+        });
+}

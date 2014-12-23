@@ -23,8 +23,6 @@ module.exports = function(app,passport) {
     app.use('/public', express.static(base + '/HUB/MaraBox/public'));
     
     app.get('/MaraBox/', function(req, res) {
-
-          
         res.json({ message: 'MaraBox' });
     });
     
@@ -38,6 +36,7 @@ module.exports = function(app,passport) {
     
     app.post('/MaraBox/admin/registroNuevoUsuario', function(req, res, next) {
         passport.authenticate('local-signupMaraBox', function(err, user, info) {
+        
         var randomString = rs.randomString(10);
         guardarCodigoValidacion(user._id, randomString);
         email.sendValidationCodeMaraBox(user.Email,randomString);
@@ -218,8 +217,6 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/admin/atletas/:id', function(req, res) {
 
     });
-    
-    
     
     //////////////////////////////////////////////////////
     // API
