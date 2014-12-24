@@ -57,6 +57,8 @@ module.exports = function(app,passport) {
     
     app.post('/MaraBox/admin/nuevoWod', function(req, res) {
       
+      console.log(req.body);
+      
         var wod = new WOD(); 		// create a new instance of the Bear model
       wod.idBox = req.body.nombre;
       wod.WarmUp.push(req.body.warmup);

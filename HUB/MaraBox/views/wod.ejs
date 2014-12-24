@@ -23,7 +23,7 @@
       <!-- LOGIN FORM -->
       <form action="/MaraBox/admin/nuevoWod" method="post">
         
-          <div class="form-group">
+          <div class="form-group" id="wug">
             <label>Warm Up</label>
             <select class="warmup" data-style="btn-info" name="warmup">
               <optgroup label="Warm Up">
@@ -33,8 +33,10 @@
               </optgroup>
             </select>
           </div>
+          <a href="#" id="remwu">Remove</a>
+          <h2><a href="#" id="addwu">Add Another Input Box</a></h2>
           
-          <div class="form-group">
+          <div class="form-group" id="wdg">
             <label>WOD</label>
             <select class="wod" data-style="btn-info" name="wod">
               <optgroup label="WOD">
@@ -44,8 +46,10 @@
               </optgroup>
             </select>
           </div>
+          <a href="#" id="remwd">Remove</a>
+          <h2><a href="#" id="addwd">Add Another Input Box</a></h2>
           
-          <div class="form-group">
+          <div class="form-group" id="bog">
             <label>Buy Out</label>
             <select class="buyout" data-style="btn-info" name="buyout">
               <optgroup label="Buy Out">
@@ -55,6 +59,8 @@
               </optgroup>
             </select>
           </div>
+          <a href="#" id="rembo">Remove</a>
+          <h2><a href="#" id="addbo">Add Another Input Box</a></h2>
           
           <button type="submit" class="btn btn-warning btn-lg">Guardar WOD</button>
       </form>
