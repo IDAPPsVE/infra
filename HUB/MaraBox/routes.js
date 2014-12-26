@@ -60,10 +60,10 @@ module.exports = function(app,passport) {
       console.log(req.body);
       
         var wod = new WOD(); 		// create a new instance of the Bear model
-      wod.idBox = req.body.nombre;
-      wod.WarmUp.push(req.body.warmup);
-      wod.WOD.push(req.body.wod);
-      wod.BuyOut.push(req.body.buyout);
+      wod.MaraBox.idBox = req.body.nombre;
+      wod.MaraBox.WarmUp = req.body.warmup;
+      wod.MaraBox.WOD = req.body.wod;
+      wod.MaraBox.BuyOut = req.body.buyout;
 
       // save the bear and check for errors
       wod.save(function(err) {
@@ -82,6 +82,18 @@ module.exports = function(app,passport) {
           });
         }
       });
+    });
+    
+    app.get('/MaraBox/eventos', function(req, res) {
+      Evento.find(function(err, ev) {
+        if (err) {
+          return console.error(err);
+        }
+        else {
+          res.render(base + '/HUB/MaraBox/views/eventos.ejs', { message: '', eventos:ev.MaraBox });
+        }
+      });
+        //res.render(base + '/HUB/MaraBox/views/eventos.ejs', { message: req.flash('loginMessage') });
     });
     
     app.get('/MaraBox/admin/nuevaEvento', function(req, res) {
@@ -122,11 +134,13 @@ module.exports = function(app,passport) {
           if (err)
           {
             res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { message: 'Hubo un error, intente nuevamente' });
+            // Enviar a todas las plataformas via push notifications
             res.end();
           }
           else
           {
             res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { message: 'El evento fue guardado con exito' });
+            // Enviar a todas las plataformas via push notifications
             res.end();
           }
         });
