@@ -57,13 +57,75 @@ module.exports = function(app,passport) {
     
     app.post('/MaraBox/admin/nuevoWod', function(req, res) {
       
+      var dictWU = [];
+      var dictWD = [];
+      var dictBO = [];
+      
+      if (req.body.warmup.length == 24)
+      {
+        dictWU.push({
+          idEjercicio : req.body.warmup,
+          Cantidad    : req.body.cwu[0]
+        });
+      }
+      else
+      {
+        for(var i = 0; i < req.body.warmup.length; i++) {
+          dictWU.push({
+            idEjercicio : req.body.warmup[i],
+            Cantidad    : req.body.cwu[i]
+          });
+        }  
+      }
+      
+      if (req.body.wod.length == 24)
+      {
+        dictWD.push({
+          idEjercicio : req.body.wod,
+          Cantidad    : req.body.cwd[0]
+        });
+      }
+      else
+      {
+        for(var j = 0; j < req.body.wod.length; j++) {
+          dictWD.push({
+            idEjercicio : req.body.wod[j],
+            Cantidad    : req.body.cwd[j]
+          });
+        }  
+      }
+      
+      if (req.body.buyout.length == 24)
+      {
+        dictBO.push({
+          idEjercicio : req.body.buyout,
+          Cantidad    : req.body.cbo[0]
+        });
+      }
+      else
+      {
+        for(var k = 0; k < req.body.buyout.length; k++) {
+          dictBO.push({
+            idEjercicio : req.body.buyout[k],
+            Cantidad    : req.body.cbo[k]
+          });
+        }  
+      }
+      
+      
+      console.log(dictWU);
+      console.log(dictWD);
+      console.log(dictBO);
+      
       console.log(req.body);
       
-        var wod = new WOD(); 		// create a new instance of the Bear model
-      wod.MaraBox.idBox = req.body.nombre;
-      wod.MaraBox.WarmUp = req.body.warmup;
-      wod.MaraBox.WOD = req.body.wod;
-      wod.MaraBox.BuyOut = req.body.buyout;
+      var wod = new WOD(); 		// create a new instance of the Bear model
+      wod.MaraBox.Nombre = req.body.nombreWOD;
+      wod.MaraBox.Timecap = req.body.timecap;
+      //wod.MaraBox.idBox = getMaraBoxId();
+      wod.MaraBox.WarmUp = dictWU;
+      wod.MaraBox.WOD = dictWD;
+      wod.MaraBox.BuyOut = dictBO;
 
       // save the bear and check for errors
       wod.save(function(err) {

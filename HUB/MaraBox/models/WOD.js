@@ -4,9 +4,11 @@ var WODSchema = mongoose.Schema({
 
   MaraBox : {
     idBox    : String,
-    WarmUp   : {type: mongoose.Schema.Types.ObjectId, ref: 'Ejercicios'},
-    WOD      : {type: mongoose.Schema.Types.ObjectId, ref: 'Ejercicios'},
-    BuyOut   : {type: mongoose.Schema.Types.ObjectId, ref: 'Ejercicios'},
+    Nombre   : String,
+    Timecap  : Number,
+    WarmUp   : [mongoose.Schema.Types.Mixed],
+    WOD      : [mongoose.Schema.Types.Mixed],
+    BuyOut   : [mongoose.Schema.Types.Mixed],
     Fecha    : {type: Date, default: Date.now },
   }
   

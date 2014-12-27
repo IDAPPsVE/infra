@@ -18,8 +18,10 @@ $(document).ready(function () {
     });
     
     //Agrega y elimina warm up al wod
-    $('#addwu').on('click', function() {
+    $('#addwu').on('click', function(e) {
+        e.preventDefault();
         $('.warmup:first').clone().appendTo("#wug");
+        $("#wug").append('<input type="text" id="cwu" name="cwu[]"/>');
         return false;
     });
 
@@ -27,11 +29,13 @@ $(document).ready(function () {
         if ($('.warmup').size() > 1)
         {
             $(".warmup:last").remove();
+            $("#cwu:last").remove();
         }
         return false;
     });
     $('#addwd').on('click', function() {
-        $('.wod:first').clone().appendTo("#wdg");
+        $('.wod:first ').clone().appendTo("#wdg");
+        $("#wdg").append('<input type="text" id="cwd" name="cwd[]"/>');
         return false;
     });
 
@@ -39,11 +43,13 @@ $(document).ready(function () {
         if ($('.wod').size() > 1)
         {
             $(".wod:last").remove();
+            $("#cwd:last").remove();
         }
         return false;
     });
     $('#addbo').on('click', function() {
         $('.buyout:first').clone().appendTo("#bog");
+        $("#bog").append('<input type="text" id="cbo" name="cbo[]"/>');
         return false;
     });
 
@@ -51,6 +57,7 @@ $(document).ready(function () {
         if ($('.buyout').size() > 1)
         {
             $(".buyout:last").remove();
+            $("#cbo:last").remove();
         }
         return false;
     });

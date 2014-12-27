@@ -23,18 +23,40 @@
       <!-- LOGIN FORM -->
       <form action="/MaraBox/admin/nuevoWod" method="post">
         
+          <div class="form-group">
+            <label>Nombre del WOD</label>
+            <input type="text" id="nombrewod" name="nombreWOD"/>
+          </div>
+          
+          <div class="form-group">
+            <label>Time Cap</label>
+            <input type="text" id="timecap" name="timecap"/>
+          </div>
+          
           <div class="form-group" id="wug">
             <label>Warm Up</label>
             <select class="warmup" data-style="btn-info" name="warmup">
               <optgroup label="Warm Up">
                 <% ejercicios.forEach(function(ejercicios) { %>
                   <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
-	            <% }); %>
+	              <% }); %>
               </optgroup>
             </select>
+            <input type="text" id="cwu" name="cwu[]"/>
           </div>
           <a href="#" id="remwu">Remove</a>
           <h2><a href="#" id="addwu">Add Another Input Box</a></h2>
+          
+          <div class="form-group">
+            <label>Tipo de Wod</label>
+            <select class="tipo" data-style="btn-info" name="tipow">
+              <optgroup label="Tipo">
+                  <option value="sencillo">Sencillo</option>
+                  <option value="amrap">AMRAP</option>
+                  <option value="emom">EMOM</option>
+              </optgroup>
+            </select>
+          </div>
           
           <div class="form-group" id="wdg">
             <label>WOD</label>
@@ -42,9 +64,10 @@
               <optgroup label="WOD">
                 <% ejercicios.forEach(function(ejercicios) { %>
                   <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
-	            <% }); %>
+	              <% }); %>
               </optgroup>
             </select>
+            <input type="text" id="cwd" name="cwd[]"/>
           </div>
           <a href="#" id="remwd">Remove</a>
           <h2><a href="#" id="addwd">Add Another Input Box</a></h2>
@@ -55,9 +78,10 @@
               <optgroup label="Buy Out">
                 <% ejercicios.forEach(function(ejercicios) { %>
                   <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
-	            <% }); %>
+	              <% }); %>
               </optgroup>
             </select>
+            <input type="text" id="cbo" name="cbo[]"/>
           </div>
           <a href="#" id="rembo">Remove</a>
           <h2><a href="#" id="addbo">Add Another Input Box</a></h2>
