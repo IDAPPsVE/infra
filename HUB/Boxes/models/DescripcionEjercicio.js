@@ -1,9 +1,12 @@
 var mongoose     = require('mongoose');
 
 var DescripcionEjercicioSchema = mongoose.Schema({
-  idEjercicio : String,
-  Descripcion : String,
-  urlVideo : String
+  MaraBox : {
+    idEjercicio : String,
+    Descripcion : String,
+    urlVideo : String
+  }
+  
 });
 
 

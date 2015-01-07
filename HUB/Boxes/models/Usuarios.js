@@ -5,12 +5,14 @@ var bcrypt   = require('bcrypt-nodejs');
 // define the schema for our user model
 var UsuarioAppSchema = mongoose.Schema({
 
+    MaraBox : {
         Cedula       : Number,
         Email        : String,
         Password     : String,
         idBox        : String,
         idBoxCode    : String,
         Tipo         : Number,
+    }
 });
 
 // methods ======================

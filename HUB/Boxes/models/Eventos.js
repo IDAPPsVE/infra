@@ -2,14 +2,16 @@ var mongoose     = require('mongoose');
 
 var EventosSchema = mongoose.Schema({
 
-  Nombre           : String,
-  Imagen           : String,
-  Ciudad           : String,
-  Estado           : String,
-  Direccion        : String,
-  FechaInicio      : Date,
-  FechaCulminacion : Date,
-  Costo            : Number
+  MaraBox : {
+    Nombre           : String,
+    Imagen           : String,
+    Ciudad           : String,
+    Estado           : String,
+    Direccion        : String,
+    FechaInicio      : Date,
+    FechaCulminacion : Date,
+    Costo            : Number
+  }
 
 });
 

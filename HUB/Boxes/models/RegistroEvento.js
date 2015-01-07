@@ -2,9 +2,12 @@ var mongoose     = require('mongoose');
 
 var RegistroEventoSchema = mongoose.Schema({
 
-  idUsuario   : String,
-  idBox       : String,
-  idEvento    : String,
+  MaraBox : {
+    idUsuario   : String,
+    idBox       : String,
+    idEvento    : String,
+  }
+  
 });
 
 

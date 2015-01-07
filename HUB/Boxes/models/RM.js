@@ -2,11 +2,12 @@ var mongoose     = require('mongoose');
 
 var RMSchema = mongoose.Schema({
 
-  idUsuario   : String,
-  idBox       : String,
-  idEjercicio    : String,
-  Fecha   : Date,
-  RM       : Number,
+    MaraBox : {
+         idUsuario   : String,
+         idEjercicio : String,
+         Fecha       : Date,
+         RM          : Number,
+    }
 });
 
 
