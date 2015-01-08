@@ -3,13 +3,14 @@ var mongoose     = require('mongoose');
 // define the schema for our user model
 var FeedbackSchema = mongoose.Schema({
 
-    MaraBox : {
+    Boxes : {
         Email        : String,
-        idUsuario     : String,
+        idUsuario    : String,
         Mensaje      : String,
-        Fecha        : Date
+        Fecha        : Date,
+        idBox        : String
     }
 });
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('Feedback', FeedbackSchema);
+module.exports = mongoose.model('FeedbackBoxes', FeedbackSchema);

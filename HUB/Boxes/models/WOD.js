@@ -2,7 +2,7 @@ var mongoose     = require('mongoose');
 
 var WODSchema = mongoose.Schema({
 
-  MaraBox : {
+  Boxes : {
     idBox    : String,
     Nombre   : String,
     Timecap  : Number,
@@ -15,4 +15,4 @@ var WODSchema = mongoose.Schema({
 });
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('WOD', WODSchema);
+module.exports = mongoose.model('WODBoxes', WODSchema);

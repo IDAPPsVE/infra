@@ -28,11 +28,13 @@ module.exports = function(app) {
     });
     
     app.get('/box/:idBox/admin/registroNuevoUsuario', function(req, res) {
-      res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: req.flash('loginMessage') });
+      var p = req.params.idBox;
+      var url = "/box/"+p+"/admin/registroNuevoUsuario'";
+      res.render(base + '/HUB/Boxes/views/signup.ejs', { message: req.flash('loginMessage'), url:url });
     });
     
     app.post('/box/:idBox/admin/registroNuevoUsuario', function(req, res, next) {
-      passport.authenticate('local-signupMaraBox', function(err, user, info) {
+      passport.authenticate('local-signupBoxes', function(err, user, info) {
         
         var randomString = rs.randomString(10);
         guardarCodigoValidacion(user._id, randomString);
@@ -46,7 +48,12 @@ module.exports = function(app) {
     app.get('/box/:idBox/admin/nuevoWod', function(req, res) {
       Ejercicios.find(function(err, ejercicios) {
         if (err) return console.error(err);
-        else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: '', ejercicios:ejercicios });
+        else
+        {
+          var p = req.params.idBox;
+          var url = "/box/"+p+"/admin/nuevoWod";
+          res.render(base + '/HUB/Boxes/views/wod.ejs', { message: '', ejercicios:ejercicios, url:url });
+        }
         });
     });
     
@@ -108,12 +115,12 @@ module.exports = function(app) {
       }
       
       var wod = new WOD(); 		// create a new instance of the Bear model
-      wod.MaraBox.Nombre = req.body.nombreWOD;
-      wod.MaraBox.Timecap = req.body.timecap;
-      //wod.MaraBox.idBox = getMaraBoxId();
-      wod.MaraBox.WarmUp = dictWU;
-      wod.MaraBox.WOD = dictWD;
-      wod.MaraBox.BuyOut = dictBO;
+      wod.Boxes.Nombre = req.body.nombreWOD;
+      wod.Boxes.Timecap = req.body.timecap;
+      wod.Boxes.idBox = req.body.idBox;
+      wod.Boxes.WarmUp = dictWU;
+      wod.Boxes.WOD = dictWD;
+      wod.Boxes.BuyOut = dictBO;
 
       // save the bear and check for errors
       wod.save(function(err) {
@@ -121,33 +128,36 @@ module.exports = function(app) {
         {
           Ejercicios.find(function(errE, ejercicios) {
             if (errE) return console.error(errE);
-            else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: 'Hubo un error, intente nuevamente', ejercicios:ejercicios });
+            else res.render(base + '/HUB/Boxes/views/wod.ejs', { message: 'Hubo un error, intente nuevamente', ejercicios:ejercicios });
           });
         }
         else
         {
           Ejercicios.find(function(errE, ejercicios) {
             if (errE) return console.error(errE);
-            else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: 'El WOD fue guardado con exito', ejercicios:ejercicios });
+            else res.render(base + '/HUB/Boxes/views/wod.ejs', { message: 'El WOD fue guardado con exito', ejercicios:ejercicios });
           });
         }
       });
     });
     
     app.get('/box/:idBox/eventos', function(req, res) {
+      
       Evento.find(function(err, ev) {
         if (err) {
           return console.error(err);
         }
         else {
-          res.render(base + '/HUB/MaraBox/views/eventos.ejs', { message: '', eventos:ev.MaraBox });
+          res.render(base + '/HUB/Boxes/views/eventos.ejs', { message: '', eventos:ev.MaraBox });
         }
       });
-        //res.render(base + '/HUB/MaraBox/views/eventos.ejs', { message: req.flash('loginMessage') });
+        //res.render(base + '/HUB/Boxes/views/eventos.ejs', { message: req.flash('loginMessage') });
     });
     
     app.get('/box/:idBox/admin/nuevaEvento', function(req, res) {
-        res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage') });
+      var p = req.params.idBox;
+      var url = "/box/"+p+"/admin/nuevaEvento";
+      res.render(base + '/HUB/Boxes/views/nuevoEvento.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage'), url:url });
     });
     
     app.post('/box/:idBox/admin/nuevaEvento', function(req, res) {
@@ -171,25 +181,25 @@ module.exports = function(app) {
       
         var e = new Evento();
       
-        e.MaraBox.Imagen = i;
-        e.MaraBox.Nombre = n;
-        e.MaraBox.Ciudad = c;
-        e.MaraBox.Estado = es; 
-        e.MaraBox.Direccion = d;
-        e.MaraBox.FechaInicio = fi;
-        e.MaraBox.FechaCulminacion = fc;
-        e.MaraBox.Costo = cos;
+        e.Boxes.Imagen = i;
+        e.Boxes.Nombre = n;
+        e.Boxes.Ciudad = c;
+        e.Boxes.Estado = es; 
+        e.Boxes.Direccion = d;
+        e.Boxes.FechaInicio = fi;
+        e.Boxes.FechaCulminacion = fc;
+        e.Boxes.Costo = cos;
       
         e.save(function(err) {
           if (err)
           {
-            res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { message: 'Hubo un error, intente nuevamente' });
+            res.render(base + '/HUB/Boxes/views/nuevoEvento.ejs', { message: 'Hubo un error, intente nuevamente' });
             // Enviar a todas las plataformas via push notifications
             res.end();
           }
           else
           {
-            res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { message: 'El evento fue guardado con exito' });
+            res.render(base + '/HUB/Boxes/views/nuevoEvento.ejs', { message: 'El evento fue guardado con exito' });
             // Enviar a todas las plataformas via push notifications
             res.end();
           }
@@ -199,20 +209,22 @@ module.exports = function(app) {
     });
     
     app.get('/box/:idBox/admin/nuevaNotificacion', function(req, res) {
-      res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message: req.flash('loginMessage') });
+      var p = req.params.idBox;
+      var url = "/box/"+p+"/admin/nuevaNotificacion";
+      res.render(base + '/HUB/Boxes/views/nuevaNotificacion.ejs', { message: req.flash('loginMessage'), url:url });
     });
     
     app.post('/box/:idBox/admin/nuevaNotificacion', function(req, res) {
       var notificacion = new Notificacion(); 		// create a new instance of the Bear model
-          notificacion.MaraBox.Titulo = req.body.titulo;
-          notificacion.MaraBox.Mensaje = req.body.mensaje;
+          notificacion.Boxes.Titulo = req.body.titulo;
+          notificacion.Boxes.Mensaje = req.body.mensaje;
           
           // save the bear and check for errors
           notificacion.save(function(err) {
             if (err) 
-              res.render(base + '/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
+              res.render(base + '/Boxes/views/nuevaNotificacion.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
             else
-              res.render(base + '/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje fue enviado con exito' });
+              res.render(base + '/Boxes/views/nuevaNotificacion.ejs', { message:'El mensaje fue enviado con exito' });
               
               // Enviar a todas las plataformas via push notifications
           });
@@ -231,7 +243,9 @@ module.exports = function(app) {
     });
     
     app.get('/box/:idBox/admin/:fecha/:hora/registroAsistencia', function(req, res) {
-        res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage') });
+      var p = req.params.idBox;
+      var url = "/box/"+p+"/admin/"+req.params.fecha+"/"+req.params.hora+"registroAsistencia";
+      res.render(base + '/HUB/Boxes/views/registroAsistencia.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage'), url:url });
     });
     
     app.post('/box/:idBox/admin/:fecha/:hora/registroAsistencia', function(req, res) {
@@ -239,22 +253,24 @@ module.exports = function(app) {
         var cedula = getUserId(cedula);
         if(!cedula)
         {
-          res.render(base + '/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos' });
+          res.render(base + '/Boxes/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos' });
         }
         else
         {
           var asistencia = new Asistencia(); 		// create a new instance of the Bear model
-          asistencia.MaraBox.idUsuario = getUserId(req.body.cedula);
-          asistencia.MaraBox.idBox = getMaraBoxId();
-          asistencia.MaraBox.Hora = req.body.hora;
-          asistencia.MaraBox.Fecha = req.body.fecha;
+          asistencia.Boxes.idUsuario = getUserId(req.body.cedula);
+          asistencia.Boxes.idBox = req.body.idBox;
+          asistencia.Boxes.Hora = req.body.hora;
+          asistencia.Boxes.Fecha = req.body.fecha;
 
           // save the bear and check for errors
           asistencia.save(function(err) {
+            var p = req.params.idBox;
+            var url = "/box/"+p+"/admin/"+req.params.fecha+"/"+req.params.hora+"/registroAsistencia";
             if (err) 
-              res.render(base + '/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no pudo ser registrado' });
+              res.render(base + '/Boxes/views/registroAsistencia.ejs', { message:'El usuario no pudo ser registrado', url:url });
             else
-              res.render(base + '/MaraBox/views/registroAsistencia.ejs', { message:'Usuario registrado para el entrenamiento del dia '+req.body.fecha+' hora '+req.body.hora });  
+              res.render(base + '/Boxes/views/registroAsistencia.ejs', { message:'Usuario registrado para el entrenamiento del dia '+req.body.fecha+' hora '+req.body.hora, url:url });  
           }); 
         }
         
@@ -265,7 +281,7 @@ module.exports = function(app) {
     // API
     //////////////////////////////////////////////////////
     app.post('/api/0.1/registroUsuario', function(req, res, next) {
-      passport.authenticate('local-signupMaraBox', function(err, user, info) {
+      passport.authenticate('local-signupBoxes', function(err, user, info) {
         var randomString = rs.randomString(10);
         guardarCodigoValidacion(user._id, randomString);
         email.sendValidationCodeMaraBox(user.Email,randomString);
@@ -276,7 +292,7 @@ module.exports = function(app) {
     });
     
     app.post('/api/0.1/login', function(req, res, next) {
-      passport.authenticate('local-loginMarabox', function(err, user, info) {
+      passport.authenticate('local-loginBoxes', function(err, user, info) {
 
         var userNeededData = {'id':user._id,
                               'Email':user.Email,
@@ -338,18 +354,6 @@ function guardarCodigoValidacion(id,validacion)
   v.Validacion = validacion;
   // save the bear and check for errors
   v.save(function(err) {});
-}
-
-function getMaraBoxId()
-{
-  Box.findOne({ 'Nombre' : 'MaraBox' }, function(err, box) {
-            // if there are any errors, return the error before anything else
-            if (err)
-                return null;
-
-            return box._id;
-
-        });
 }
 
 function getUserId(cedula)

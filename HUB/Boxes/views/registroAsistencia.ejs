@@ -21,7 +21,7 @@
       <% } %>
 
       <!-- LOGIN FORM -->
-      <form action="/MaraBox/admin/<%=fecha%>/<%=hora%>/registroAsistencia" method="post">
+      <form action=<%= url %> method="post">
         
           <input type="hidden" name="fecha" value=<%=fecha%>>
           <input type="hidden" name="hora" value=<%=hora%>>
@@ -36,7 +36,11 @@
           </div>
           <div class="form-group">
               <label>Apellido</label>
-              <input type="password" class="form-control" name="apellido">
+              <input type="text" class="form-control" name="apellido">
+          </div>
+          <div class="form-group">
+              <label>Apellido</label>
+              <input type="text" class="form-control" name="idBox">
           </div>
           <button type="submit" class="btn btn-warning btn-lg">Registrar Asistencia</button>
       </form>

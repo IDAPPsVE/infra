@@ -21,7 +21,7 @@
       <% } %>
 
       <!-- LOGIN FORM -->
-      <form action="/MaraBox/admin/nuevoWod" method="post">
+      <form action=<%= url %> method="post">
         
           <div class="form-group">
             <label>Nombre del WOD</label>
@@ -38,7 +38,7 @@
             <select class="warmup" data-style="btn-info" name="warmup">
               <optgroup label="Warm Up">
                 <% ejercicios.forEach(function(ejercicios) { %>
-                  <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
+                  <option value=<%= ejercicios._id %>><%= ejercicios.Boxes.Nombre %></option>
 	              <% }); %>
               </optgroup>
             </select>
@@ -63,7 +63,7 @@
             <select class="wod" data-style="btn-info" name="wod">
               <optgroup label="WOD">
                 <% ejercicios.forEach(function(ejercicios) { %>
-                  <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
+                  <option value=<%= ejercicios._id %>><%= ejercicios.Boxes.Nombre %></option>
 	              <% }); %>
               </optgroup>
             </select>
@@ -77,7 +77,7 @@
             <select class="buyout" data-style="btn-info" name="buyout">
               <optgroup label="Buy Out">
                 <% ejercicios.forEach(function(ejercicios) { %>
-                  <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
+                  <option value=<%= ejercicios._id %>><%= ejercicios.Boxes.Nombre %></option>
 	              <% }); %>
               </optgroup>
             </select>

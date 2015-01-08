@@ -2,7 +2,7 @@ var mongoose     = require('mongoose');
 
 var InfoUsuarioSchema = mongoose.Schema({
 
-  MaraBox : {
+  Boxes : {
     Nombres           : String,
     Apellidos         : String,
     Ciudad            : String,
@@ -16,4 +16,4 @@ var InfoUsuarioSchema = mongoose.Schema({
 
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('InfoUsuario', InfoUsuarioSchema);
+module.exports = mongoose.model('InfoUsuarioBoxes', InfoUsuarioSchema);

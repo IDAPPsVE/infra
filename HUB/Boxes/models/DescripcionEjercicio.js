@@ -1,7 +1,7 @@
 var mongoose     = require('mongoose');
 
 var DescripcionEjercicioSchema = mongoose.Schema({
-  MaraBox : {
+  Boxes : {
     idEjercicio : String,
     Descripcion : String,
     urlVideo : String
@@ -11,4 +11,4 @@ var DescripcionEjercicioSchema = mongoose.Schema({
 
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('DescripcionEjercicio', DescripcionEjercicioSchema);
+module.exports = mongoose.model('DescripcionEjercicioBoxes', DescripcionEjercicioSchema);

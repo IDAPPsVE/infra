@@ -2,7 +2,7 @@ var mongoose     = require('mongoose');
 
 var EventosSchema = mongoose.Schema({
 
-  MaraBox : {
+  Boxes : {
     Nombre           : String,
     Imagen           : String,
     Ciudad           : String,
@@ -10,11 +10,12 @@ var EventosSchema = mongoose.Schema({
     Direccion        : String,
     FechaInicio      : Date,
     FechaCulminacion : Date,
-    Costo            : Number
+    Costo            : Number,
+    idBox            : String
   }
 
 });
 
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('Eventos', EventosSchema);
+module.exports = mongoose.model('EventosBoxes', EventosSchema);

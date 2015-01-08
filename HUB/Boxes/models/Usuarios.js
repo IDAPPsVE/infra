@@ -5,7 +5,7 @@ var bcrypt   = require('bcrypt-nodejs');
 // define the schema for our user model
 var UsuarioAppSchema = mongoose.Schema({
 
-    MaraBox : {
+    Boxes : {
         Cedula       : Number,
         Email        : String,
         Password     : String,
@@ -27,4 +27,4 @@ UsuarioAppSchema.methods.validPassword = function(password) {
 };
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('UsuarioApp', UsuarioAppSchema);
+module.exports = mongoose.model('UsuarioBoxes', UsuarioAppSchema);
