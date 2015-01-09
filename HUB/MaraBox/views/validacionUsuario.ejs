@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../views/partials/head %>
+</head>
+<body class="container">
+
+  <header>
+    <% include ../views/partials/header %>
+  </header>
+
+  <div class="container">
+
+  <div class="col-sm-6 col-sm-offset-3">
+
+      <h1><span class="fa fa-sign-in"></span> Signup</h1>
+
+      <!-- show any messages that come back with authentication -->
+      <% if (message.length > 0) { %>
+          <div class="alert alert-danger"><%= message %></div>
+      <% } %>
+    </div>
+
+    <h1>Su correo ha sido validado, Por favor ingrese su numero de cedula en el siguiente formulario</h1>
+    
+    <form action="/MaraBox/validarCedula" method="post">
+        
+          <input type="hidden" id="base" name="codigo" value=<%=codigo%>>
+          
+          <div class="form-group">
+              <label>Cedula de Identidad</label>
+              <input type="text" class="form-control" name="cedula">
+          </div>
+          
+          <button type="submit" class="btn btn-warning btn-lg">Validar</button>
+      </form>
+  </div>
+
+  <footer>
+    <% include ../views/partials/footer %>
+  </footer>
+
+</body>
+</html>

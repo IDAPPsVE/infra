@@ -1,6 +1,4 @@
 var express  = require('express');
-
-var Validacion  = require('./models/ValidacionUsuario');
 var base = process.env.PWD;
 
 var busboy = require('connect-busboy');
@@ -16,14 +14,64 @@ var Ejercicios = require(base + '/HUB/MaraBox/models/Ejercicios');
 var WOD = require(base + '/HUB/MaraBox/models/WOD');
 var Evento = require(base + '/HUB/MaraBox/models/Eventos');
 var Notificacion =  require(base + '/HUB/MaraBox/models/Notificaciones');
+var Validacion = require(base + '/HUB/MaraBox/models/ValidacionUsuario');
 
 
 module.exports = function(app,passport) {
     
     app.use('/public', express.static(base + '/HUB/MaraBox/public'));
-    
+
     app.get('/MaraBox/', function(req, res) {
         res.json({ message: 'MaraBox' });
+    });
+    
+    app.get('/MaraBox/ValidacionUsuario/:codigoValidacion', function(req, res) {
+        Validacion.findOne({ Codigo : req.params.codigoValidacion },function(err, validacion) {
+          if (err) return console.error(err);
+          else
+          {
+            validacion.CorreoValidado = 1;
+            validacion.save(function(errv) {
+              if(errv) {
+                res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { codigo : req.params.codigoValidacion, message: 'Disculpe, intente nuevamente' });  
+              }
+              else {
+                res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { codigo : req.params.codigoValidacion, message: '' });    
+              }
+            });
+          }
+        });
+    });
+    
+    app.post('/MaraBox/validarCedula', function(req, res) {
+      
+      Validacion.findOne({ Codigo : req.body.codigo },function(errv, validacion) {
+          if (errv) return console.error(errv);
+          else
+          {
+            Usuario.findById( validacion.idUsuario,function(erru, usuario) {
+              if (erru) return console.error(erru);
+              else
+              {
+                if (usuario.Cedula == req.body.cedula)
+                {
+                  validacion.CedulaValidada = 1;
+                  validacion.save(function(errvv) {
+                    if(errvv) {
+                      res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { message: 'Disculpe, intente nuevamente' });  
+                    }
+                    else {
+                      res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { message: '' });    
+                    }
+                  });
+                }
+                else{
+                  res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { message: 'Disculpe, El numero de cedula de identidad no concuerda con el ingresado al momento de registrarse, por favor intente de nuevo.' });
+                }
+              }
+            }); 
+          }
+        });
     });
     
     app.get('/MaraBox/atletas/:id', function(req, res) {
@@ -39,7 +87,8 @@ module.exports = function(app,passport) {
         
         var randomString = rs.randomString(10);
         guardarCodigoValidacion(user._id, randomString);
-        email.sendValidationCodeMaraBox(user.Email,randomString);
+        var url = "/MaraBox/ValidacionUsuario/"+randomString;
+        email.sendValidationUsuarioMaraBox(user.Email,url);
         
         return res.json({'err':err,'user':user,'info':info});
 
@@ -111,13 +160,6 @@ module.exports = function(app,passport) {
           });
         }  
       }
-      
-      
-      console.log(dictWU);
-      console.log(dictWD);
-      console.log(dictBO);
-      
-      console.log(req.body);
       
       var wod = new WOD(); 		// create a new instance of the Bear model
       wod.MaraBox.Nombre = req.body.nombreWOD;
@@ -303,7 +345,8 @@ module.exports = function(app,passport) {
       passport.authenticate('local-signupMaraBox', function(err, user, info) {
         var randomString = rs.randomString(10);
         guardarCodigoValidacion(user._id, randomString);
-        email.sendValidationCodeMaraBox(user.Email,randomString);
+        var url = "/MaraBox/ValidacionUsuario/"+randomString;
+        email.sendValidationUsuarioMaraBox(user.Email,url);
         
         return res.json({'err':err,'user':user,'info':info});
 
@@ -334,15 +377,31 @@ module.exports = function(app,passport) {
         req.logout();
         res.json({ code : '200', message: 'Sesion terminada' });
     });
+    
     app.post('/MaraBox/uploadUserPic', function(req, res) {
 
     });
+    
     app.get('/MaraBox/getUserPic', function(req, res) {
         res.json({ message: 'hooray! welcome to our api!' });
     });
+    
     app.post('/MaraBox/asistencia', function(req, res) {
+       var asistencia = new Asistencia(); 		// create a new instance of the Bear model
+          asistencia.MaraBox.idUsuario = getUserId(req.body.cedula);
+          asistencia.MaraBox.idBox = getMaraBoxId();
+          asistencia.MaraBox.Hora = req.body.hora;
+          asistencia.MaraBox.Fecha = req.body.fecha;
 
+          // save the bear and check for errors
+          asistencia.save(function(err) {
+            if (err) 
+              res.json({ code : '200', message: 'Asistencia guardada con exito' });
+            else
+              res.json({ code : '-1000', message: 'No se pudo guardar los datos, intente nuevamente' });
+          }); 
     });
+    
     app.post('/MaraBox/:evento/asistir', function(req, res) {
 
     });
@@ -352,69 +411,60 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/progreso', function(req, res) {
         res.json({ message: 'hooray! welcome to our api!' });
     });
-    app.get('/MaraBox/:idEjercicio', function(req, res) {
-        res.json({ message: req.params.idEjercicio });
+    
+    app.get('/MaraBox/ejercicios', function(req, res) 
+    {
+      Ejercicios.find(function(errE, ejercicios) {
+          if (errE)
+          {
+            res.json({ code : "-100", mensaje : "No se pudo obtener los datos" });
+          }
+          else
+          {
+            res.json({ code : "200", ejercicios : ejercicios });
+          }
+      });
     });
-    app.get('/MaraBox/ejercicios', function(req, res) {
-        res.json({ message: 'hooray! welcome to our api!' });
+    
+    app.get('/MaraBox/ejercicios/:idEjercicio', function(req, res) 
+    {
+      Ejercicios.findOne({ 'Email' :  req.params.idEjercicio }, function(errE, ejercicio) {
+          if (errE)
+          {
+            res.json({ code : "-100", mensaje : "No se pudo obtener los datos" });
+          }
+          else
+          {
+            res.json({ code : "200", ejercicio : ejercicio });
+          }
+      });
     });
-    app.get('/MaraBox/WOD/:fecha', function(req, res) {
-        res.json({ message: 'hooray! welcome to our api!' });
+    
+    app.get('/MaraBox/WOD', function(req, res) {
+        WOD.find(function(errE, wod) {
+          if (errE)
+          {
+            res.json({ code : "-100", mensaje : "No hay WOD registrado para hoy" });
+          }
+          else
+          {
+            res.json({ code : "200", wod : wod });
+          }
+      });
     });
+    
     app.get('/MaraBox/eventos', function(req, res) {
         res.json({ message: 'hooray! welcome to our api!' });
     });
     
-    /*app.post('/login', function(req, res,next) {
-      passport.authenticate('local-login', function(err, user, info) {
-
-        var userNeededData = {'id':user._id,
-                              'Email':user.Email,
-                              'Tipo':user.Tipo,
-                              'isLoggedIn':'1'};
-        req.login(userNeededData, function(err) {
-          if (err) { return next(err); }
-            //return res.json({'err':err,'user':userNeededData,'info':info});
-            if((user.Tipo == 1) || (user.Tipo == 2))
-              {
-                res.redirect('/admin/dashboard');
-              }
-
-            if(user.Tipo == 10)
-            {
-              res.redirect('/dashboard');
-            }
-
-        });
-
-
-      })(req, res, next);
-    });
-    app.post('/contacto',function(req, res) {
-
-      var contacto = new Contacto(); 		// create a new instance of the Bear model
-      contacto.Nombre = req.body.nombre;
-      contacto.Apellido = req.body.apellido;
-      contacto.Email = req.body.email;
-      contacto.Mensaje = req.body.mensaje;
-      contacto.Fecha = new Date();
-
-      // save the bear and check for errors
-      contacto.save(function(err) {
-        if (err)
-          res.render('../IDAPP/views/contacto.ejs', { message:'Su petición no pudo ser enviada correctamente, por favor intente nuevamente' });
-
-        res.render('../IDAPP/views/contacto.ejs', { message:'Gracias por contactarnos, pronto le responderemos su mensaje' });
-      });
-
-    });*/
 }
 
 function guardarCodigoValidacion(id,validacion)
 {
   var v = new Validacion(); 		// create a new instance of the Bear model
-  v.user_id = id;
-  v.Validacion = validacion;
+  v.idUsuario = id;
+  v.Codigo = validacion;
+  v.idBox = getMaraBoxId();
   // save the bear and check for errors
   v.save(function(err) {});
 }
