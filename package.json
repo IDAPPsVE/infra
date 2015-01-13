@@ -18,6 +18,7 @@
 		"nodemailer" : "latest",
 		"email-templates" : "latest",
 		"connect-busboy" : "latest",
-		"fs-extra" : "latest"
+		"fs-extra" : "latest",
+		"moment" : "latest"
 	}
 }

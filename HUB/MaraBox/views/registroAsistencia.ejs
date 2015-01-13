@@ -17,7 +17,11 @@
 
       <!-- show any messages that come back with authentication -->
       <% if (message.length > 0) { %>
-          <div class="alert alert-danger"><%= message %></div>
+          <div class="alert alert-danger"><%= message %>
+            <% if (regman == 1) { %>
+              <a href="/MaraBox/admin/primerUsuario">Registrar aqui</a>
+            <% } %>
+          </div>
       <% } %>
 
       <!-- LOGIN FORM -->
@@ -36,7 +40,7 @@
           </div>
           <div class="form-group">
               <label>Apellido</label>
-              <input type="password" class="form-control" name="apellido">
+              <input type="text" class="form-control" name="apellido">
           </div>
           <button type="submit" class="btn btn-warning btn-lg">Registrar Asistencia</button>
       </form>
