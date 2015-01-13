@@ -305,6 +305,77 @@ module.exports = function(app,passport) {
           }); 
     });
     
+    app.get('/MaraBox/admin/registroSolvencia', function(req, res) {
+        res.render(base + '/HUB/MaraBox/views/registroSolvencia.ejs', { message: req.flash('loginMessage') });
+    });
+    
+    app.post('/MaraBox/admin/registroSolvencia', function(req, res) {
+      
+        var cedula = req.body.cedula;
+        var userid = getUserId(cedula);
+        var dh = 0;
+        var fi = moment(req.body.fechaInicio);
+        var fc = moment(req.body.fechaCulminacion);
+        
+        var totalDias = fi.diff(fc, 'days');
+        
+        Descanso.find(function(errd, descanso) {
+                if (errd){}
+                else{
+                  if(descanso)
+                  {
+                    var i = false;
+                    descanso.forEach(function(d){
+                      i = moment(d.Fecha).isBetween(fi, fc);
+                      if (i)
+                      {
+                        dh++;
+                        i = false;
+                      }
+                    });
+                  }
+                }
+              });
+              
+        var solvencia = new Solvencia(); 		// create a new instance of the Bear model
+          solvencia.MaraBox.idUsuario = userid;
+          solvencia.MaraBox.FechaInicio = req.body.fechaInicio;
+          solvencia.MaraBox.FechaCulminacion = req.body.fechaCulminacion;
+          solvencia.MaraBox.DiasHabiles = totalDias + dh;
+          
+          // save the bear and check for errors
+          solvencia.save(function(err) {
+            if (err) 
+              res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
+            else
+              res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'Registro guardado con exito' });
+              
+              // Enviar a todas las plataformas via push notifications
+          }); 
+    });
+    
+    app.get('/MaraBox/admin/registroFeriado', function(req, res) {
+        res.render(base + '/HUB/MaraBox/views/registroFeriado.ejs', { message: req.flash('loginMessage') });
+    });
+    
+    app.post('/MaraBox/admin/registroFeriado', function(req, res) {
+          var descanso = new Descanso();
+          descanso.MaraBox.Fecha = req.body.fecha;
+          descanso.MaraBox.DiaCompleto = req.body.diaCompleto;
+          descanso.MaraBox.Hora = req.body.hora;
+          descanso.MaraBox.Motivo = req.body.motivo;
+          
+          // save the bear and check for errors
+          descanso.save(function(err) {
+            if (err) 
+              res.render(base + '/HUB/MaraBox/views/registroFeriado.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
+            else
+              res.render(base + '/HUB/MaraBox/views/registroFeriado.ejs', { message:'Registro guardado con exito' });
+              
+              // Enviar a todas las plataformas via push notifications
+          });
+    });
+    
     app.get('/MaraBox/admin/:fecha', function(req, res) {
       //Agregar coach a la clase
     });
@@ -354,7 +425,7 @@ module.exports = function(app,passport) {
         
     });
     
-    app.get('/MaraBox/admin/primerUsuario', function(req, res) {
+    app.get('/MaraBox/admin/registroPrimerUsuario', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message: req.flash('loginMessage') });
     });
     
