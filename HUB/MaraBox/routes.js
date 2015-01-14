@@ -10,6 +10,7 @@ var email = require(base + '/IDAPP/controllers/mailController');
 
 var Asistencia = require(base + '/HUB/MaraBox/models/Asistencia');
 var Usuario = require(base + '/HUB/MaraBox/models/Usuarios');
+var InfoUsuario = require(base + '/HUB/MaraBox/models/InfoUsuarios');
 var Box = require(base + '/IDAPP/models/Boxes');
 var Ejercicios = require(base + '/HUB/MaraBox/models/Ejercicios');
 var WOD = require(base + '/HUB/MaraBox/models/WOD');
@@ -27,18 +28,7 @@ module.exports = function(app,passport) {
     app.use('/public', express.static(base + '/HUB/MaraBox/public'));
 
     app.get('/MaraBox/', function(req, res) {
-      var a = moment('2007-10-29');
-      var b = moment('2007-10-20');
-      var duration = moment.duration({'days' : 25});
-      var fechaMasDias = moment(b).add(duration);
-      console.log("Hoy " + moment(new Date()).format("DD-MM-YYYY"));
-      console.log("Diferencia " + a.diff(b, 'days'));
-      console.log("Diferencia " + fechaMasDias.diff(b, 'days'));
-      console.log("Esta en un intervalo? " + moment('2007-10-30').isBetween(b, fechaMasDias));
-      console.log("Esta en un intervalo? " + moment('2007-10-30').isBetween(b, a));
-                
-        
-        res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message: req.flash('loginMessage') });
+      
     });
     
     app.get('/MaraBox/ValidacionUsuario/:codigoValidacion', function(req, res) {
@@ -114,8 +104,8 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/admin/nuevoWod', function(req, res) {
       
         Ejercicios.find(function(err, ejercicios) {
-        if (err) return console.error(err);
-        else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: '', ejercicios:ejercicios });
+          if (err) return console.error(err);
+          else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: '', ejercicios:ejercicios });
         });
         
     });
@@ -213,7 +203,6 @@ module.exports = function(app,passport) {
           res.render(base + '/HUB/MaraBox/views/eventos.ejs', { message: '', eventos:ev.MaraBox });
         }
       });
-        //res.render(base + '/HUB/MaraBox/views/eventos.ejs', { message: req.flash('loginMessage') });
     });
     
     app.get('/MaraBox/admin/nuevaEvento', function(req, res) {
@@ -400,7 +389,45 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/admin/:fecha/:hora', function(req, res) {
-      res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { fecha : req.params.fecha, message: req.flash('loginMessage') });
+      
+      var e = {};
+      var datos = [];
+      Clases.find({ Fecha : req.params.fecha, Hora : req.params.hora }, function(err, clase) {
+        if (err) return console.error(err);
+        else
+        {
+          console.log(clase);
+          if (clase)
+          {
+            Entrenadores.findById(clase.idEntrenador, function(erre, entrenador) {
+              if (erre) return console.error(erre);
+              else
+              {
+                console.log(entrenador);
+                if (entrenador)
+                {
+                  e = entrenador;
+                }
+              }
+            });
+            Asistencia.find({ idClase : clase._id }, function(erra, asistencia) {
+              if (erra) return console.error(erra);
+              else
+              {
+                console.log(asistencia);
+                if (asistencia)
+                {
+                  asistencia.forEach(function(a){
+                    var iu = getInfoUsuario(asistencia.idUsuario);
+                    datos.push({entrenador:e, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+                  });
+                  res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { entrenador : e, asistencia : datos, message: req.flash('loginMessage') });
+                }
+              }
+            });
+          }
+        }
+      });
     });
     
     app.get('/MaraBox/admin/registroAsistencia', function(req, res) {
@@ -644,6 +671,44 @@ function getUserId(cedula)
               
             }
         });
+}
+
+function getInfoUsuario(usuarioId)
+{
+  var cedula;
+  var datos = [];
+ Usuario.findById(usuarioId, function(err, usuario) {
+            // if there are any errors, return the error before anything else
+            if (err) return null;
+            else 
+            {
+              console.log(usuario);
+              if (usuario)
+              {
+                cedula = usuario.Cedula;
+                
+                InfoUsuario.find({ idUsuario : usuarioId }, function(erru, info) {
+                    if (erru) return null;
+                    else 
+                    {
+                      if (usuario)
+                      {
+                        datos[0] = cedula;
+                        datos[1] = info.Nombre;
+                        datos[2] = info.Apellido;
+                        console.log(datos);
+                        return datos;
+                        
+                      }
+                      else
+                      {
+                        return null;
+                      }
+                    }
+                });
+              }
+            }
+        }); 
 }
 
 function getClaseId(hora)

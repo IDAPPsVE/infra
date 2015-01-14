@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../views/partials/head %>
+</head>
+<body class="container">
+
+  <header>
+    <% include ../views/partials/header %>
+  </header>
+
+  <div class="container">
+
+  <div class="col-sm-6 col-sm-offset-3">
+
+      <!-- show any messages that come back with authentication -->
+      <% if (message.length > 0) { %>
+          <div class="alert alert-danger"><%= message %></div>
+      <% } %>
+      
+      <div><strong></strong><%= e.MaraBox.Nombre%> <%=e.MaraBox.Apellido %></strong></div>
+      
+      <% ejercicios.forEach(function(ejercicios) { %>
+                  <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
+	              <% }); %>
+      
+      <table>
+        <tr><td>#</td><td>Cedula</td><td>Nombres</td><td>Apellidos</td></tr>
+        <% asistencia.forEach(function(a) { %>
+        <% var i = 0 %>
+        <tr><td><% i++ %></td><td>a.cedula</td><td>a.nombre</td><td>a.apellido</td></tr>
+        <% }); %>
+      </table>
+                
+      
+      
+  </div>
+
+  </div>
+
+  <footer>
+    <% include ../views/partials/footer %>
+  </footer>
+
+</body>
+</html>
+

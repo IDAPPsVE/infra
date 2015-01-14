@@ -7,6 +7,7 @@ var ClasesSchema = mongoose.Schema({
         Fecha        : Date,
         Hora         : Date,
         idEntrenador : String,
+        Cupo         : Number
     }
 });
 

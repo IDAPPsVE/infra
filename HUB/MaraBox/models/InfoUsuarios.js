@@ -10,6 +10,7 @@ var InfoUsuarioSchema = mongoose.Schema({
     Direccion         : String,
     Telefono          : Number,
     FechaNacimiento   : Date,
+    idUsuario         : String
   }
   
 });
