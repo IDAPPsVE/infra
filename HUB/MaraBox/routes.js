@@ -19,6 +19,7 @@ var Validacion = require(base + '/HUB/MaraBox/models/ValidacionUsuario');
 var Solvencia = require(base + '/HUB/MaraBox/models/Solvencia');
 var Descanso = require(base + '/HUB/MaraBox/models/Descansos');
 var Clases = require(base + '/HUB/MaraBox/models/Clases');
+var Entrenadores = require(base + '/HUB/MaraBox/models/Entrenadores');
 
 
 module.exports = function(app,passport) {
@@ -268,23 +269,7 @@ module.exports = function(app,passport) {
 
     })
     req.pipe(req.busboy);
-      
     
-      /*var fstream;
-        req.pipe(req.busboy);
-        console.log(req.busboy);
-        req.busboy.on('file', function (fieldname, file, filename) {
-            console.log("Uploading: " + filename);
-
-            //Path where image will be uploaded
-            fstream = fs.createWriteStream(base + '/HUB/MaraBox/public/img/' + filename);
-            file.pipe(fstream);
-            fstream.on('close', function () {    
-                console.log("Upload Finished of " + filename);              
-                res.redirect('back');           //where to go next
-            });
-        });
-        */
     });
     
     app.get('/MaraBox/admin/nuevaNotificacion', function(req, res) {
@@ -379,7 +364,39 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/admin/:fecha', function(req, res) {
-      res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { fecha : req.params.fecha, message: req.flash('loginMessage') });
+      Entrenadores.find(function(err, coach) {
+        if (err) return console.error(err);
+        else
+        {
+          if (coach)
+          {
+            res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { fecha : req.params.fecha, entrenadores : coach, message: req.flash('loginMessage') });
+          }
+        }
+      });
+    });
+    
+    app.post('/MaraBox/admin/asignacionEntrenador', function(req, res) {
+      var clases = new Clases();
+      clases.MaraBox.idEntrenador = req.body.entrenador;
+      clases.MaraBox.Fecha = req.body.fecha;
+      clases.MaraBox.Hora = req.body.hora;
+      
+      clases.save(function(err) {
+            if (err) 
+              res.render(base + '/HUB/MaraBox/views/registroFeriado.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
+            else
+              Entrenadores.find(function(err, coach) {
+                if (err) return console.error(err);
+                else
+                {
+                  if (coach)
+                  {
+                    res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { fecha : req.params.fecha, entrenadores : coach, message: "El entrenador fue asignado con exito" });
+                  }
+                }
+              });
+          });
     });
     
     app.get('/MaraBox/admin/:fecha/:hora', function(req, res) {

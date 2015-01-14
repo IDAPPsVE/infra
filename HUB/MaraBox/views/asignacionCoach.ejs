@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../views/partials/head %>
+</head>
+<body class="container">
+
+  <header>
+    <% include ../views/partials/header %>
+  </header>
+
+  <div class="container">
+
+  <div class="col-sm-6 col-sm-offset-3">
+
+      <!-- show any messages that come back with authentication -->
+      <% if (message.length > 0) { %>
+          <div class="alert alert-danger"><%= message %></div>
+      <% } %>
+
+      <form action="/MaraBox/admin/asignacionEntrenador" method="post">
+        
+          <input type="hidden" name="fecha" value=<%=fecha%>>
+          
+          <div class="form-group">
+              <label>Entrenador</label>
+              <select data-style="btn-info" name="entrenador">
+                <% entrenadores.forEach(function(e) { %>
+                  <option value=<%= e._id %>><%= e.MaraBox.Nombre%> <%=e.MaraBox.Apellido %></option>
+	              <% }); %>
+            </select>
+          </div>
+          <div class="form-group">
+              <label>Dia de entrenamiento</label>
+              <input type="date" class="form-control" name="fecha">
+          </div>
+          <div class="form-group">
+            <label>Hora de clase</label>
+            <select class="tipo" data-style="btn-info" name="hora">
+                  <option value="06:00">06:00 am</option>
+                  <option value="07:00">07:00 am</option>
+                  <option value="08:00">08:00 am</option>
+                  <option value="09:00">09:00 am</option>
+                  <option value="10:00">10:00 am</option>
+                  <option value="11:00">11:00 am</option>
+                  <option value="12:00">12:00 pm</option>
+                  <option value="13:00">01:00 pm</option>
+                  <option value="14:00">02:00 pm</option>
+                  <option value="15:00">03:00 pm</option>
+                  <option value="16:00">04:00 pm</option>
+                  <option value="17:00">05:00 pm</option>
+                  <option value="18:00">06:00 pm</option>
+                  <option value="19:00">07:00 pm</option>
+                  <option value="20:00">08:00 pm</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-warning btn-lg">Asignar Coach</button>
+      </form>
+
+      <hr>
+
+      <p>Already have an account? <a href="/login">Login</a></p>
+      <p>Or go <a href="/">home</a>.</p>
+
+  </div>
+
+  </div>
+
+  <footer>
+    <% include ../views/partials/footer %>
+  </footer>
+
+</body>
+</html>
+
