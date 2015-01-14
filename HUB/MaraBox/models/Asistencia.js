@@ -4,10 +4,9 @@ var mongoose     = require('mongoose');
 var AsistenciaSchema = mongoose.Schema({
 
     MaraBox : {
-        idUsuario        : String,
+        idUsuario   : String,
         idBox       : String,
-        Hora     : Date,
-        Fecha        : Date
+        idClase     : Date,
     }
 });
 

@@ -19,13 +19,13 @@
       <% if (message.length > 0) { %>
           <div class="alert alert-danger"><%= message %>
             <% if (regman == 1) { %>
-              <a href="/MaraBox/admin/primerUsuario">Registrar aqui</a>
+              <a href="/MaraBox/admin/registroPrimerUsuario">Registrar aqui</a>
             <% } %>
           </div>
       <% } %>
 
       <!-- LOGIN FORM -->
-      <form action="/MaraBox/admin/<%=fecha%>/<%=hora%>/registroAsistencia" method="post">
+      <form action="/MaraBox/admin/registroAsistencia" method="post">
         
           <input type="hidden" name="fecha" value=<%=fecha%>>
           <input type="hidden" name="hora" value=<%=hora%>>
@@ -35,20 +35,29 @@
               <input type="text" class="form-control" name="cedula">
           </div>
           <div class="form-group">
-              <label>Nombre</label>
-              <input type="text" class="form-control" name="nombre">
-          </div>
-          <div class="form-group">
-              <label>Apellido</label>
-              <input type="text" class="form-control" name="apellido">
+            <label>Hora de clase</label>
+            <select class="tipo" data-style="btn-info" name="hora">
+                  <option value="06:00">06:00 am</option>
+                  <option value="07:00">07:00 am</option>
+                  <option value="08:00">08:00 am</option>
+                  <option value="09:00">09:00 am</option>
+                  <option value="10:00">10:00 am</option>
+                  <option value="11:00">11:00 am</option>
+                  <option value="12:00">12:00 pm</option>
+                  <option value="13:00">01:00 pm</option>
+                  <option value="14:00">02:00 pm</option>
+                  <option value="15:00">03:00 pm</option>
+                  <option value="16:00">04:00 pm</option>
+                  <option value="17:00">05:00 pm</option>
+                  <option value="18:00">06:00 pm</option>
+                  <option value="19:00">07:00 pm</option>
+                  <option value="20:00">08:00 pm</option>
+            </select>
           </div>
           <button type="submit" class="btn btn-warning btn-lg">Registrar Asistencia</button>
       </form>
 
       <hr>
-
-      <p>Already have an account? <a href="/login">Login</a></p>
-      <p>Or go <a href="/">home</a>.</p>
 
   </div>
 

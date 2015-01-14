@@ -18,6 +18,7 @@ var Notificacion =  require(base + '/HUB/MaraBox/models/Notificaciones');
 var Validacion = require(base + '/HUB/MaraBox/models/ValidacionUsuario');
 var Solvencia = require(base + '/HUB/MaraBox/models/Solvencia');
 var Descanso = require(base + '/HUB/MaraBox/models/Descansos');
+var Clases = require(base + '/HUB/MaraBox/models/Clases');
 
 
 module.exports = function(app,passport) {
@@ -29,6 +30,7 @@ module.exports = function(app,passport) {
       var b = moment('2007-10-20');
       var duration = moment.duration({'days' : 25});
       var fechaMasDias = moment(b).add(duration);
+      console.log("Hoy " + moment(new Date()).format("DD-MM-YYYY"));
       console.log("Diferencia " + a.diff(b, 'days'));
       console.log("Diferencia " + fechaMasDias.diff(b, 'days'));
       console.log("Esta en un intervalo? " + moment('2007-10-30').isBetween(b, fechaMasDias));
@@ -377,23 +379,23 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/admin/:fecha', function(req, res) {
-      //Agregar coach a la clase
+      res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { fecha : req.params.fecha, message: req.flash('loginMessage') });
     });
     
     app.get('/MaraBox/admin/:fecha/:hora', function(req, res) {
-      //Ver asistentes y couch a la clase
+      res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { fecha : req.params.fecha, message: req.flash('loginMessage') });
     });
     
-    app.get('/MaraBox/admin/:fecha/:hora/registroAsistencia', function(req, res) {
-        res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage') });
+    app.get('/MaraBox/admin/registroAsistencia', function(req, res) {
+        res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message: req.flash('loginMessage') });
     });
     
-    app.post('/MaraBox/admin/:fecha/:hora/registroAsistencia', function(req, res) {
+    app.post('/MaraBox/admin/registroAsistencia', function(req, res) {
         
         var cedula = getUserId(cedula);
         if(!cedula)
         {
-          res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { fecha : req.params.fecha, hora : req.params.hora, message:'El usuario no esta registrado en la base de datos', regman : 1 });
+          res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos', regman : 1 });
         }
         else
         {
@@ -403,26 +405,23 @@ module.exports = function(app,passport) {
           if (solvente)
           {
             var asistencia = new Asistencia();
-            asistencia.MaraBox.idUsuario = 
+            asistencia.MaraBox.idUsuario = idu;
             asistencia.MaraBox.idBox = getMaraBoxId();
-            asistencia.MaraBox.Hora = req.body.hora;
-            asistencia.MaraBox.Fecha = req.body.fecha;
+            asistencia.MaraBox.idClase = getClaseId(req.body.hora);
 
             // save the bear and check for errors
             asistencia.save(function(err) {
               if (err) 
-                res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { fecha : req.params.fecha, hora : req.params.hora, message:'El usuario no pudo ser registrado' });
+                res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no pudo ser registrado' });
               else
-                res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { fecha : req.params.fecha, hora : req.params.hora, message:'Usuario registrado para el entrenamiento del dia '+req.body.fecha+' hora '+req.body.hora });  
+                res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'Usuario registrado para el entrenamiento del dia '+req.body.fecha+' hora '+req.body.hora });  
             });  
           }
           else
           {
-            res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { fecha : req.params.fecha, hora : req.params.hora, message:'El usuario no aparece registrado en el registro de solvencias del Box, por favor actualice los datos de la solvencia del usuario para poder continuar con el registro.' });
+            res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no aparece registrado en el registro de solvencias del Box, por favor actualice los datos de la solvencia del usuario para poder continuar con el registro.' });
           }
-           
         }
-        
     });
     
     app.get('/MaraBox/admin/registroPrimerUsuario', function(req, res) {
@@ -630,6 +629,26 @@ function getUserId(cedula)
         });
 }
 
+function getClaseId(hora)
+{
+  Clases.findOne({ 'Fecha' : hoy(), 'Hora' :  hora }, function(err, clase) {
+            // if there are any errors, return the error before anything else
+            if (err) return null;
+            else 
+            {
+              if (clase)
+              {
+                return clase._id;
+
+              }
+              else
+              {
+                return null;
+              }
+            }
+        });
+}
+
 function verificarSolvencia(userid)
 {
   var solvente = false;
@@ -672,4 +691,14 @@ function verificarCierreDelBox()
                   }
                 }
               });
+}
+
+function hoy()
+{
+  return moment(new Date()).format("DD-MM-YYYY");
+}
+
+function formatearFecha(fecha)
+{
+  return moment(fecha).format("DD-MM-YYYY");
 }
