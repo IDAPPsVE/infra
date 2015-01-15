@@ -556,6 +556,33 @@ module.exports = function(app,passport) {
         res.json({ code : '200', message: 'Sesion terminada' });
     });
     
+    app.post('/MaraBox/validarAsistencia/:idClase/:idUsuario', function(req, res) {
+        Asistencia.findOne({ idClase : req.params.idClase, idUsuario : req.params.idUsuario }, function(err, asistencia) {
+          if (err)
+          {
+            return res.json({ code : '-1000', message: 'No se pudo recibir los datos correctamente, intente de nuevo'});
+          }
+          else
+          {
+            if (asistencia)
+            {
+              asistencia.Validado = 1;
+              asistencia.save(function(err){
+                if (err)
+                {
+                  
+                }
+                else
+                {
+                  return res.json({ code : '200', message : ''});
+                }
+              });
+            }
+          }
+        })
+        
+    });
+    
     app.post('/MaraBox/uploadUserPic', function(req, res) {
 
     });
