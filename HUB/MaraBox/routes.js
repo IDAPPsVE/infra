@@ -28,7 +28,7 @@ module.exports = function(app,passport) {
     app.use('/public', express.static(base + '/HUB/MaraBox/public'));
 
     app.get('/MaraBox/', function(req, res) {
-      
+      res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message: req.flash('loginMessage') });
     });
     
     app.get('/MaraBox/ValidacionUsuario/:codigoValidacion', function(req, res) {
@@ -468,24 +468,44 @@ module.exports = function(app,passport) {
         }
     });
     
-    app.get('/MaraBox/admin/registroPrimerUsuario', function(req, res) {
+    app.get('/MaraBox/admin/registro/usuario/nuevo', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message: req.flash('loginMessage') });
     });
     
-    app.post('/MaraBox/admin/primerUsuariop', function(req, res) {
-       /* var notificacion = new Notificacion(); 		// create a new instance of the Bear model
-          notificacion.MaraBox.Titulo = req.body.titulo;
-          notificacion.MaraBox.Mensaje = req.body.mensaje;
-          
-          // save the bear and check for errors
-          notificacion.save(function(err) {
+    app.post('/MaraBox/admin/registroPrimerUsuario', function(req, res) {
+        var usuario = Usuario();
+        usuario.MaraBox.Cedula = req.body.cedula;
+        usuario.save(function(err) {
             if (err) 
-              res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
+              res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
             else
-              res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje fue enviado con exito' });
-              
-              // Enviar a todas las plataformas via push notifications
-          }); */
+              Usuario.findOne({ cedula : req.body.cedula }, function(erru, usuario) {
+                if (erru) return console.error(erru);
+                else
+                {
+                  if(usuario)
+                  {
+                    var info = InfoUsuario();
+                    info.MaraBox.Nombres = req.body.nombre;
+                    info.MaraBox.Apellidos = req.body.apellido;
+                    info.MaraBox.Ciudad = req.body.ciudad;
+                    info.MaraBox.Estado = req.body.estado;
+                    info.MaraBox.Direccion = req.body.direccion;
+                    info.MaraBox.Telefono = req.body.telefono;
+                    info.MaraBox.FechaNacimiento = req.body.fechaNacimiento;
+                    info.MaraBox.idUsuario = usuario._id;
+                    
+                    info.save(function(err) {
+                        if (err) 
+                          res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
+                        else
+                          res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message:'El usuario fue registrado con exito' });
+                      });
+                  }
+                }
+              });
+          });
+
     });
     
     app.get('/MaraBox/admin/atletas', function(req, res) {
