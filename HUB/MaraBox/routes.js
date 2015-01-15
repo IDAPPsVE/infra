@@ -187,11 +187,42 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/super/cambiarPermisos', function(req, res) {
-        res.render(base + '/HUB/MaraBox/views/cambiarPermisos.ejs', { message: req.flash('loginMessage') });
+      var u5 = []; 
+      var u6 = [];
+      Usuario.find({ Tipo : "5"}, function(erru, admin) {
+          if (admin)
+          {
+            admin.forEach(function(a){
+              var iu = getInfoUsuario(admin._id);
+              u5.push({id:admin._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+            });
+          }
+      });
+      Usuario.find({ Tipo : "6"}, function(erru, coach) {
+          if (coach)
+          {
+            coach.forEach(function(a){
+              var iu = getInfoUsuario(coach._id);
+              u6.push({id:coach._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+            }); 
+          }
+      });
+        res.render(base + '/HUB/MaraBox/views/cambiarPermisos.ejs', { admin : u5, coach : u6, message: req.flash('loginMessage') });
     });
     
     app.post('/MaraBox/super/cambiarPermisos', function(req, res) {
-      
+      Usuario.findById(req.body.id, function(erru, usuario) {
+         usuario.Tipo = req.body.tipo;
+         usuario.save(function(err) {
+           if (err){
+             return res.redirect('/MaraBox/super/cambiarPermisos', { mesaage:'Ha ocurrido un problema, favor intente nuevamente' });
+           }
+           else
+           {
+             return res.redirect('/MaraBox/super/cambiarPermisos', { mesaage:'Permiso cambiado satisfactoriamente' });
+           }
+         });
+      });
     });
     
     //=========================================================

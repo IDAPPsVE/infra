@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../views/partials/head %>
+</head>
+<body class="container">
+
+  <header>
+    <% include ../views/partials/header %>
+  </header>
+
+  <div class="container">
+
+  <div class="col-sm-6 col-sm-offset-3">
+
+      <!-- show any messages that come back with authentication -->
+      <% if (message.length > 0) { %>
+          <div class="alert alert-danger"><%= message %></div>
+      <% } %>
+      
+                
+      <h1>Usuarios Administrativos</h1>
+      <table>
+        <tr><td>Cedula</td><td>Nombres</td><td>Apellidos</td><td>Tipo de Usuario</td><td></td></tr>
+        <% admin.forEach(function(a) { %>
+            <form action="/MaraBox/super/cambiarPermisos" method="post">
+                <input type="hidden" name="id" value=a.id>
+                <tr><td>a.cedula</td><td>a.nombre</td><td>a.apellido</td>
+                <td><select class="tipo" data-style="btn-info" name="tipo">
+                      <option value="5">Administrativo</option>
+                      <option value="6">Entrenador</option>
+                      <option value="10">Atleta</option>
+                    </select></td>
+                <td><button type="submit" class="btn btn-warning btn-lg">Cambiar</button></td></tr>
+            </form>
+        <% }); %>
+      </table>
+      
+      <h1>Entrenadores</h1>
+      <table>
+        <tr><td>Cedula</td><td>Nombres</td><td>Apellidos</td><td>Tipo de Usuario</td><td></td></tr>
+        <% coach.forEach(function(a) { %>
+            <form action="/MaraBox/super/cambiarPermisos" method="post">
+                <input type="hidden" name="id" value=a.id>
+                <tr><td>a.cedula</td><td>a.nombre</td><td>a.apellido</td>
+                <td><select class="tipo" data-style="btn-info" name="tipo">
+                      <option value="5">Administrativo</option>
+                      <option value="6">Entrenador</option>
+                      <option value="10">Atleta</option>
+                    </select></td>
+                <td><button type="submit" class="btn btn-warning btn-lg">Cambiar</button></td></tr>
+            </form>
+        <% }); %>
+      </table>
+  </div>
+
+  </div>
+
+  <footer>
+    <% include ../views/partials/footer %>
+  </footer>
+
+</body>
+</html>
