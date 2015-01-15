@@ -156,30 +156,12 @@ module.exports = function(app,passport) {
     //=========================================================
     //                Funciones de administrador
     //=========================================================
-    app.get('/MaraBox/admin/registroNuevoUsuario', function(req, res) {
-        res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: req.flash('loginMessage') });
-    });
-    
-    app.post('/MaraBox/admin/registroNuevoUsuario', function(req, res, next) {
-        passport.authenticate('local-signupMaraBox', function(err, user, info) {
-        
-        var randomString = rs.randomString(10);
-        guardarCodigoValidacion(user._id, randomString);
-        var url = "/MaraBox/ValidacionUsuario/"+randomString;
-        email.sendValidationUsuarioMaraBox(user.Email,url);
-        
-        return res.json({'err':err,'user':user,'info':info});
-
-      })(req, res, next);
-    });
-    
     app.get('/MaraBox/admin/nuevoWod', function(req, res) {
       
         Ejercicios.find(function(err, ejercicios) {
           if (err) return console.error(err);
           else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: '', ejercicios:ejercicios });
         });
-        
     });
     
     app.post('/MaraBox/admin/nuevoWod', function(req, res) {
@@ -578,7 +560,6 @@ module.exports = function(app,passport) {
                 }
               });
           });
-
     });
     
     app.get('/MaraBox/admin/atletas', function(req, res) {
@@ -592,7 +573,7 @@ module.exports = function(app,passport) {
     //////////////////////////////////////////////////////
     // API
     //////////////////////////////////////////////////////
-    app.post('/MaraBox/signup', function(req, res,next) {
+    app.post('/MaraBox/api/signup', function(req, res,next) {
       passport.authenticate('local-signupMaraBox', function(err, user, info) {
         var randomString = rs.randomString(10);
         guardarCodigoValidacion(user._id, randomString);
@@ -604,7 +585,7 @@ module.exports = function(app,passport) {
       })(req, res, next);
     });
     
-    app.post('/MaraBox/login', function(req, res,next) {
+    app.post('/MaraBox/api/login', function(req, res,next) {
       passport.authenticate('local-loginMarabox', function(err, user, info) {
 
         var userNeededData = {'id':user._id,
@@ -624,12 +605,12 @@ module.exports = function(app,passport) {
       })(req, res, next);
     });
     
-    app.get('/MaraBox/logout', function(req, res) {
+    app.get('/MaraBox/api/logout', function(req, res) {
         req.logout();
         res.json({ code : '200', message: 'Sesion terminada' });
     });
     
-    app.post('/MaraBox/validarAsistencia/:idClase/:idUsuario', function(req, res) {
+    app.post('/MaraBox/api/validarAsistencia/:idClase/:idUsuario', function(req, res) {
         Asistencia.findOne({ idClase : req.params.idClase, idUsuario : req.params.idUsuario }, function(err, asistencia) {
           if (err)
           {
@@ -656,7 +637,7 @@ module.exports = function(app,passport) {
         
     });
     
-    app.post('/MaraBox/asistencia', function(req, res) {
+    app.post('/MaraBox/api/asistencia', function(req, res) {
       var idu = getUserId(req.body.cedula);
       var solvente = verificarSolvencia(idu);
           
@@ -681,7 +662,7 @@ module.exports = function(app,passport) {
       }
     });
     
-    app.get('/MaraBox/ejercicios', function(req, res) 
+    app.get('/MaraBox/api/ejercicios', function(req, res) 
     {
       Ejercicios.find(function(errE, ejercicios) {
           if (errE)
@@ -695,7 +676,7 @@ module.exports = function(app,passport) {
       });
     });
     
-    app.get('/MaraBox/ejercicios/:idEjercicio', function(req, res) 
+    app.get('/MaraBox/api/ejercicios/:idEjercicio', function(req, res) 
     {
       Ejercicios.findOne({ 'Email' :  req.params.idEjercicio }, function(errE, ejercicio) {
           if (errE)
@@ -709,7 +690,7 @@ module.exports = function(app,passport) {
       });
     });
     
-    app.get('/MaraBox/WOD', function(req, res) {
+    app.get('/MaraBox/api/WOD', function(req, res) {
         WOD.find(function(errE, wod) {
           if (errE)
           {
@@ -722,16 +703,16 @@ module.exports = function(app,passport) {
       });
     });
     
-    app.get('/MaraBox/eventos', function(req, res) {
+    app.get('/MaraBox/api/eventos', function(req, res) {
         res.json({ message: 'hooray! welcome to our api!' });
     });
-    app.post('/MaraBox/:evento/asistir', function(req, res) {
+    app.post('/MaraBox/api/:evento/asistir', function(req, res) {
 
     });
-    app.post('/MaraBox/registroRM', function(req, res) {
+    app.post('/MaraBox/api/registroRM', function(req, res) {
 
     });
-    app.get('/MaraBox/progreso', function(req, res) {
+    app.get('/MaraBox/api/progreso', function(req, res) {
         
     });
     
