@@ -3,11 +3,13 @@ var base = process.env.PWD;
 
 var busboy = require('connect-busboy');
 var fs = require('fs-extra');
-var moment = require('moment');
+
 
 var rs = require(base + '/IDAPP/helpers/randomString');
+var f = require(base + '/IDAPP/helpers/dates');
 var email = require(base + '/IDAPP/controllers/mailController');
 
+//import modelos
 var Asistencia = require(base + '/HUB/MaraBox/models/Asistencia');
 var Usuario = require(base + '/HUB/MaraBox/models/Usuarios');
 var InfoUsuario = require(base + '/HUB/MaraBox/models/InfoUsuarios');
@@ -416,8 +418,8 @@ module.exports = function(app,passport) {
         var cedula = req.body.cedula;
         var userid = getUserId(cedula);
         var dh = 0;
-        var fi = moment(req.body.fechaInicio);
-        var fc = moment(req.body.fechaCulminacion);
+        var fi = f.fecha(req.body.fechaInicio);
+        var fc = f.fecha(req.body.fechaCulminacion);
         
         var totalDias = fi.diff(fc, 'days');
         
@@ -428,7 +430,7 @@ module.exports = function(app,passport) {
                   {
                     var i = false;
                     descanso.forEach(function(d){
-                      i = moment(d.Fecha).isBetween(fi, fc);
+                      i = f.fecha(d.Fecha).isBetween(fi, fc);
                       if (i)
                       {
                         dh++;
@@ -881,7 +883,6 @@ function getInfoUsuario(usuarioId)
                         datos[2] = info.Apellido;
                         console.log(datos);
                         return datos;
-                        
                       }
                       else
                       {
@@ -896,7 +897,7 @@ function getInfoUsuario(usuarioId)
 
 function getClaseId(hora)
 {
-  Clases.findOne({ 'Fecha' : hoy(), 'Hora' :  hora }, function(err, clase) {
+  Clases.findOne({ 'Fecha' : f.hoy(), 'Hora' :  hora }, function(err, clase) {
             // if there are any errors, return the error before anything else
             if (err) return null;
             else 
@@ -924,9 +925,8 @@ function verificarSolvencia(userid)
             {
               if(solvencia)
               {
-                var duration = moment.duration({'days' : solvencia.DiasHabiles});
-                var fechaMasDias = moment(solvencia.FechaInicio).add(duration);
-                solvente = moment().isBetween(solvencia.FechaInicio, fechaMasDias);
+                var fechaMasDias = f.agregarFechas(solvencia.FechaInicio,solvencia.DiasHabiles);
+                solvente = f.entre(solvencia.FechaInicio, fechaMasDias);
                 return solvente;
               }
               else
@@ -934,8 +934,6 @@ function verificarSolvencia(userid)
                 return solvente;
               }
             }
-            
-
         }); 
 }
 
@@ -956,14 +954,4 @@ function verificarCierreDelBox()
                   }
                 }
               });
-}
-
-function hoy()
-{
-  return moment(new Date()).format("DD-MM-YYYY");
-}
-
-function formatearFecha(fecha)
-{
-  return moment(fecha).format("DD-MM-YYYY");
 }
