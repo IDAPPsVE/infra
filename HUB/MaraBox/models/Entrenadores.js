@@ -3,9 +3,10 @@ var mongoose     = require('mongoose');
 var EntrenadoresSchema = mongoose.Schema({
 
     MaraBox : {
-        Nombre     : String,
-        Apellido   : String,
-        idUsuario  : String,
+        Nombre        : String,
+        Apellido      : String,
+        idUsuario     : String,
+        Certificacion : String,
     }
   
 });

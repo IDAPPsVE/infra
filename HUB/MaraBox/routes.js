@@ -27,9 +27,69 @@ module.exports = function(app,passport) {
     
     app.use('/public', express.static(base + '/HUB/MaraBox/public'));
 
+    //=========================================================
+    //          Pagina de inicio y Perfiles de Usuario
+    //=========================================================
     app.get('/MaraBox/', function(req, res) {
-      res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message: req.flash('loginMessage') });
+      res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
     });
+    
+    app.get('/MaraBox/super/dashboard', function(req, res) {
+      res.render(base + '/HUB/MaraBox/views/dashboard-super.ejs', { message: req.flash('loginMessage') });
+    });
+    
+    app.get('/MaraBox/admin/dashboard', function(req, res) {
+      res.render(base + '/HUB/MaraBox/views/dashboard.ejs', { message: req.flash('loginMessage') });
+    });
+    
+    //=========================================================
+    //                    Signup y Login
+    //=========================================================
+    
+    // process the login form
+    app.post('/MaraBox/login', function(req, res,next) {
+      passport.authenticate('local-loginMaraBoxAdmin', function(err, user, info) {
+        var userNeededData = {'id':user._id,
+                              'Email':user.Email,
+                              'Tipo':user.Tipo,
+                              'isLoggedIn':'1'};
+        req.login(userNeededData, function(err) {
+          if (err) { return next(err); }
+            if(user.Tipo == 4)
+              {
+                res.redirect('/MaraBox/super/dashboard');
+              }
+            if((user.Tipo == 5) || (user.Tipo == 6))
+            {
+              res.redirect('/MaraBox/admin/dashboard');
+            }
+        });
+      })(req, res, next);
+    });
+    
+    // show the signup form
+    app.get('/MaraBox/signup', function(req, res) {
+      res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: req.flash('loginMessage') });
+    });
+
+    app.post('/MaraBox/signup', function(req, res,next) {
+      passport.authenticate('local-signupMaraBoxAdmin', function(err, user, info) {
+        var randomString = rs.randomString(20);
+        guardarCodigoValidacion(user._id, randomString);
+        email.sendValidationCode(user.Email,randomString);
+        if (err){}
+        else
+        {
+          res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: "El usuario fue registrado con exito" });
+        }
+      })(req, res, next);
+    });
+    
+    
+    //=========================================================
+    //            Validacion de cuentas de usuario
+    //=========================================================
+    
     
     app.get('/MaraBox/ValidacionUsuario/:codigoValidacion', function(req, res) {
         Validacion.findOne({ Codigo : req.params.codigoValidacion },function(err, validacion) {
@@ -80,10 +140,22 @@ module.exports = function(app,passport) {
         });
     });
     
-    app.get('/MaraBox/atletas/:id', function(req, res) {
-      res.json({ message: 'MaraBox ' + req.params.id });
+    
+    //=========================================================
+    //            Funciones de Superusuario
+    //=========================================================
+    
+    app.get('/MaraBox/super/cambiarPermisos', function(req, res) {
+        res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: req.flash('loginMessage') });
     });
     
+    app.post('/MaraBox/super/cambiarPermisos', function(req, res) {
+      
+    });
+    
+    //=========================================================
+    //                Funciones de administrador
+    //=========================================================
     app.get('/MaraBox/admin/registroNuevoUsuario', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: req.flash('loginMessage') });
     });
@@ -388,7 +460,7 @@ module.exports = function(app,passport) {
           });
     });
     
-    app.get('/MaraBox/admin/:fecha/:hora', function(req, res) {
+    app.get('/MaraBox/admin/asistencia/:fecha/:hora', function(req, res) {
       
       var e = {};
       var datos = [];
@@ -473,6 +545,7 @@ module.exports = function(app,passport) {
     });
     
     app.post('/MaraBox/admin/registroPrimerUsuario', function(req, res) {
+        console.log(req.body);
         var usuario = Usuario();
         usuario.MaraBox.Cedula = req.body.cedula;
         usuario.save(function(err) {
@@ -583,14 +656,6 @@ module.exports = function(app,passport) {
         
     });
     
-    app.post('/MaraBox/uploadUserPic', function(req, res) {
-
-    });
-    
-    app.get('/MaraBox/getUserPic', function(req, res) {
-        res.json({ message: 'hooray! welcome to our api!' });
-    });
-    
     app.post('/MaraBox/asistencia', function(req, res) {
       var idu = getUserId(req.body.cedula);
       var solvente = verificarSolvencia(idu);
@@ -614,16 +679,6 @@ module.exports = function(app,passport) {
       {
         res.json({ code : '-100', message: 'A la fecha usted no se encuentra solvente, por favor dirijase a caja para solventar este incoveniente' });
       }
-    });
-    
-    app.post('/MaraBox/:evento/asistir', function(req, res) {
-
-    });
-    app.post('/MaraBox/registroRM', function(req, res) {
-
-    });
-    app.get('/MaraBox/progreso', function(req, res) {
-        res.json({ message: 'hooray! welcome to our api!' });
     });
     
     app.get('/MaraBox/ejercicios', function(req, res) 
@@ -670,6 +725,30 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/eventos', function(req, res) {
         res.json({ message: 'hooray! welcome to our api!' });
     });
+    app.post('/MaraBox/:evento/asistir', function(req, res) {
+
+    });
+    app.post('/MaraBox/registroRM', function(req, res) {
+
+    });
+    app.get('/MaraBox/progreso', function(req, res) {
+        
+    });
+    
+}
+
+function isLoggedIn(req, res, next) {
+
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated())
+    {
+        return next();
+    }
+    else
+    {
+        // if they aren't redirect them to the home page
+        return res.redirect('/MaraBox/', { message : 'Debes ingresar para poder acceder a los datos solicitados'});  
+    }
     
 }
 
