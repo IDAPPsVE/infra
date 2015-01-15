@@ -59,9 +59,13 @@ module.exports = function(app,passport) {
               {
                 res.redirect('/MaraBox/super/dashboard');
               }
-            if((user.Tipo == 5) || (user.Tipo == 6))
+            else if((user.Tipo == 5) || (user.Tipo == 6))
             {
               res.redirect('/MaraBox/admin/dashboard');
+            }
+            else
+            {
+              res.render(base + '/HUB/MaraBox/views/index.ejs', { message: "Disculpe, el usuario ingresado no tiene los privilegios suficiente para ingresar al sistema. Puede usar la aplicacion para Android o iPhone" });
             }
         });
       })(req, res, next);
@@ -145,8 +149,45 @@ module.exports = function(app,passport) {
     //            Funciones de Superusuario
     //=========================================================
     
+    app.get('/MaraBox/super/privilegiados', function(req, res) {
+      
+      var u4 = [];
+      var u5 = []; 
+      var u6 = [];
+      
+      Usuario.find({ Tipo : "4"}, function(erru, superU) {
+          if (superU)
+          {
+            superU.forEach(function(a){
+              var iu = getInfoUsuario(superU._id);
+              u4.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+            });
+          }
+      });
+      Usuario.find({ Tipo : "5"}, function(erru, admin) {
+          if (admin)
+          {
+            admin.forEach(function(a){
+              var iu = getInfoUsuario(admin._id);
+              u5.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+            });
+          }
+      });
+      Usuario.find({ Tipo : "6"}, function(erru, coach) {
+          if (coach)
+          {
+            coach.forEach(function(a){
+              var iu = getInfoUsuario(coach._id);
+              u6.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+            }); 
+          }
+      });
+      
+        res.render(base + '/HUB/MaraBox/views/usuariosConPermisos.ejs', { superU : u4, admin : u5, coach : u6, message: req.flash('loginMessage') });
+    });
+    
     app.get('/MaraBox/super/cambiarPermisos', function(req, res) {
-        res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: req.flash('loginMessage') });
+        res.render(base + '/HUB/MaraBox/views/cambiarPermisos.ejs', { message: req.flash('loginMessage') });
     });
     
     app.post('/MaraBox/super/cambiarPermisos', function(req, res) {
@@ -635,6 +676,10 @@ module.exports = function(app,passport) {
           }
         })
         
+    });
+    
+    app.get('/MaraBox/api/:fecha/:hora', function(req, res) {
+      //Obtener informacion de cupo disponible, lista de espera, informacion del entrenador    
     });
     
     app.post('/MaraBox/api/asistencia', function(req, res) {
