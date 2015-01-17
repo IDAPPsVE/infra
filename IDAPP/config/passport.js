@@ -23,8 +23,6 @@ module.exports = function(passport) {
         // asynchronous
         // User.findOne wont fire unless data is sent back
         process.nextTick(function() {
-
-
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
         UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
@@ -115,17 +113,62 @@ module.exports = function(passport) {
             });
           });
         }));
+        
     // =========================================================================
     // Registro y Sesion empleados IDAPP
     // =========================================================================
-    
+      passport.use('local-signupIDAPPEmpleado', new LocalStrategy({
+      // by default, local strategy uses username and password, we will override with email
+      usernameField : 'email',
+      passwordField : 'password',
+      passReqToCallback : true // allows us to pass back the entire request to the callback
+    },
+    function(req, email, password, done) {
+
+      // asynchronous
+      // User.findOne wont fire unless data is sent back
+      process.nextTick(function() {
+
+
+        // find a user whose email is the same as the forms email
+        // we are checking to see if the user trying to login already exists
+        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
+
+          // if there are any errors, return the error
+          if (err)
+            return done(err);
+
+            // check to see if theres already a user with that email
+            if (usuario) {
+              return done(null, false, { code : '-5000', message: 'El correo electrónico ingresado ya está registrado' });
+            } else {
+
+              // if there is no user with that email
+              // create the user
+
+              var newUser            = new UsuarioInfra();
+
+              // set the user's local credential
+              newUser.Email    = email;
+              newUser.Tipo     = 3;
+              newUser.Password = newUser.generateHash(password);
+
+              // save the user
+              newUser.save(function(err) {
+                if (err)
+                  {
+                    throw err;
+                  }
+                  return done(null, newUser, { code : '200'});
+                });
+              }
+            });
+          });
+        }));
+        
     // =========================================================================
     // Registro y Sesion Cliente Admin Superusuario
     // =========================================================================
-    
-
-    
-
     passport.use('local-signupAdminSys', new LocalStrategy({
       // by default, local strategy uses username and password, we will override with email
       usernameField : 'email',
@@ -159,7 +202,7 @@ module.exports = function(passport) {
               // set the user's local credentials
               newUser.Contrato = req.body.contrato;
               newUser.Email    = email;
-              newUser.Tipo     = 5;
+              newUser.Tipo     = 4;
               newUser.Password = newUser.generateHash(password);
 
               // save the user
@@ -177,6 +220,8 @@ module.exports = function(passport) {
           });
 
         }));
+
+
 
 
      // =========================================================================
@@ -200,7 +245,7 @@ module.exports = function(passport) {
       });
     });
 
-    passport.use('local-login', new LocalStrategy({
+    passport.use('local-signupICARUS', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
@@ -231,7 +276,7 @@ module.exports = function(passport) {
 
     }));
     
-    passport.use('local-loginCliente', new LocalStrategy({
+    passport.use('local-signupIDAPP', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
@@ -256,10 +301,63 @@ module.exports = function(passport) {
 
             // all is well, return successful user
             return done(null, usuario,{ code : '200' });
-
-
         });
+    }));
+    
+    passport.use('local-signupIDAPPEmpleado', new LocalStrategy({
+        // by default, local strategy uses username and password, we will override with email
+        usernameField : 'email',
+        passwordField : 'password',
+        passReqToCallback : true // allows us to pass back the entire request to the callback
+    },
+    function(req, email, password, done) { // callback with email and password from our form
 
+        // find a user whose email is the same as the forms email
+        // we are checking to see if the user trying to login already exists
+        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
+            // if there are any errors, return the error before anything else
+            if (err)
+                return done(err);
+
+            // if no user is found, return the message
+            if (usuario.Email != email)
+              return done(null, false, { code : '-5000', message: 'Usuario no registrado' });
+
+            // if the user is found but the password is wrong
+            if (!usuario.validPassword(password))
+                return done(null, false, { code : '-2000', message: 'Password errado' });
+
+            // all is well, return successful user
+            return done(null, usuario,{ code : '200' });
+        });
+    }));
+    
+    passport.use('local-signupAdminSys', new LocalStrategy({
+        // by default, local strategy uses username and password, we will override with email
+        usernameField : 'email',
+        passwordField : 'password',
+        passReqToCallback : true // allows us to pass back the entire request to the callback
+    },
+    function(req, email, password, done) { // callback with email and password from our form
+
+        // find a user whose email is the same as the forms email
+        // we are checking to see if the user trying to login already exists
+        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
+            // if there are any errors, return the error before anything else
+            if (err)
+                return done(err);
+
+            // if no user is found, return the message
+            if (usuario.Email != email)
+              return done(null, false, { code : '-5000', message: 'Usuario no registrado' });
+
+            // if the user is found but the password is wrong
+            if (!usuario.validPassword(password))
+                return done(null, false, { code : '-2000', message: 'Password errado' });
+
+            // all is well, return successful user
+            return done(null, usuario,{ code : '200' });
+        });
     }));
 
 };

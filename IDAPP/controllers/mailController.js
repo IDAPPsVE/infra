@@ -5,12 +5,12 @@ var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: 'vjfs18@gmail.com',
-        pass: 'Taberusan1989'
+        user: 'idapps.ve@gmail.com',
+        pass: 'Nexus58613@jc'
     }
 });
 
-var from = "vjfs18@gmail.com";
+var from = "idapps.ve@gmail.com";
 
 exports.sendValidationCode = function(to,Validacion){
 
