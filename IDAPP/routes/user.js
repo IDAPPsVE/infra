@@ -62,8 +62,7 @@ module.exports = function(app, passport) {
     
     //Ingreso para los empleados del 
     app.get('/ias/staff/login', function(req, res) {
-
-        //res.render('../IDAPP/views/login.ejs', { message: req.flash('loginMessage') });
+        res.render('../IDAPP/views/loginStaff.ejs', { message: req.flash('loginMessage') });
     });
 
     app.post('/ias/staff/login', function(req, res,next) {
@@ -86,7 +85,7 @@ module.exports = function(app, passport) {
     });
     
     app.get('/ias/staff/signup', function(req, res) {
-      res.render('../IDAPP/views/signup.ejs', { message: req.flash('loginMessage') });
+      res.render('../IDAPP/views/signupStaff.ejs', { message: req.flash('loginMessage') });
     });
 
     app.post('/ias/staff/signup', function(req, res,next) {
@@ -102,8 +101,7 @@ module.exports = function(app, passport) {
     
     //Ingreso de los administradores de IDAPP
     app.get('/ias/admin/login', function(req, res) {
-
-        //res.render('../IDAPP/views/login.ejs', { message: req.flash('loginMessage') });
+        res.render('../IDAPP/views/loginAdmin.ejs', { message: req.flash('loginMessage') });
     });
 
     app.post('/ias/admin/login', function(req, res,next) {
@@ -126,7 +124,7 @@ module.exports = function(app, passport) {
     });
   
     app.get('/ias/admin/signup', function(req, res) {
-      res.render('../IDAPP/views/signup.ejs', { message: req.flash('loginMessage') });
+      res.render('../IDAPP/views/signupAdmin.ejs', { message: req.flash('loginMessage') });
     });
 
     app.post('/ias/admin/signup', function(req, res,next) {
@@ -142,8 +140,7 @@ module.exports = function(app, passport) {
     
     //Ingreso ICARUS
     app.get('/ias/ss/login', function(req, res) {
-
-        //res.render('../IDAPP/views/login.ejs', { message: req.flash('loginMessage') });
+        res.render('../IDAPP/views/loginIcarus.ejs', { message: req.flash('loginMessage') });
     });
 
     app.post('/ias/ss/login', function(req, res,next) {
@@ -166,7 +163,7 @@ module.exports = function(app, passport) {
     });
 
     app.get('/ias/ss/signup', function(req, res) {
-      res.render('../IDAPP/views/signup.ejs', { message: req.flash('loginMessage') });
+      res.render('../IDAPP/views/signupIcarus.ejs', { message: req.flash('loginMessage') });
     });
 
     app.post('/ias/ss/signup', function(req, res,next) {
