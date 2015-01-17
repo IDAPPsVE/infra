@@ -3,8 +3,9 @@ var Contratos   = require('../models/Contratos');
 var LocalStrategy   = require('passport-local').Strategy;
 
 // load up the user model
-var UsuarioIDAPP            = require('../models/UsuariosIDAPP');
 var UsuarioInfra            = require('../models/UsuariosInfra');
+var UsuarioIDAPP            = require('../models/UsuariosIDAPP');
+var UsuarioCliente            = require('../models/UsuariosCliente');
 
 // expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -25,7 +26,7 @@ module.exports = function(passport) {
         process.nextTick(function() {
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
 
             // if there are any errors, return the error
             if (err)
@@ -41,7 +42,7 @@ module.exports = function(passport) {
                 // if there is no user with that email
                 // create the user
 
-                var newUser            = new UsuarioIDAPP();
+                var newUser            = new UsuarioInfra();
 
                 // set the user's local credentials
                 newUser.Contrato = req.body.contrato;
@@ -132,7 +133,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
 
           // if there are any errors, return the error
           if (err)
@@ -146,7 +147,7 @@ module.exports = function(passport) {
               // if there is no user with that email
               // create the user
 
-              var newUser            = new UsuarioInfra();
+              var newUser            = new UsuarioIDAPP();
 
               // set the user's local credential
               newUser.Email    = email;
@@ -184,7 +185,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioCliente.findOne({ 'Email' :  email }, function(err, usuario) {
 
           // if there are any errors, return the error
           if (err)
@@ -197,7 +198,7 @@ module.exports = function(passport) {
 
               // if there is no user with that email
               // create the user
-              var newUser            = new UsuarioInfra();
+              var newUser            = new UsuarioCliente();
 
               // set the user's local credentials
               newUser.Contrato = req.body.contrato;
@@ -214,11 +215,8 @@ module.exports = function(passport) {
                   return done(null, newUser, { code : '200'});
                 });
               }
-
             });
-
           });
-
         }));
 
 
@@ -286,7 +284,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
@@ -342,7 +340,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioCliente.findOne({ 'Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
@@ -368,8 +366,9 @@ function verificarValidezContrato(contrato)
 
     // if there are any errors, return the error
     if (err)
+    {
       return done(err);
-
+    }
       if(c)
       {
         return true;

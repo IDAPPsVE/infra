@@ -8,7 +8,6 @@ var UsuarioInfraSchema = mongoose.Schema({
         IDAPP : {
             Email        : String,
             Password     : String,
-            Contrato     : String,
             Tipo         : Number,
         }
         
