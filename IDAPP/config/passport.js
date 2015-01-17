@@ -10,17 +10,9 @@ var UsuarioInfra            = require('../models/UsuariosInfra');
 module.exports = function(passport) {
 
     // =========================================================================
-    // passport session setup ==================================================
+    // Registro y Sesion ICARUS
     // =========================================================================
-
-
-    // =========================================================================
-    // LOCAL SIGNUP ============================================================
-    // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
-
-    passport.use('local-signup', new LocalStrategy({
+    passport.use('local-signupICARUS', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
@@ -56,7 +48,7 @@ module.exports = function(passport) {
                 // set the user's local credentials
                 newUser.Contrato = req.body.contrato;
                 newUser.Email    = email;
-                newUser.Tipo     = 4;
+                newUser.Tipo     = 1;
                 newUser.Password = newUser.generateHash(password);
 
                 // save the user
@@ -68,13 +60,13 @@ module.exports = function(passport) {
                     return done(null, newUser, { code : '200'});
                 });
             }
-
         });
-
         });
-
     }));
-
+    
+    // =========================================================================
+    // Registro y Sesion admin IDAPP
+    // =========================================================================
     passport.use('local-signupIDAPP', new LocalStrategy({
       // by default, local strategy uses username and password, we will override with email
       usernameField : 'email',
@@ -120,12 +112,19 @@ module.exports = function(passport) {
                   return done(null, newUser, { code : '200'});
                 });
               }
-
             });
-
           });
-
         }));
+    // =========================================================================
+    // Registro y Sesion empleados IDAPP
+    // =========================================================================
+    
+    // =========================================================================
+    // Registro y Sesion Cliente Admin Superusuario
+    // =========================================================================
+    
+
+    
 
     passport.use('local-signupAdminSys', new LocalStrategy({
       // by default, local strategy uses username and password, we will override with email

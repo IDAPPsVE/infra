@@ -7,6 +7,7 @@ var fs = require('fs-extra');
 
 var rs = require(base + '/IDAPP/helpers/randomString');
 var f = require(base + '/IDAPP/helpers/dates');
+var h = require(base + '/HUB/MaraBox/helpers');
 var email = require(base + '/IDAPP/controllers/mailController');
 
 //import modelos
@@ -32,8 +33,15 @@ module.exports = function(app,passport) {
     //=========================================================
     //          Pagina de inicio y Perfiles de Usuario
     //=========================================================
+    
+    app.get('/MaraBox/api/test'), function(req, res)
+    {
+        return res.json({ code:'200', message:'Hola!' });
+    }
+    
     app.get('/MaraBox/', function(req, res) {
-      res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
+      return res.json({ code:'200', message:'Hola!' });
+      //res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
     });
     
     app.get('/MaraBox/super/dashboard', function(req, res) {
@@ -81,7 +89,7 @@ module.exports = function(app,passport) {
     app.post('/MaraBox/signup', function(req, res,next) {
       passport.authenticate('local-signupMaraBoxAdmin', function(err, user, info) {
         var randomString = rs.randomString(20);
-        guardarCodigoValidacion(user._id, randomString);
+        h.guardarCodigoValidacion(user._id, randomString);
         email.sendValidationCode(user.Email,randomString);
         if (err){}
         else
@@ -161,7 +169,7 @@ module.exports = function(app,passport) {
           if (superU)
           {
             superU.forEach(function(a){
-              var iu = getInfoUsuario(superU._id);
+              var iu = h.getInfoUsuario(superU._id);
               u4.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
             });
           }
@@ -170,7 +178,7 @@ module.exports = function(app,passport) {
           if (admin)
           {
             admin.forEach(function(a){
-              var iu = getInfoUsuario(admin._id);
+              var iu = h.getInfoUsuario(admin._id);
               u5.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
             });
           }
@@ -179,7 +187,7 @@ module.exports = function(app,passport) {
           if (coach)
           {
             coach.forEach(function(a){
-              var iu = getInfoUsuario(coach._id);
+              var iu = h.getInfoUsuario(coach._id);
               u6.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
             }); 
           }
@@ -195,7 +203,7 @@ module.exports = function(app,passport) {
           if (admin)
           {
             admin.forEach(function(a){
-              var iu = getInfoUsuario(admin._id);
+              var iu = h.getInfoUsuario(admin._id);
               u5.push({id:admin._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
             });
           }
@@ -204,7 +212,7 @@ module.exports = function(app,passport) {
           if (coach)
           {
             coach.forEach(function(a){
-              var iu = getInfoUsuario(coach._id);
+              var iu = h.getInfoUsuario(coach._id);
               u6.push({id:coach._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
             }); 
           }
@@ -298,7 +306,7 @@ module.exports = function(app,passport) {
       var wod = new WOD(); 		// create a new instance of the Bear model
       wod.MaraBox.Nombre = req.body.nombreWOD;
       wod.MaraBox.Timecap = req.body.timecap;
-      wod.MaraBox.idBox = getMaraBoxId();
+      wod.MaraBox.idBox = h.getMaraBoxId();
       wod.MaraBox.WarmUp = dictWU;
       wod.MaraBox.WOD = dictWD;
       wod.MaraBox.BuyOut = dictBO;
@@ -416,7 +424,7 @@ module.exports = function(app,passport) {
     app.post('/MaraBox/admin/registroSolvencia', function(req, res) {
       
         var cedula = req.body.cedula;
-        var userid = getUserId(cedula);
+        var userid = h.getUserId(cedula);
         var dh = 0;
         var fi = f.fecha(req.body.fechaInicio);
         var fc = f.fecha(req.body.fechaCulminacion);
@@ -546,7 +554,7 @@ module.exports = function(app,passport) {
                 if (asistencia)
                 {
                   asistencia.forEach(function(a){
-                    var iu = getInfoUsuario(asistencia.idUsuario);
+                    var iu = h.getInfoUsuario(asistencia.idUsuario);
                     datos.push({entrenador:e, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
                   });
                   res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { entrenador : e, asistencia : datos, message: req.flash('loginMessage') });
@@ -564,22 +572,22 @@ module.exports = function(app,passport) {
     
     app.post('/MaraBox/admin/registroAsistencia', function(req, res) {
         
-        var cedula = getUserId(cedula);
+        var cedula = h.getUserId(cedula);
         if(!cedula)
         {
           res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos', regman : 1 });
         }
         else
         {
-          var idu = getUserId(req.body.cedula);
-          var solvente = verificarSolvencia(idu);
+          var idu = h.getUserId(req.body.cedula);
+          var solvente = h.verificarSolvencia(idu);
           
           if (solvente)
           {
             var asistencia = new Asistencia();
             asistencia.MaraBox.idUsuario = idu;
-            asistencia.MaraBox.idBox = getMaraBoxId();
-            asistencia.MaraBox.idClase = getClaseId(req.body.hora);
+            asistencia.MaraBox.idBox = h.getMaraBoxId();
+            asistencia.MaraBox.idClase = h.getClaseId(req.body.hora);
 
             // save the bear and check for errors
             asistencia.save(function(err) {
@@ -643,315 +651,4 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/admin/atletas/:id', function(req, res) {
 
     });
-    
-    //////////////////////////////////////////////////////
-    // API
-    //////////////////////////////////////////////////////
-    app.post('/MaraBox/api/signup', function(req, res,next) {
-      passport.authenticate('local-signupMaraBox', function(err, user, info) {
-        var randomString = rs.randomString(10);
-        guardarCodigoValidacion(user._id, randomString);
-        var url = "/MaraBox/ValidacionUsuario/"+randomString;
-        email.sendValidationUsuarioMaraBox(user.Email,url);
-        
-        return res.json({'err':err,'user':user,'info':info});
-
-      })(req, res, next);
-    });
-    
-    app.post('/MaraBox/api/login', function(req, res,next) {
-      passport.authenticate('local-loginMarabox', function(err, user, info) {
-
-        var userNeededData = {'id':user._id,
-                              'Email':user.Email,
-                              'Tipo':user.Tipo,
-                              'isLoggedIn':'1'};
-        req.login(userNeededData, function(err) {
-          if (err) { return next(err); }
-          
-          console.log(req.session, req.headers['x-access-token']);
-
-            if(user.Tipo == 10)
-            {
-              return res.json({'err':err,'data':userNeededData});
-            }
-        });
-      })(req, res, next);
-    });
-    
-    app.get('/MaraBox/api/logout', function(req, res) {
-        req.logout();
-        res.json({ code : '200', message: 'Sesion terminada' });
-    });
-    
-    app.post('/MaraBox/api/validarAsistencia/:idClase/:idUsuario', function(req, res) {
-        Asistencia.findOne({ idClase : req.params.idClase, idUsuario : req.params.idUsuario }, function(err, asistencia) {
-          if (err)
-          {
-            return res.json({ code : '-1000', message: 'No se pudo recibir los datos correctamente, intente de nuevo'});
-          }
-          else
-          {
-            if (asistencia)
-            {
-              asistencia.Validado = 1;
-              asistencia.save(function(err){
-                if (err)
-                {
-                  
-                }
-                else
-                {
-                  return res.json({ code : '200', message : ''});
-                }
-              });
-            }
-          }
-        })
-        
-    });
-    
-    app.get('/MaraBox/api/:fecha/:hora', function(req, res) {
-      //Obtener informacion de cupo disponible, lista de espera, informacion del entrenador    
-    });
-    
-    app.post('/MaraBox/api/asistencia', function(req, res) {
-      var idu = getUserId(req.body.cedula);
-      var solvente = verificarSolvencia(idu);
-          
-      if (solvente)
-      {
-        var asistencia = new Asistencia();
-        asistencia.MaraBox.idUsuario = 
-        asistencia.MaraBox.idBox = getMaraBoxId();
-        asistencia.MaraBox.Hora = req.body.hora;
-        asistencia.MaraBox.Fecha = req.body.fecha;
-
-        asistencia.save(function(err) {
-          if (err) 
-            res.json({ code : '-1000', message: 'No se pudo guardar los datos, intente nuevamente' });
-          else
-            res.json({ code : '200', message: 'Asistencia guardada con exito' });    
-        });
-      }
-      else
-      {
-        res.json({ code : '-100', message: 'A la fecha usted no se encuentra solvente, por favor dirijase a caja para solventar este incoveniente' });
-      }
-    });
-    
-    app.get('/MaraBox/api/ejercicios', function(req, res) 
-    {
-      Ejercicios.find(function(errE, ejercicios) {
-          if (errE)
-          {
-            res.json({ code : "-100", mensaje : "No se pudo obtener los datos" });
-          }
-          else
-          {
-            res.json({ code : "200", ejercicios : ejercicios });
-          }
-      });
-    });
-    
-    app.get('/MaraBox/api/ejercicios/:idEjercicio', function(req, res) 
-    {
-      Ejercicios.findOne({ 'Email' :  req.params.idEjercicio }, function(errE, ejercicio) {
-          if (errE)
-          {
-            res.json({ code : "-100", mensaje : "No se pudo obtener los datos" });
-          }
-          else
-          {
-            res.json({ code : "200", ejercicio : ejercicio });
-          }
-      });
-    });
-    
-    app.get('/MaraBox/api/WOD', function(req, res) {
-        WOD.find(function(errE, wod) {
-          if (errE)
-          {
-            res.json({ code : "-100", mensaje : "No hay WOD registrado para hoy" });
-          }
-          else
-          {
-            res.json({ code : "200", wod : wod });
-          }
-      });
-    });
-    
-    app.get('/MaraBox/api/eventos', function(req, res) {
-        res.json({ message: 'hooray! welcome to our api!' });
-    });
-    app.post('/MaraBox/api/:evento/asistir', function(req, res) {
-
-    });
-    app.post('/MaraBox/api/registroRM', function(req, res) {
-
-    });
-    app.get('/MaraBox/api/progreso', function(req, res) {
-        
-    });
-    
-}
-
-function isLoggedIn(req, res, next) {
-
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated())
-    {
-        return next();
-    }
-    else
-    {
-        // if they aren't redirect them to the home page
-        return res.redirect('/MaraBox/', { message : 'Debes ingresar para poder acceder a los datos solicitados'});  
-    }
-    
-}
-
-function guardarCodigoValidacion(id,validacion)
-{
-  var v = new Validacion(); 		// create a new instance of the Bear model
-  v.idUsuario = id;
-  v.Codigo = validacion;
-  v.idBox = getMaraBoxId();
-  // save the bear and check for errors
-  v.save(function(err) {});
-}
-
-function getMaraBoxId()
-{
-  Box.findOne({ 'Nombre' : 'MaraBox' }, function(err, box) {
-            // if there are any errors, return the error before anything else
-            if (err)
-                return null;
-
-            return box._id;
-
-        });
-}
-
-function getUserId(cedula)
-{
-  
-  Usuario.findOne({ 'Cedula' :  cedula }, function(err, usuario) {
-            // if there are any errors, return the error before anything else
-            if (err) return null;
-            else 
-            {
-              console.log(usuario);
-              if (usuario)
-              {
-                console.log(usuario._id);
-                return usuario._id;
-
-              }
-              else
-              {
-                return null;
-              }
-              
-              
-            }
-        });
-}
-
-function getInfoUsuario(usuarioId)
-{
-  var cedula;
-  var datos = [];
- Usuario.findById(usuarioId, function(err, usuario) {
-            // if there are any errors, return the error before anything else
-            if (err) return null;
-            else 
-            {
-              console.log(usuario);
-              if (usuario)
-              {
-                cedula = usuario.Cedula;
-                
-                InfoUsuario.find({ idUsuario : usuarioId }, function(erru, info) {
-                    if (erru) return null;
-                    else 
-                    {
-                      if (usuario)
-                      {
-                        datos[0] = cedula;
-                        datos[1] = info.Nombre;
-                        datos[2] = info.Apellido;
-                        console.log(datos);
-                        return datos;
-                      }
-                      else
-                      {
-                        return null;
-                      }
-                    }
-                });
-              }
-            }
-        }); 
-}
-
-function getClaseId(hora)
-{
-  Clases.findOne({ 'Fecha' : f.hoy(), 'Hora' :  hora }, function(err, clase) {
-            // if there are any errors, return the error before anything else
-            if (err) return null;
-            else 
-            {
-              if (clase)
-              {
-                return clase._id;
-
-              }
-              else
-              {
-                return null;
-              }
-            }
-        });
-}
-
-function verificarSolvencia(userid)
-{
-  var solvente = false;
-  Solvencia.find({ 'idUsuario' : userid }, function(err, solvencia) {
-            // if there are any errors, return the error before anything else
-            if (err) return null;
-            else
-            {
-              if(solvencia)
-              {
-                var fechaMasDias = f.agregarFechas(solvencia.FechaInicio,solvencia.DiasHabiles);
-                solvente = f.entre(solvencia.FechaInicio, fechaMasDias);
-                return solvente;
-              }
-              else
-              {
-                return solvente;
-              }
-            }
-        }); 
-}
-
-function verificarCierreDelBox()
-{
-  var diaDescanso = 0;
-  Descanso.find({'Fecha' : new Date()} , function(errd, descanso) {
-                if (errd){}
-                else{
-                  if(descanso)
-                  {
-                    diaDescanso = descanso.DiaCompleto;
-                    return diaDescanso;
-                  }
-                  else
-                  {
-                    return diaDescanso;
-                  }
-                }
-              });
 }

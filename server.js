@@ -53,6 +53,7 @@ require('./IDAPP/routes/user.js')(router, passport); // load our routes and pass
 require('./IDAPP/routes/infra.js')(router);
 require('./HUB/Boxes/routes.js')(router);
 require('./HUB/MaraBox/routes.js')(router, passport);
+require('./HUB/MaraBox/api.js')(router, passport);
 
 app.use('/', router);
 
