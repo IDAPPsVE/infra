@@ -5,7 +5,7 @@ var LocalStrategy   = require('passport-local').Strategy;
 // load up the user model
 var UsuarioInfra            = require('../models/UsuariosInfra');
 var UsuarioIDAPP            = require('../models/UsuariosIDAPP');
-var UsuarioCliente            = require('../models/UsuariosCliente');
+var UsuarioCliente            = require('../models/UsuariosClientes');
 
 // expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -243,7 +243,7 @@ module.exports = function(passport) {
       });
     });
 
-    passport.use('local-signupICARUS', new LocalStrategy({
+    passport.use('local-loginICARUS', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
@@ -274,7 +274,7 @@ module.exports = function(passport) {
 
     }));
     
-    passport.use('local-signupIDAPP', new LocalStrategy({
+    passport.use('local-loginIDAPP', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
@@ -302,7 +302,7 @@ module.exports = function(passport) {
         });
     }));
     
-    passport.use('local-signupIDAPPEmpleado', new LocalStrategy({
+    passport.use('local-loginIDAPPEmpleado', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
@@ -330,7 +330,7 @@ module.exports = function(passport) {
         });
     }));
     
-    passport.use('local-signupAdminSys', new LocalStrategy({
+    passport.use('local-loginAdminSys', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',

@@ -8,28 +8,25 @@ var Contratos   = require('../models/Contratos');
 var rs = require('../helpers/randomString');
 
 module.exports = function(app, passport) {
-
-    // =====================================
-    // HOME PAGE (with login links) ========
-    // =====================================
+    // ================================================
+    //              Pagina Public IDAPP
+    // ================================================
     app.get('/', function(req, res) {
         res.render('../IDAPP/views/index.ejs');
     });
 
-    // ===============================h======
-    // LOGIN ===============================
-    // =====================================
-    // Esta ruta no va a mostrar vista para los usuarios finales al menos que sea interno de la empres
+    // ================================================
+    //  Sistema de accesos segun niveles de seguridad
+    // ================================================
+    
+    //Ingreso del propietario de la app, este sera redirigido al dashboard como superusuario de su aplicacion. 
     app.get('/login', function(req, res) {
 
         res.render('../IDAPP/views/login.ejs', { message: req.flash('loginMessage') });
     });
 
-
-
-    // process the login form
     app.post('/login', function(req, res,next) {
-      passport.authenticate('local-login', function(err, user, info) {
+      passport.authenticate('local-loginAdminSys', function(err, user, info) {
 
         var userNeededData = {'id':user._id,
                               'Email':user.Email,
@@ -37,37 +34,22 @@ module.exports = function(app, passport) {
                               'isLoggedIn':'1'};
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
-          
-          console.log(req.session, req.headers['x-access-token']);
-          
-            //return res.json({'err':err,'user':userNeededData,'info':info});
-            if((user.Tipo == 1) || (user.Tipo == 2))
+
+            if(user.Tipo == 4)
               {
+                //Redirigir a donde debe
                 res.redirect('/admin/dashboard');
               }
-
-            if(user.Tipo == 10)
-            {
-              res.redirect('/dashboard');
-            }
-
         });
-
-
       })(req, res, next);
     });
 
-
-    // =====================================
-    // SIGNUP ==============================
-    // =====================================
-    // show the signup form
     app.get('/signup', function(req, res) {
       res.render('../IDAPP/views/signup.ejs', { message: req.flash('loginMessage') });
     });
 
     app.post('/signup', function(req, res,next) {
-      passport.authenticate('local-signup', function(err, user, info) {
+      passport.authenticate('local-loginAdminSys', function(err, user, info) {
         var randomString = rs.randomString(20);
         guardarCodigoValidacion(user._id, randomString);
         email.sendValidationCode(user.Email,randomString);
@@ -76,18 +58,127 @@ module.exports = function(app, passport) {
 
       })(req, res, next);
     });
+    
+    
+    //Ingreso para los empleados del 
+    app.get('/ias/staff/login', function(req, res) {
 
-    app.get('/signupAdmin', function(req, res) {
-      res.render('../IDAPP/views/signupAdmin.ejs', { message: req.flash('loginMessage') });
+        //res.render('../IDAPP/views/login.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.post('/signupAdmin', function(req, res,next) {
-      passport.authenticate('local-signupIDAPP', function(err, user, info) {
+    app.post('/ias/staff/login', function(req, res,next) {
+      passport.authenticate('local-loginIDAPPEmpleado', function(err, user, info) {
+
+        var userNeededData = {'id':user._id,
+                              'Email':user.Email,
+                              'Tipo':user.Tipo,
+                              'isLoggedIn':'1'};
+        req.login(userNeededData, function(err) {
+          if (err) { return next(err); }
+          
+            if(user.Tipo == 3)
+              {
+                //Redirigir a donde debe
+                res.redirect('/admin/dashboard');
+              }
+        });
+      })(req, res, next);
+    });
+    
+    app.get('/ias/staff/signup', function(req, res) {
+      res.render('../IDAPP/views/signup.ejs', { message: req.flash('loginMessage') });
+    });
+
+    app.post('/ias/staff/signup', function(req, res,next) {
+      passport.authenticate('local-loginIDAPPEmpleado', function(err, user, info) {
+        var randomString = rs.randomString(20);
+        guardarCodigoValidacion(user._id, randomString);
+        email.sendValidationCode(user.Email,randomString);
+        
         return res.json({'err':err,'user':user,'info':info});
+
+      })(req, res, next);
+    });
+    
+    //Ingreso de los administradores de IDAPP
+    app.get('/ias/admin/login', function(req, res) {
+
+        //res.render('../IDAPP/views/login.ejs', { message: req.flash('loginMessage') });
+    });
+
+    app.post('/ias/admin/login', function(req, res,next) {
+      passport.authenticate('local-loginIDAPP', function(err, user, info) {
+
+        var userNeededData = {'id':user._id,
+                              'Email':user.Email,
+                              'Tipo':user.Tipo,
+                              'isLoggedIn':'1'};
+        req.login(userNeededData, function(err) {
+          if (err) { return next(err); }
+          
+            if(user.Tipo == 2)
+              {
+                //Redirigir a donde debe
+                res.redirect('/admin/dashboard');
+              }
+        });
+      })(req, res, next);
+    });
+  
+    app.get('/ias/admin/signup', function(req, res) {
+      res.render('../IDAPP/views/signup.ejs', { message: req.flash('loginMessage') });
+    });
+
+    app.post('/ias/admin/signup', function(req, res,next) {
+      passport.authenticate('local-signupIDAPP', function(err, user, info) {
+        var randomString = rs.randomString(20);
+        guardarCodigoValidacion(user._id, randomString);
+        email.sendValidationCode(user.Email,randomString);
+        
+        return res.json({'err':err,'user':user,'info':info});
+
+      })(req, res, next);
+    });
+    
+    //Ingreso ICARUS
+    app.get('/ias/ss/login', function(req, res) {
+
+        //res.render('../IDAPP/views/login.ejs', { message: req.flash('loginMessage') });
+    });
+
+    app.post('/ias/ss/login', function(req, res,next) {
+      passport.authenticate('local-loginICARUS', function(err, user, info) {
+
+        var userNeededData = {'id':user._id,
+                              'Email':user.Email,
+                              'Tipo':user.Tipo,
+                              'isLoggedIn':'1'};
+        req.login(userNeededData, function(err) {
+          if (err) { return next(err); }
+          
+            if(user.Tipo == 1)
+              {
+                //Redirigir a donde debe
+                res.redirect('/admin/dashboard');
+              }
+        });
       })(req, res, next);
     });
 
+    app.get('/ias/ss/signup', function(req, res) {
+      res.render('../IDAPP/views/signup.ejs', { message: req.flash('loginMessage') });
+    });
 
+    app.post('/ias/ss/signup', function(req, res,next) {
+      passport.authenticate('local-signupICARUS', function(err, user, info) {
+        var randomString = rs.randomString(20);
+        guardarCodigoValidacion(user._id, randomString);
+        email.sendValidationCode(user.Email,randomString);
+        
+        return res.json({'err':err,'user':user,'info':info});
+
+      })(req, res, next);
+    });
     // =====================================
     // LOGOUT ==============================
     // =====================================
