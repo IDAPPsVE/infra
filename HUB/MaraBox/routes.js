@@ -27,42 +27,40 @@ var Entrenadores = require(base + '/HUB/MaraBox/models/Entrenadores');
 
 
 module.exports = function(app,passport) {
-    
+
     app.use('/public', express.static(base + '/HUB/MaraBox/public'));
 
     //=========================================================
     //          Pagina de inicio y Perfiles de Usuario
     //=========================================================
-    
+
     app.get('/api/MaraBox/v0.0.1/test'), function(req, res)
     {
         return res.json({ code:'200', message:'Hola!' });
     }
-    
+
     app.get('/MaraBox/', function(req, res) {
-      console.log(req);
       return res.json({ code:'200', message:'Hola!' });
       //res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
     });
-    
+
     app.post('/MaraBox/', function(req, res) {
-      console.log(req);
       return res.json({ code:'200', message:'Hola!' });
       //res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
     });
-    
+
     app.get('/MaraBox/super/dashboard', function(req, res) {
       res.render(base + '/HUB/MaraBox/views/dashboard-super.ejs', { message: req.flash('loginMessage') });
     });
-    
+
     app.get('/MaraBox/admin/dashboard', function(req, res) {
       res.render(base + '/HUB/MaraBox/views/dashboard.ejs', { message: req.flash('loginMessage') });
     });
-    
+
     //=========================================================
     //                    Signup y Login
     //=========================================================
-    
+
     // process the login form
     app.post('/MaraBox/login', function(req, res,next) {
       passport.authenticate('local-loginMaraBoxAdmin', function(err, user, info) {
@@ -87,7 +85,7 @@ module.exports = function(app,passport) {
         });
       })(req, res, next);
     });
-    
+
     // show the signup form
     app.get('/MaraBox/signup', function(req, res) {
       res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: req.flash('loginMessage') });
@@ -105,13 +103,13 @@ module.exports = function(app,passport) {
         }
       })(req, res, next);
     });
-    
-    
+
+
     //=========================================================
     //            Validacion de cuentas de usuario
     //=========================================================
-    
-    
+
+
     app.get('/MaraBox/ValidacionUsuario/:codigoValidacion', function(req, res) {
         Validacion.findOne({ Codigo : req.params.codigoValidacion },function(err, validacion) {
           if (err) return console.error(err);
@@ -120,18 +118,18 @@ module.exports = function(app,passport) {
             validacion.CorreoValidado = 1;
             validacion.save(function(errv) {
               if(errv) {
-                res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { codigo : req.params.codigoValidacion, message: 'Disculpe, intente nuevamente' });  
+                res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { codigo : req.params.codigoValidacion, message: 'Disculpe, intente nuevamente' });
               }
               else {
-                res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { codigo : req.params.codigoValidacion, message: '' });    
+                res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { codigo : req.params.codigoValidacion, message: '' });
               }
             });
           }
         });
     });
-    
+
     app.post('/MaraBox/validarCedula', function(req, res) {
-      
+
       Validacion.findOne({ Codigo : req.body.codigo },function(errv, validacion) {
           if (errv) return console.error(errv);
           else
@@ -145,10 +143,10 @@ module.exports = function(app,passport) {
                   validacion.CedulaValidada = 1;
                   validacion.save(function(errvv) {
                     if(errvv) {
-                      res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { message: 'Disculpe, intente nuevamente' });  
+                      res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { message: 'Disculpe, intente nuevamente' });
                     }
                     else {
-                      res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { message: 'Cedula validada correctamente' });    
+                      res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { message: 'Cedula validada correctamente' });
                     }
                   });
                 }
@@ -156,22 +154,22 @@ module.exports = function(app,passport) {
                   res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { message: 'Disculpe, El numero de cedula de identidad no concuerda con el ingresado al momento de registrarse, por favor intente de nuevo.' });
                 }
               }
-            }); 
+            });
           }
         });
     });
-    
-    
+
+
     //=========================================================
     //            Funciones de Superusuario
     //=========================================================
-    
+
     app.get('/MaraBox/super/privilegiados', function(req, res) {
-      
+
       var u4 = [];
-      var u5 = []; 
+      var u5 = [];
       var u6 = [];
-      
+
       Usuario.find({ Tipo : "4"}, function(erru, superU) {
           if (superU)
           {
@@ -196,15 +194,15 @@ module.exports = function(app,passport) {
             coach.forEach(function(a){
               var iu = h.getInfoUsuario(coach._id);
               u6.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
-            }); 
+            });
           }
       });
-      
+
         res.render(base + '/HUB/MaraBox/views/usuariosConPermisos.ejs', { superU : u4, admin : u5, coach : u6, message: req.flash('loginMessage') });
     });
-    
+
     app.get('/MaraBox/super/cambiarPermisos', function(req, res) {
-      var u5 = []; 
+      var u5 = [];
       var u6 = [];
       Usuario.find({ Tipo : "5"}, function(erru, admin) {
           if (admin)
@@ -221,12 +219,12 @@ module.exports = function(app,passport) {
             coach.forEach(function(a){
               var iu = h.getInfoUsuario(coach._id);
               u6.push({id:coach._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
-            }); 
+            });
           }
       });
         res.render(base + '/HUB/MaraBox/views/cambiarPermisos.ejs', { admin : u5, coach : u6, message: req.flash('loginMessage') });
     });
-    
+
     app.post('/MaraBox/super/cambiarPermisos', function(req, res) {
       Usuario.findById(req.body.id, function(erru, usuario) {
          usuario.Tipo = req.body.tipo;
@@ -241,24 +239,24 @@ module.exports = function(app,passport) {
          });
       });
     });
-    
+
     //=========================================================
     //                Funciones de administrador
     //=========================================================
     app.get('/MaraBox/admin/nuevoWod', function(req, res) {
-      
+
         Ejercicios.find(function(err, ejercicios) {
           if (err) return console.error(err);
           else res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: '', ejercicios:ejercicios });
         });
     });
-    
+
     app.post('/MaraBox/admin/nuevoWod', function(req, res) {
-      
+
       var dictWU = [];
       var dictWD = [];
       var dictBO = [];
-      
+
       if (req.body.warmup.length == 24)
       {
         dictWU.push({
@@ -273,9 +271,9 @@ module.exports = function(app,passport) {
             idEjercicio : req.body.warmup[i],
             Cantidad    : req.body.cwu[i]
           });
-        }  
+        }
       }
-      
+
       if (req.body.wod.length == 24)
       {
         dictWD.push({
@@ -290,9 +288,9 @@ module.exports = function(app,passport) {
             idEjercicio : req.body.wod[j],
             Cantidad    : req.body.cwd[j]
           });
-        }  
+        }
       }
-      
+
       if (req.body.buyout.length == 24)
       {
         dictBO.push({
@@ -307,9 +305,9 @@ module.exports = function(app,passport) {
             idEjercicio : req.body.buyout[k],
             Cantidad    : req.body.cbo[k]
           });
-        }  
+        }
       }
-      
+
       var wod = new WOD(); 		// create a new instance of the Bear model
       wod.MaraBox.Nombre = req.body.nombreWOD;
       wod.MaraBox.Timecap = req.body.timecap;
@@ -336,7 +334,7 @@ module.exports = function(app,passport) {
         }
       });
     });
-    
+
     app.get('/MaraBox/eventos', function(req, res) {
       Evento.find(function(err, ev) {
         if (err) {
@@ -347,17 +345,17 @@ module.exports = function(app,passport) {
         }
       });
     });
-    
+
     app.get('/MaraBox/admin/nuevaEvento', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage') });
     });
-    
+
     app.post('/MaraBox/admin/nuevaEvento', function(req, res) {
-      
+
       var i,n,c,es,d,fi,fc,cos;
-      
+
       req.busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated) {
-        
+
         if(fieldname == "base64") i = val;
         if(fieldname == "nombre") n = val;
         if(fieldname == "ciudad") c = val;
@@ -367,21 +365,21 @@ module.exports = function(app,passport) {
         if(fieldname == "fechaCulminacion") fc = val;
         if(fieldname == "costo") cos = val;
       });
-      
+
       req.busboy.on('finish', function() {
         console.log(i,n,c,es,d,fi,fc,cos);
-      
+
         var e = new Evento();
-      
+
         e.MaraBox.Imagen = i;
         e.MaraBox.Nombre = n;
         e.MaraBox.Ciudad = c;
-        e.MaraBox.Estado = es; 
+        e.MaraBox.Estado = es;
         e.MaraBox.Direccion = d;
         e.MaraBox.FechaInicio = fi;
         e.MaraBox.FechaCulminacion = fc;
         e.MaraBox.Costo = cos;
-      
+
         e.save(function(err) {
           if (err)
           {
@@ -397,47 +395,47 @@ module.exports = function(app,passport) {
           }
         });
         console.log('Done parsing form!');
-        
+
 
     })
     req.pipe(req.busboy);
-    
+
     });
-    
+
     app.get('/MaraBox/admin/nuevaNotificacion', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message: req.flash('loginMessage') });
     });
-    
+
     app.post('/MaraBox/admin/nuevaNotificacion', function(req, res) {
         var notificacion = new Notificacion(); 		// create a new instance of the Bear model
           notificacion.MaraBox.Titulo = req.body.titulo;
           notificacion.MaraBox.Mensaje = req.body.mensaje;
-          
+
           // save the bear and check for errors
           notificacion.save(function(err) {
-            if (err) 
+            if (err)
               res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
             else
               res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje fue enviado con exito' });
-              
+
               // Enviar a todas las plataformas via push notifications
-          }); 
+          });
     });
-    
+
     app.get('/MaraBox/admin/registroSolvencia', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/registroSolvencia.ejs', { message: req.flash('loginMessage') });
     });
-    
+
     app.post('/MaraBox/admin/registroSolvencia', function(req, res) {
-      
+
         var cedula = req.body.cedula;
         var userid = h.getUserId(cedula);
         var dh = 0;
         var fi = f.fecha(req.body.fechaInicio);
         var fc = f.fecha(req.body.fechaCulminacion);
-        
+
         var totalDias = fi.diff(fc, 'days');
-        
+
         Descanso.find(function(errd, descanso) {
                 if (errd){}
                 else{
@@ -455,46 +453,46 @@ module.exports = function(app,passport) {
                   }
                 }
               });
-              
+
         var solvencia = new Solvencia(); 		// create a new instance of the Bear model
           solvencia.MaraBox.idUsuario = userid;
           solvencia.MaraBox.FechaInicio = req.body.fechaInicio;
           solvencia.MaraBox.FechaCulminacion = req.body.fechaCulminacion;
           solvencia.MaraBox.DiasHabiles = totalDias + dh;
-          
+
           // save the bear and check for errors
           solvencia.save(function(err) {
-            if (err) 
+            if (err)
               res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
             else
               res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'Registro guardado con exito' });
-              
+
               // Enviar a todas las plataformas via push notifications
-          }); 
+          });
     });
-    
+
     app.get('/MaraBox/admin/registroFeriado', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/registroFeriado.ejs', { message: req.flash('loginMessage') });
     });
-    
+
     app.post('/MaraBox/admin/registroFeriado', function(req, res) {
           var descanso = new Descanso();
           descanso.MaraBox.Fecha = req.body.fecha;
           descanso.MaraBox.DiaCompleto = req.body.diaCompleto;
           descanso.MaraBox.Hora = req.body.hora;
           descanso.MaraBox.Motivo = req.body.motivo;
-          
+
           // save the bear and check for errors
           descanso.save(function(err) {
-            if (err) 
+            if (err)
               res.render(base + '/HUB/MaraBox/views/registroFeriado.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
             else
               res.render(base + '/HUB/MaraBox/views/registroFeriado.ejs', { message:'Registro guardado con exito' });
-              
+
               // Enviar a todas las plataformas via push notifications
           });
     });
-    
+
     app.get('/MaraBox/admin/:fecha', function(req, res) {
       Entrenadores.find(function(err, coach) {
         if (err) return console.error(err);
@@ -507,16 +505,16 @@ module.exports = function(app,passport) {
         }
       });
     });
-    
+
     app.post('/MaraBox/admin/asignacionEntrenador', function(req, res) {
       var clases = new Clases();
       clases.MaraBox.idEntrenador = req.body.entrenador;
       clases.MaraBox.Fecha = req.body.fecha;
       clases.MaraBox.Hora = req.body.hora;
-      
+
       clases.save(function(err) {
-            if (err) 
-              res.render(base + '/HUB/MaraBox/views/registroFeriado.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
+            if (err)
+              res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
             else
               Entrenadores.find(function(err, coach) {
                 if (err) return console.error(err);
@@ -530,9 +528,9 @@ module.exports = function(app,passport) {
               });
           });
     });
-    
+
     app.get('/MaraBox/admin/asistencia/:fecha/:hora', function(req, res) {
-      
+
       var e = {};
       var datos = [];
       Clases.find({ Fecha : req.params.fecha, Hora : req.params.hora }, function(err, clase) {
@@ -572,13 +570,13 @@ module.exports = function(app,passport) {
         }
       });
     });
-    
+
     app.get('/MaraBox/admin/registroAsistencia', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message: req.flash('loginMessage') });
     });
-    
+
     app.post('/MaraBox/admin/registroAsistencia', function(req, res) {
-        
+
         var cedula = h.getUserId(cedula);
         if(!cedula)
         {
@@ -588,7 +586,7 @@ module.exports = function(app,passport) {
         {
           var idu = h.getUserId(req.body.cedula);
           var solvente = h.verificarSolvencia(idu);
-          
+
           if (solvente)
           {
             var asistencia = new Asistencia();
@@ -598,11 +596,11 @@ module.exports = function(app,passport) {
 
             // save the bear and check for errors
             asistencia.save(function(err) {
-              if (err) 
+              if (err)
                 res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no pudo ser registrado' });
               else
-                res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'Usuario registrado para el entrenamiento del dia '+req.body.fecha+' hora '+req.body.hora });  
-            });  
+                res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'Usuario registrado para el entrenamiento del dia '+req.body.fecha+' hora '+req.body.hora });
+            });
           }
           else
           {
@@ -610,17 +608,17 @@ module.exports = function(app,passport) {
           }
         }
     });
-    
+
     app.get('/MaraBox/admin/registro/usuario/nuevo', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message: req.flash('loginMessage') });
     });
-    
+
     app.post('/MaraBox/admin/registroPrimerUsuario', function(req, res) {
         console.log(req.body);
         var usuario = Usuario();
         usuario.MaraBox.Cedula = req.body.cedula;
         usuario.save(function(err) {
-            if (err) 
+            if (err)
               res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
             else
               Usuario.findOne({ cedula : req.body.cedula }, function(erru, usuario) {
@@ -638,9 +636,9 @@ module.exports = function(app,passport) {
                     info.MaraBox.Telefono = req.body.telefono;
                     info.MaraBox.FechaNacimiento = req.body.fechaNacimiento;
                     info.MaraBox.idUsuario = usuario._id;
-                    
+
                     info.save(function(err) {
-                        if (err) 
+                        if (err)
                           res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
                         else
                           res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message:'El usuario fue registrado con exito' });
@@ -650,27 +648,27 @@ module.exports = function(app,passport) {
               });
           });
     });
-    
+
     app.get('/MaraBox/admin/atletas', function(req, res) {
 
     });
-    
+
     app.get('/MaraBox/admin/atletas/:id', function(req, res) {
 
     });
-    
-    
-    
-    
+
+
+
+
     //////////////////////////////////////////////////////
     // API
     //////////////////////////////////////////////////////
-    
+
     app.get('/MaraBox/api/prueba'), function(req, res)
     {
         return res.json({ code:'200', message:'Hola!' });
     }
-    
+
     app.post('/MaraBox/api/signup', function(req, res,next) {
       passport.authenticate('local-signupMaraBox', function(err, user, info) {
           if (err)
@@ -682,13 +680,13 @@ module.exports = function(app,passport) {
             var randomString = rs.randomString(10);
             h.guardarCodigoValidacion(user._id, randomString);
             var url = "/MaraBox/ValidacionUsuario/"+randomString;
-            email.sendValidationUsuarioMaraBox(user.Email,url);      
-            
+            email.sendValidationUsuarioMaraBox(user.Email,url);
+
             return res.json({ code:'200', message:'Su registro ha sido guardado con exito, debe validar su correo para poder utilizar la app' });
           }
         })(req, res, next);
     });
-    
+
     app.post('/MaraBox/api/login', function(req, res,next) {
       passport.authenticate('local-loginMarabox', function(err, user, info) {
 
@@ -698,8 +696,6 @@ module.exports = function(app,passport) {
                               'isLoggedIn':'1'};
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
-          
-          console.log(req.session, req.headers['x-access-token']);
 
             if(user.Tipo == 10)
             {
@@ -708,12 +704,12 @@ module.exports = function(app,passport) {
         });
       })(req, res, next);
     });
-    
+
     app.get('/MaraBox/api/logout', function(req, res) {
         req.logout();
         res.json({ code : '200', message: 'Sesion terminada' });
     });
-    
+
     app.post('/MaraBox/api/validarAsistencia/:idClase/:idUsuario', function(req, res) {
         Asistencia.findOne({ idClase : req.params.idClase, idUsuario : req.params.idUsuario }, function(err, asistencia) {
           if (err)
@@ -728,7 +724,7 @@ module.exports = function(app,passport) {
               asistencia.save(function(err){
                 if (err)
                 {
-                  
+
                 }
                 else
                 {
@@ -739,13 +735,13 @@ module.exports = function(app,passport) {
           }
         })
     });
-    
+
     app.get('/MaraBox/api/clase/:hora', function(req, res) {
-        
+
         var totalAsistentes = 0;
         var disponible = 0;
         var listaEspera = 0;
-      
+
         var e = {};
           Clases.find({ Fecha : f.hoy(), Hora : req.params.hora }, function(err, clase) {
             if (err) return console.error(err);
@@ -763,13 +759,13 @@ module.exports = function(app,passport) {
                     }
                   }
                 });
-                
+
                 Asistencia.find({ idClase : clase._id }).sort({ Creado: 1 }).count(function(err, c)
                 {
                    console.log('Count is ' + c);
                    totalAsistentes = c;
                 });
-                
+
                 disponible = clase.Cupo - totalAsistentes;
                 if (disponible === 0)
                 {
@@ -779,17 +775,17 @@ module.exports = function(app,passport) {
                 {
                     listaEspera = -1 * disponible;
                 }
-                
+
                 res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { entrenador : e, disponible : disponible, listaEspera : listaEspera, message: req.flash('loginMessage') });
               }
             }
-          });  
+          });
     });
-    
+
     app.post('/MaraBox/api/asistencia', function(req, res) {
       var idu = h.getUserId(req.body.cedula);
       var solvente = h.verificarSolvencia(idu);
-          
+
       if (solvente)
       {
         var asistencia = new Asistencia();
@@ -798,10 +794,10 @@ module.exports = function(app,passport) {
         asistencia.MaraBox.idClase = h.getClaseId(req.body.hora);
 
         asistencia.save(function(err) {
-          if (err) 
+          if (err)
             res.json({ code : '-1000', message: 'No se pudo guardar los datos, intente nuevamente' });
           else
-            res.json({ code : '200', message: 'Asistencia guardada con exito' });    
+            res.json({ code : '200', message: 'Asistencia guardada con exito' });
         });
       }
       else
@@ -809,8 +805,8 @@ module.exports = function(app,passport) {
         res.json({ code : '-100', message: 'A la fecha usted no se encuentra solvente, por favor dirijase a caja para solventar este incoveniente' });
       }
     });
-    
-    app.get('/MaraBox/api/ejercicios', function(req, res) 
+
+    app.get('/MaraBox/api/ejercicios', function(req, res)
     {
       Ejercicios.find(function(errE, ejercicios) {
           if (errE)
@@ -823,8 +819,8 @@ module.exports = function(app,passport) {
           }
       });
     });
-    
-    app.get('/MaraBox/api/ejercicios/:idEjercicio', function(req, res) 
+
+    app.get('/MaraBox/api/ejercicios/:idEjercicio', function(req, res)
     {
       Ejercicios.findOne({ 'Email' :  req.params.idEjercicio }, function(errE, ejercicio) {
           if (errE)
@@ -837,7 +833,7 @@ module.exports = function(app,passport) {
           }
       });
     });
-    
+
     app.get('/MaraBox/api/WOD', function(req, res) {
         WOD.find(function(errE, wod) {
           if (errE)
@@ -850,7 +846,7 @@ module.exports = function(app,passport) {
           }
       });
     });
-    
+
     app.get('/MaraBox/api/eventos', function(req, res) {
         res.json({ message: 'hooray! welcome to our api!' });
     });
@@ -861,6 +857,6 @@ module.exports = function(app,passport) {
 
     });
     app.get('/MaraBox/api/progreso', function(req, res) {
-        
+
     });
 }
