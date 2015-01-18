@@ -28,10 +28,10 @@ module.exports = function(app) {
     app.post('/contacto',function(req, res) {
 
       var contacto = new Contacto(); 		// create a new instance of the Bear model
-      contacto.Nombre = req.body.nombre;
-      contacto.Apellido = req.body.apellido;
-      contacto.Email = req.body.email;
-      contacto.Mensaje = req.body.mensaje;
+      contacto.IDAPP.Nombre = req.body.nombre;
+      contacto.IDAPP.Apellido = req.body.apellido;
+      contacto.IDAPP.Email = req.body.email;
+      contacto.IDAPP.Mensaje = req.body.mensaje;
 
       // save the bear and check for errors
       contacto.save(function(err) {
