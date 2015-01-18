@@ -68,7 +68,6 @@ module.exports = function(app) {
 
     app.get('/admin/registroContrato', function(req, res) {
         res.render('../IDAPP/views/registroContrato.ejs', { message:'' });
-      //res.send('hello, estas en la vista de registro de contacto');
     });
 
     app.post('/registroContrato',function(req, res) {
@@ -76,39 +75,61 @@ module.exports = function(app) {
       var nombreApp = req.body.app;
       var correo = req.body.correo;
       var contratoN  = req.body.contrato;
-
-      var contrato = new Contrato(); 		// create a new instance of the Bear model
-      contrato.Contrato          = contratoN;
-      contrato.Android           = req.body.android;
-      contrato.iOS               = req.body.ios;
-      contrato.Administrativo    = req.body.administrativo;
-      contrato.Facturacion       = req.body.facturacion;
-      contrato.RIF               = req.body.rif;
-      contrato.Empresa           = req.body.empresa;
-      contrato.Telefono_Oficina  = req.body.telefonoOficina;
-      contrato.Telefono_Personal = req.body.telefonoContacto;
-      contrato.Direccion         = req.body.direccion;
-      contrato.Correo_Contacto   = correo;
-      contrato.Nombre_APP        = nombreApp;
-
-      // save the bear and check for errors
-      contrato.save(function(err) {
-        console.log(err);
+      var android = 0;
+      var ios = 0;
+      var adm = 0;
+   
+      Contrato.findOne({ 'IDAPP.Contrato' : contratoN }, function(err, c) {
         if (err)
         {
-          res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'No se pudo registrar el nuevo contrato, por favor intente nuevamente' });
+          return null;
+        }
+        
+        if (c === null)
+        {
+          if (req.body.android === "on"){
+            android = 1;
+          }
+          if (req.body.ios === "on"){
+            ios = 1;
+          }
+          if (req.body.administrativo === "on"){
+            adm = 1;
+          }
+          console.log(req.body.android, req.body.ios, req.body.administrativo);
+          var contrato = new Contrato(); 		// create a new instance of the Bear model
+          contrato.IDAPP.Contrato          = contratoN;
+          contrato.IDAPP.Android           = android;
+          contrato.IDAPP.iOS               = ios;
+          contrato.IDAPP.Administrativo    = adm;
+          contrato.IDAPP.Facturacion       = req.body.facturacion;
+          contrato.IDAPP.RIF               = req.body.rif;
+          contrato.IDAPP.Empresa           = req.body.empresa;
+          contrato.IDAPP.Telefono_Oficina  = req.body.telefonoOficina;
+          contrato.IDAPP.Telefono_Personal = req.body.telefonoPersonal;
+          contrato.IDAPP.Direccion         = req.body.direccion;
+          contrato.IDAPP.Correo_Contacto   = correo;
+          contrato.IDAPP.Nombre_APP        = nombreApp;
+    
+          // save the bear and check for errors
+          contrato.save(function(err) {
+            console.log(err);
+            if (err)
+            {
+              res.render('../IDAPP/views/registroContrato.ejs', { message:'No se pudo registrar el nuevo contrato, por favor intente nuevamente' });
+            }
+            else
+            {
+              guardarBoxEnBoxes(correo, nombreApp);
+              res.render('../IDAPP/views/registroContrato.ejs', { message:'Contrato registrado con éxito' });
+            }
+          });
         }
         else
         {
-          // Registrar box en Boxes
-          // Luego, generar codigo de Box y Box Admin
-          // Por ultimo, enviar correo al Usuario propietario de la app
-          guardarBoxEnBoxes(correo, nombreApp);
-
-          res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'Contrato registrado con éxito' });
+          res.render('../IDAPP/views/registroContrato.ejs', { message:'El numero de contrato ingresado ya esta registrado' });
         }
       });
-
     });
 
 
@@ -132,7 +153,8 @@ module.exports = function(app) {
 
 function obtenerContratoId(nombreApp)
 {
-  Contrato.findOne({ 'Nombre' : nombreApp}, function(err, contrato) {
+  console.log("obtenerContratoId(nombreApp)", nombreApp);
+  Contrato.findOne({ 'IDAPP.Nombre' : nombreApp}, function(err, contrato) {
     // if there are any errors, return the error before anything else
     if (err)
     {
@@ -145,9 +167,10 @@ function obtenerContratoId(nombreApp)
 
 function guardarBoxEnBoxes(to, nombreApp)
 {
+  console.log("guardarBoxEnBoxes(to, nombreApp)",to, nombreApp);
   var b = new B();
-  b.Nombre = nombreApp;
-  b.idContrato = obtenerContratoId(nombreApp);
+  b.IDAPP.Nombre = nombreApp;
+  b.IDAPP.idContrato = obtenerContratoId(nombreApp);
   b.save(function(err) {
     if (err)
     {
@@ -167,13 +190,14 @@ function guardarBoxEnBoxes(to, nombreApp)
 
 function obtenerBoxId(nombreApp)
 {
-  B.findOne({ 'Nombre' : nombreApp }, function(err, box) {
+  B.findOne({ 'IDAPP.Nombre' : nombreApp }, function(err, box) {
     // if there are any errors, return the error before anything else
     if (err)
     {
       return null;
     }
     if (box)
+      console.log("obtenerBoxId(nombreApp)",box._id);
       return box._id;
     });
 }
@@ -182,8 +206,8 @@ function guardarBoxCode(boxId)
 {
   var s = rs.randomString(8);
   var bc = new BC();
-  bc.Codigo = s;
-  bc.idBox = boxId;
+  bc.IDAPP.Codigo = s;
+  bc.IDAPP.idBox = boxId;
   bc.save(function(err) {
     if (err)
     {}
@@ -192,13 +216,14 @@ function guardarBoxCode(boxId)
 
 function obtenerBoxCode(boxId)
 {
-  BC.findOne({ 'idBox' : boxId }, function(err, boxCode) {
+  BC.findOne({ 'IDAPP.idBox' : boxId }, function(err, boxCode) {
     // if there are any errors, return the error before anything else
     if (err)
     {
       return null;
     }
     if (boxCode)
+    console.log("obtenerBoxCode(boxId)",boxCode.Codigo);
       return boxCode.Codigo;
     });
 }
@@ -207,8 +232,8 @@ function guardarBoxAdminCode(boxId)
 {
   var s = rs.randomString(8);
   var bac = new BAC();
-  bac.Codigo = s;
-  bac.idBox = boxId;
+  bac.IDAPP.Codigo = s;
+  bac.IDAPP.idBox = boxId;
   bac.save(function(err) {
     if (err)
     {}
@@ -217,20 +242,21 @@ function guardarBoxAdminCode(boxId)
 
 function obtenerBoxAdminCode(boxId)
 {
-  BAC.findOne({ 'idBox' : boxId }, function(err, boxAdminCode) {
+  BAC.findOne({ 'IDAPP.idBox' : boxId }, function(err, boxAdminCode) {
     // if there are any errors, return the error before anything else
     if (err)
     {
       return null;
     }
     if (boxAdminCode)
+    console.log("obtenerBoxAdminCode(boxId)",boxAdminCode.Codigo);
       return boxAdminCode.Codigo;
     });
 }
 
 function enviarBoxYBoxAdminCode(to, boxId, boxAdmin)
 {
-  email.sendValidationCode(to, boxId, boxAdmin);
+  email.sendBoxAndBoxsdminCode(to, boxId, boxAdmin);
 }
 
 // route middleware to make sure a user is logged in
