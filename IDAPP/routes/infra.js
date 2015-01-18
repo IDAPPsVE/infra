@@ -65,8 +65,8 @@ module.exports = function(app) {
       res.send('hello, estas en dashboard de IDAPP');
     });
 
-    app.get('/admin/registroContrato', isLoggedIn, function(req, res) {
-        res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'' });
+    app.get('/admin/registroContrato', function(req, res) {
+        res.render('../IDAPP/views/registroContrato.ejs', { message:'' });
       //res.send('hello, estas en la vista de registro de contacto');
     });
 
@@ -132,7 +132,7 @@ module.exports = function(app) {
 
 function obtenerContratoId(nombreApp)
 {
-  Contrato.findOne({ 'Nombre' : nombreApp, '' }, function(err, contrato) {
+  Contrato.findOne({ 'Nombre' : nombreApp}, function(err, contrato) {
     // if there are any errors, return the error before anything else
     if (err)
     {

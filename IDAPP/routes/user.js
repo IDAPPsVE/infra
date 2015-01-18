@@ -3,7 +3,7 @@
  */
 
 var email = require('../controllers/mailController');
-var Validacion  = require('../models/ValidacionBox');
+var Validacion  = require('../models/ValidacionIDAPP');
 var Contratos   = require('../models/Contratos');
 var rs = require('../helpers/randomString');
 
