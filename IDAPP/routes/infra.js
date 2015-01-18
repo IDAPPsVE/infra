@@ -4,11 +4,13 @@ var Validacion  = require('../models/ValidacionBox');
 
 module.exports = function(app) {
 
-  /*
-  *
-  * Acciones comunes
-  *
-  */
+  // ================================================
+  //              Pagina Public IDAPP
+  // ================================================
+    app.get('/', function(req, res) {
+      res.render('../IDAPP/views/index.ejs');
+    });
+
     app.get('/about', function(req, res) {
         res.render('../IDAPP/views/about.ejs');
     });
@@ -24,7 +26,6 @@ module.exports = function(app) {
       contacto.Apellido = req.body.apellido;
       contacto.Email = req.body.email;
       contacto.Mensaje = req.body.mensaje;
-      contacto.Fecha = new Date();
 
       // save the bear and check for errors
       contacto.save(function(err) {
@@ -37,44 +38,34 @@ module.exports = function(app) {
     });
 
 
-    /*
-    *
-    * Registro de APPs
-    *
-    */
-    app.get('/admin/registroContrato', isLoggedIn, function(req, res) {
-        res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'' });
-      //res.send('hello, estas en la vista de registro de contacto');
+    // ================================================
+    //              Validaciones
+    // ================================================
+    app.get('/admin/val/:validationCode', function(req, res) {
+      //  res.render('../IDAPP/views/index.ejs');
+      res.send('hello, your email was already validated with the code' + req.params.validationCode + '!');
     });
 
-    app.get('/val/:validationCode', function(req, res) {
+    app.get('/app/val/:validationCode', function(req, res) {
       //  res.render('../IDAPP/views/index.ejs');
       res.send('hello, your email was already validated with the code' + req.params.validationCode + '!');
     });
 
 
-
-    /*
-    *
-    * Dashboards y separacion de logica
-    *
-    */
+    // ================================================
+    //              Admin Dashboard MaraBox
+    // ================================================
     app.get('/admin/dashboard', isLoggedIn, function(req, res) {
       //  res.render('../IDAPP/views/index.ejs');
       res.send('hello, estas en dashboard de IDAPP');
     });
 
-    app.get('/:app_id/dashboard', isLoggedIn, function(req, res) {
-    //  res.render('../IDAPP/views/index.ejs');
-      res.send('hello ' + req.params.app_id + '!');
+    app.get('/admin/registroContrato', isLoggedIn, function(req, res) {
+        res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'' });
+      //res.send('hello, estas en la vista de registro de contacto');
     });
 
-    app.get('/:app_id/dashboard/registroAdministracion', isLoggedIn, function(req, res) {
-      //  res.render('../IDAPP/views/index.ejs');
-      res.send('hello, estas en la vista de registro del usuario admin del sistema administrativo');
-    });
-
-    app.post('/registroAdministracion',function(req, res) {
+    app.post('/registroContrato',function(req, res) {
 
       var contrato = new Contrato(); 		// create a new instance of the Bear model
       contrato.Contrato          = req.body.contrato;
@@ -87,7 +78,6 @@ module.exports = function(app) {
       contrato.Telefono_Oficina  = req.body.telefonoOficina
       contrato.Telefono_Personal = req.body.telefonoContacto;
       contrato.Direccion         = req.body.direccion;
-      contrato.Fecha_Contrato    = new Date();
       contrato.Fecha_Facturacion = req.body.fechaFacturacion;
       contrato.Nombre_APP        = req.body.app
       contrato.Firmantes         = '';
@@ -98,17 +88,28 @@ module.exports = function(app) {
         console.log(err);
         if (err)
           res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'No se pudo registrar el nuevo contrato, por favor intente nuevamente' });
-        else
-          res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'Contrato registrado con éxito' });
-        });
-
+          else
+            res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'Contrato registrado con éxito' });
       });
 
-    // ===========================================
-    // CONTABILIDAD
-    app.get('/dashboard', function(req, res) {
-        res.render('../IDAPP/views/admin/admin.ejs', { message:'' });
     });
+
+
+    // ================================================
+    //              Admin Dashboard CrossfitApp
+    // ================================================
+
+    app.get('/:app_id/dashboard', isLoggedIn, function(req, res) {
+    //  res.render('../IDAPP/views/index.ejs');
+      res.send('hello ' + req.params.app_id + '!');
+    });
+
+    app.get('/:app_id/dashboard/registroAdministracion', isLoggedIn, function(req, res) {
+      //  res.render('../IDAPP/views/index.ejs');
+      res.send('hello, estas en la vista de registro del usuario admin del sistema administrativo');
+    });
+
+
 
 };
 
