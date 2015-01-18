@@ -12,13 +12,14 @@ var transporter = nodemailer.createTransport({
 
 var from = "idapps.ve@gmail.com";
 
-exports.sendValidationCode = function(to,Validacion){
+//Admin y empleado IDAPP, y propietarios de apps
+exports.sendValidationCode = function(to,url){
 
   var path = process.cwd() + '/IDAPP/views/email/emailValidation.ejs';
   var str = fs.readFileSync(path, 'utf8');
 
   var renderedHtml = ejs.render(str, {
-    validationURL : Validacion,
+    validationURL : url,
     filename : path
   });
 
@@ -36,37 +37,14 @@ exports.sendValidationCode = function(to,Validacion){
   });
 }
 
-exports.sendValidationCodeMaraBox = function(to,Validacion){
+//Usuarios finales Marabox
+exports.sendValidationCodeMaraBox = function(to,url){
 
   var path = process.cwd() + '/IDAPP/views/email/emailValidation.ejs';
   var str = fs.readFileSync(path, 'utf8');
 
   var renderedHtml = ejs.render(str, {
-    validationURL : Validacion,
-    filename : path
-  });
-
-  transporter.sendMail({
-    from: from,
-    to: to,
-    subject: 'Bienvenido a Marabox',
-    html: renderedHtml
-  }, function(error, info){
-    if(error){
-        console.log(error);
-    }else{
-        console.log('Message sent: ' + info.response);
-    }
-  });
-}
-
-exports.sendValidationUsuarioMaraBox = function(to,Validacion){
-
-  var path = process.cwd() + '/IDAPP/views/email/emailValidation.ejs';
-  var str = fs.readFileSync(path, 'utf8');
-
-  var renderedHtml = ejs.render(str, {
-    validationURL : Validacion,
+    validationURL : url,
     filename : path
   });
 

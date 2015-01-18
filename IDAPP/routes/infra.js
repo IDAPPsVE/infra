@@ -78,13 +78,25 @@ module.exports = function(app) {
       var android = 0;
       var ios = 0;
       var adm = 0;
-   
-      Contrato.findOne({ 'IDAPP.Contrato' : contratoN }, function(err, c) {
+      
+      console.log(req.body);
+      
+      if ((req.body.rif === null) ||
+      (req.body.empresa === null) ||
+      (req.body.direccion === null) ||
+      (correo === null) ||
+      (nombreApp === null))
+      {
+        return res.render('../IDAPP/views/registroContrato.ejs', { message:'Todos los campos de texto son obligatorios.' });
+      }
+      else
+      {
+        Contrato.findOne({ 'IDAPP.Contrato' : contratoN }, function(err, c) {
         if (err)
         {
           return null;
         }
-        
+
         if (c === null)
         {
           if (req.body.android === "on"){
@@ -116,20 +128,23 @@ module.exports = function(app) {
             console.log(err);
             if (err)
             {
-              res.render('../IDAPP/views/registroContrato.ejs', { message:'No se pudo registrar el nuevo contrato, por favor intente nuevamente' });
+              return res.render('../IDAPP/views/registroContrato.ejs', { message:'No se pudo registrar el nuevo contrato, por favor intente nuevamente' });
             }
             else
             {
               guardarBoxEnBoxes(correo, nombreApp);
-              res.render('../IDAPP/views/registroContrato.ejs', { message:'Contrato registrado con éxito' });
+              return res.render('../IDAPP/views/registroContrato.ejs', { message:'Contrato registrado con éxito' });
             }
           });
         }
         else
         {
-          res.render('../IDAPP/views/registroContrato.ejs', { message:'El numero de contrato ingresado ya esta registrado' });
+          return res.render('../IDAPP/views/registroContrato.ejs', { message:'El numero de contrato ingresado ya esta registrado' });
         }
       });
+      }
+           
+      
     });
 
 

@@ -4,8 +4,11 @@
 
 var email = require('../controllers/mailController');
 var Validacion  = require('../models/ValidacionIDAPP');
+var ValidacionP  = require('../models/ValidacionAppPropietario');
 var Contratos   = require('../models/Contratos');
 var rs = require('../helpers/randomString');
+
+var dominio = "http://infra-idappsve-1.c9.io"
 
 module.exports = function(app, passport) {
     // ================================================
@@ -44,8 +47,9 @@ module.exports = function(app, passport) {
     app.post('/signup', function(req, res,next) {
       passport.authenticate('local-loginAdminSys', function(err, user, info) {
         var randomString = rs.randomString(20);
-        guardarCodigoValidacion(user._id, randomString);
-        email.sendValidationCode(user.Email,randomString);
+        var url = dominio + '/app/val/' + randomString;
+        guardarCodigoValidacionPropietarioApp(user._id, randomString);
+        email.sendValidationCode(user.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -84,8 +88,9 @@ module.exports = function(app, passport) {
     app.post('/ias/staff/signup', function(req, res,next) {
       passport.authenticate('local-loginIDAPPEmpleado', function(err, user, info) {
         var randomString = rs.randomString(20);
-        guardarCodigoValidacion(user._id, randomString);
-        email.sendValidationCode(user.Email,randomString);
+        var url = dominio + '/admin/val/' + randomString;
+        guardarCodigoValidacionIDAPP(user._id, randomString);
+        email.sendValidationCode(user.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -123,8 +128,9 @@ module.exports = function(app, passport) {
     app.post('/ias/admin/signup', function(req, res,next) {
       passport.authenticate('local-signupIDAPP', function(err, user, info) {
         var randomString = rs.randomString(20);
-        guardarCodigoValidacion(user._id, randomString);
-        email.sendValidationCode(user.Email,randomString);
+        var url = dominio + '/admin/val/' + randomString;
+        guardarCodigoValidacionIDAPP(user._id, randomString);
+        email.sendValidationCode(user.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -162,8 +168,9 @@ module.exports = function(app, passport) {
     app.post('/ias/ss/signup', function(req, res,next) {
       passport.authenticate('local-signupICARUS', function(err, user, info) {
         var randomString = rs.randomString(20);
-        guardarCodigoValidacion(user._id, randomString);
-        email.sendValidationCode(user.Email,randomString);
+        var url = dominio + '/admin/val/' + randomString;
+        guardarCodigoValidacionIDAPP(user._id, randomString);
+        email.sendValidationCode(user.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -178,18 +185,26 @@ module.exports = function(app, passport) {
     });
 };
 
-function guardarCodigoValidacion(id,validacion)
+function guardarCodigoValidacionIDAPP(id,validacion)
 {
-  var v = new Validacion(); 		// create a new instance of the Bear model
-  v.user_id = id;
+  var v = new Validacion();
+  v.idUsuario= id;
   v.Validacion = validacion;
-  // save the bear and check for errors
-  v.save(function(err) {});
+  v.save(function(err) {
+    if (err)
+    {}
+  });
 }
 
 function guardarCodigoValidacionPropietarioApp(id,validacion)
 {
-
+  var v = new ValidacionP();
+  v.idUsuario = id;
+  v.Validacion = validacion;
+  v.save(function(err) {
+    if (err)
+    {}
+  });
 }
 
 // route middleware to make sure a user is logged in
