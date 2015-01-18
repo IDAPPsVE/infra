@@ -1,6 +1,11 @@
+var email = require('../controllers/mailController');
 var Contacto    = require('../models/Contacto');
 var Contrato   = require('../models/Contratos');
-var Validacion  = require('../models/ValidacionBox');
+var ValidacionIDAPP  = require('../models/ValidacionIDAPP');
+var ValidacionAppPropietario  = require('../models/ValidacionAppPropietario');
+var B = require('../models/Boxes');
+var BC = require('../models/BoxCode');
+var BAC = require('../models/BoxAdminCode');
 
 module.exports = function(app) {
 
@@ -67,6 +72,9 @@ module.exports = function(app) {
 
     app.post('/registroContrato',function(req, res) {
 
+      var nombreApp = req.body.app;
+      var contrato  = req.body.contrato;
+
       var contrato = new Contrato(); 		// create a new instance of the Bear model
       contrato.Contrato          = req.body.contrato;
       contrato.Android           = req.body.android;
@@ -78,8 +86,9 @@ module.exports = function(app) {
       contrato.Telefono_Oficina  = req.body.telefonoOficina
       contrato.Telefono_Personal = req.body.telefonoContacto;
       contrato.Direccion         = req.body.direccion;
+      contrato.Correo_Contacto   = req.body.correo;
       contrato.Fecha_Facturacion = req.body.fechaFacturacion;
-      contrato.Nombre_APP        = req.body.app
+      contrato.Nombre_APP        = nombreApp;
       contrato.Firmantes         = '';
       contrato.Cedula_Firmantes  = [];
 
@@ -87,9 +96,18 @@ module.exports = function(app) {
       contrato.save(function(err) {
         console.log(err);
         if (err)
+        {
           res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'No se pudo registrar el nuevo contrato, por favor intente nuevamente' });
-          else
-            res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'Contrato registrado con éxito' });
+        }
+        else
+        {
+          // Registrar box en Boxes
+          // Luego, generar codigo de Box y Box Admin
+          // Por ultimo, enviar correo al Usuario propietario de la app
+          guardarBoxEnBoxes(nombreApp,contrato);
+
+          res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'Contrato registrado con éxito' });
+        }
       });
 
     });
@@ -113,6 +131,102 @@ module.exports = function(app) {
 
 };
 
+function obtenerContratoId(nombreApp)
+{
+  Contrato.findOne({ 'Nombre' : nombreApp, '' }, function(err, contrato) {
+    // if there are any errors, return the error before anything else
+    if (err)
+    {
+      return null;
+    }
+    if (contrato)
+      return contrato._id;
+    });
+  }
+
+function guardarBoxEnBoxes(nombreApp)
+{
+  var b = new B();
+  b.Nombre = nombreApp;
+  b.idContrato = obtenerContratoId(nombreApp);
+  b.save(function(err) {
+    if (err)
+    {
+
+    }
+    else
+    {
+      var boxId = obtenerBoxId(nombreApp);
+      guardarBoxCode(boxId)
+      var boxCode = obtenerBoxCode();
+      guardarBoxAdmin(boxId)
+      var boxAdmin = obtenerBoxAdminCode();
+      enviarBoxYBoxAdminCode(boxId, boxAdmin);
+    }
+  });
+}
+
+function obtenerBoxId(nombreApp)
+{
+  B.findOne({ 'Nombre' : nombreApp }, function(err, box) {
+    // if there are any errors, return the error before anything else
+    if (err)
+    {
+      return null;
+    }
+    if (box)
+      return box._id;
+    });
+}
+
+function guardarBoxCode(boxId)
+{
+  var s = rs.randomString(8);
+  var bc = new BC();
+  bc.Codigo = s;
+  bc.idBox = boxId;
+  bc.save(function(err) {});
+}
+
+function obtenerBoxCode()
+{
+  BC.findOne({ 'Nombre' : nombreApp }, function(err, boxCode) {
+    // if there are any errors, return the error before anything else
+    if (err)
+    {
+      return null;
+    }
+    if (boxCode)
+      return boxCode._id;
+    });
+}
+
+function guardarBoxAdminCode(boxId)
+{
+  var s = rs.randomString(8);
+  var bac = new BAC();
+  bac.Codigo = s;
+  bac.idBox = boxId;
+  bac.save(function(err) {});
+}
+
+function obtenerBoxAdminCode()
+{
+  BAC.findOne({ 'Nombre' : nombreApp }, function(err, boxAdminCode) {
+    // if there are any errors, return the error before anything else
+    if (err)
+    {
+      return null;
+    }
+    if (boxAdminCode)
+      return boxAdminCode._id;
+    });
+}
+
+function enviarBoxYBoxAdminCode(to, boxId, boxAdmin)
+{
+  email.sendValidationCode(to, boxId, boxAdmin);
+}
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {

@@ -84,4 +84,29 @@ exports.sendValidationUsuarioMaraBox = function(to,Validacion){
   });
 }
 
+exports.sendBoxAndBoxsdminCode = function(to, boxId, boxAdmin)
+{
+  var path = process.cwd() + '/IDAPP/views/email/emailBoxCodes.ejs';
+  var str = fs.readFileSync(path, 'utf8');
+
+  var renderedHtml = ejs.render(str, {
+    boxCode  : boxId,
+    boxAdmin : boxAdmin,
+    filename : path
+  });
+
+  transporter.sendMail({
+    from: from,
+    to: to,
+    subject: 'Codigos unicos de Box',
+    html: renderedHtml
+  }, function(error, info){
+    if(error){
+      console.log(error);
+    }else{
+      console.log('Message sent: ' + info.response);
+    }
+  });
+}
+
 exports.sendWelcomeMsg = function(){}

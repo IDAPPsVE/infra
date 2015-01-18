@@ -8,9 +8,9 @@ var FeedbackAppSchema = mongoose.Schema({
                 idBox        : String,
                 idUsuario    : String,
                 Mensaje      : String,
-                Fecha        : Date
+                Fecha        : {type: Date, default: Date.now },
         }
-        
+
 });
 
 // create the model for users and expose it to our app
