@@ -111,11 +111,11 @@ module.exports = function(app,passport) {
 
 
     app.get('/MaraBox/ValidacionUsuario/:codigoValidacion', function(req, res) {
-        Validacion.findOne({ Codigo : req.params.codigoValidacion },function(err, validacion) {
+        Validacion.findOne({ 'MaraBox.Codigo' : req.params.codigoValidacion },function(err, validacion) {
           if (err) return console.error(err);
           else
           {
-            validacion.CorreoValidado = 1;
+            validacion.MaraBox.CorreoValidado = 1;
             validacion.save(function(errv) {
               if(errv) {
                 res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { codigo : req.params.codigoValidacion, message: 'Disculpe, intente nuevamente' });
@@ -130,7 +130,7 @@ module.exports = function(app,passport) {
 
     app.post('/MaraBox/validarCedula', function(req, res) {
 
-      Validacion.findOne({ Codigo : req.body.codigo },function(errv, validacion) {
+      Validacion.findOne({ 'MaraBox.Codigo' : req.body.codigo },function(errv, validacion) {
           if (errv) return console.error(errv);
           else
           {
@@ -140,7 +140,7 @@ module.exports = function(app,passport) {
               {
                 if (usuario.Cedula == req.body.cedula)
                 {
-                  validacion.CedulaValidada = 1;
+                  validacion.MaraBox.CedulaValidada = 1;
                   validacion.save(function(errvv) {
                     if(errvv) {
                       res.render(base + '/HUB/MaraBox/views/validacionUsuario.ejs', { message: 'Disculpe, intente nuevamente' });
@@ -170,7 +170,7 @@ module.exports = function(app,passport) {
       var u5 = [];
       var u6 = [];
 
-      Usuario.find({ Tipo : "4"}, function(erru, superU) {
+      Usuario.find({ 'MaraBox.Tipo' : "4"}, function(erru, superU) {
           if (superU)
           {
             superU.forEach(function(a){
@@ -179,7 +179,7 @@ module.exports = function(app,passport) {
             });
           }
       });
-      Usuario.find({ Tipo : "5"}, function(erru, admin) {
+      Usuario.find({ 'MaraBox.Tipo' : "5"}, function(erru, admin) {
           if (admin)
           {
             admin.forEach(function(a){
@@ -188,7 +188,7 @@ module.exports = function(app,passport) {
             });
           }
       });
-      Usuario.find({ Tipo : "6"}, function(erru, coach) {
+      Usuario.find({ 'MaraBox.Tipo' : "6"}, function(erru, coach) {
           if (coach)
           {
             coach.forEach(function(a){
@@ -204,7 +204,7 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/super/cambiarPermisos', function(req, res) {
       var u5 = [];
       var u6 = [];
-      Usuario.find({ Tipo : "5"}, function(erru, admin) {
+      Usuario.find({ 'MaraBox.Tipo' : "5"}, function(erru, admin) {
           if (admin)
           {
             admin.forEach(function(a){
@@ -213,7 +213,7 @@ module.exports = function(app,passport) {
             });
           }
       });
-      Usuario.find({ Tipo : "6"}, function(erru, coach) {
+      Usuario.find({ 'MaraBox.Tipo' : "6"}, function(erru, coach) {
           if (coach)
           {
             coach.forEach(function(a){
@@ -533,7 +533,7 @@ module.exports = function(app,passport) {
 
       var e = {};
       var datos = [];
-      Clases.find({ Fecha : req.params.fecha, Hora : req.params.hora }, function(err, clase) {
+      Clases.find({ 'MaraBox.Fecha' : req.params.fecha, 'MaraBox.Hora' : req.params.hora }, function(err, clase) {
         if (err) return console.error(err);
         else
         {
@@ -551,7 +551,7 @@ module.exports = function(app,passport) {
                 }
               }
             });
-            Asistencia.find({ idClase : clase._id }, function(erra, asistencia) {
+            Asistencia.find({ 'MaraBox.idClase' : clase._id }, function(erra, asistencia) {
               if (erra) return console.error(erra);
               else
               {
@@ -614,14 +614,13 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/admin/registroPrimerUsuario', function(req, res) {
-        console.log(req.body);
         var usuario = Usuario();
         usuario.MaraBox.Cedula = req.body.cedula;
         usuario.save(function(err) {
             if (err)
               res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
             else
-              Usuario.findOne({ cedula : req.body.cedula }, function(erru, usuario) {
+              Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, usuario) {
                 if (erru) return console.error(erru);
                 else
                 {
@@ -711,7 +710,7 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/validarAsistencia/:idClase/:idUsuario', function(req, res) {
-        Asistencia.findOne({ idClase : req.params.idClase, idUsuario : req.params.idUsuario }, function(err, asistencia) {
+        Asistencia.findOne({ 'MaraBox.idClase' : req.params.idClase, 'MaraBox.idUsuario' : req.params.idUsuario }, function(err, asistencia) {
           if (err)
           {
             return res.json({ code : '-1000', message: 'No se pudo recibir los datos correctamente, intente de nuevo'});
@@ -720,7 +719,7 @@ module.exports = function(app,passport) {
           {
             if (asistencia)
             {
-              asistencia.Validado = 1;
+              asistencia.MaraBox.Validado = 1;
               asistencia.save(function(err){
                 if (err)
                 {
@@ -743,7 +742,7 @@ module.exports = function(app,passport) {
         var listaEspera = 0;
 
         var e = {};
-          Clases.find({ Fecha : f.hoy(), Hora : req.params.hora }, function(err, clase) {
+          Clases.find({ 'MaraBox.Fecha' : f.hoy(), 'MaraBox.Hora' : req.params.hora }, function(err, clase) {
             if (err) return console.error(err);
             else
             {
@@ -760,7 +759,7 @@ module.exports = function(app,passport) {
                   }
                 });
 
-                Asistencia.find({ idClase : clase._id }).sort({ Creado: 1 }).count(function(err, c)
+                Asistencia.find({ 'MaraBox.idClase' : clase._id }).sort({ 'MaraBox.Creado' : 1 }).count(function(err, c)
                 {
                    console.log('Count is ' + c);
                    totalAsistentes = c;
@@ -822,7 +821,7 @@ module.exports = function(app,passport) {
 
     app.get('/MaraBox/api/ejercicios/:idEjercicio', function(req, res)
     {
-      Ejercicios.findOne({ 'Email' :  req.params.idEjercicio }, function(errE, ejercicio) {
+      Ejercicios.findOne({ 'MaraBox.Email' :  req.params.idEjercicio }, function(errE, ejercicio) {
           if (errE)
           {
             res.json({ code : "-100", mensaje : "No se pudo obtener los datos" });

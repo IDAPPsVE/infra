@@ -30,16 +30,16 @@ exports.isLoggedIn = function(req, res, next) {
 exports.guardarCodigoValidacion = function(id,validacion)
 {
   var v = new Validacion(); 		// create a new instance of the Bear model
-  v.idUsuario = id;
-  v.Codigo = validacion;
-  v.idBox = h.getMaraBoxId();
+  v.MaraBox.idUsuario = id;
+  v.MaraBox.Codigo = validacion;
+  v.MaraBox.idBox = h.getMaraBoxId();
   // save the bear and check for errors
   v.save(function(err) {});
 }
 
 exports.getMaraBoxId = function()
 {
-  Box.findOne({ 'Nombre' : 'MaraBox' }, function(err, box) {
+  Box.findOne({ 'MaraBox.Nombre' : 'MaraBox' }, function(err, box) {
             // if there are any errors, return the error before anything else
             if (err)
                 return null;
@@ -52,7 +52,7 @@ exports.getMaraBoxId = function()
 exports.getUserId = function(cedula)
 {
   
-  Usuario.findOne({ 'Cedula' :  cedula }, function(err, usuario) {
+  Usuario.findOne({ 'MaraBox.Cedula' :  cedula }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err) return null;
             else 
@@ -113,7 +113,7 @@ exports.getInfoUsuario = function(usuarioId)
 
 exports.getClaseId = function(hora)
 {
-  Clases.findOne({ 'Fecha' : f.hoy(), 'Hora' :  hora }, function(err, clase) {
+  Clases.findOne({ 'MaraBox.Fecha' : f.hoy(), 'Hora' :  hora }, function(err, clase) {
             // if there are any errors, return the error before anything else
             if (err) return null;
             else 
@@ -134,7 +134,7 @@ exports.getClaseId = function(hora)
 exports.verificarSolvencia = function(userid)
 {
   var solvente = false;
-  Solvencia.find({ 'idUsuario' : userid }, function(err, solvencia) {
+  Solvencia.find({ 'MaraBox.idUsuario' : userid }, function(err, solvencia) {
             // if there are any errors, return the error before anything else
             if (err) return null;
             else
@@ -156,7 +156,7 @@ exports.verificarSolvencia = function(userid)
 exports.verificarCierreDelBox = function()
 {
   var diaDescanso = 0;
-  Descanso.find({'Fecha' : new Date()} , function(errd, descanso) {
+  Descanso.find({'MaraBox.Fecha' : new Date()} , function(errd, descanso) {
                 if (errd){}
                 else{
                   if(descanso)

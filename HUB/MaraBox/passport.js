@@ -30,7 +30,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+        Usuario.findOne({ 'MaraBox.Email' :  email }, function(err, usuario) {
 
             // if there are any errors, return the error
             if (err)
@@ -47,12 +47,12 @@ module.exports = function(passport) {
                 var newUser            = new Usuario();
 
                 // set the user's local credentials
-                newUser.Cedula = req.body.cedula;
-                newUser.Email    = email;
-                newUser.idBox  = getMaraBoxId();
-                newUser.idBoxCode = req.body.idBoxCode;
-                newUser.Tipo     = 10;
-                newUser.Password = newUser.generateHash(password);
+                newUser.MaraBox.Cedula = req.body.cedula;
+                newUser.MaraBox.Email    = email;
+                newUser.MaraBox.idBox  = getMaraBoxId();
+                newUser.MaraBox.idBoxCode = req.body.idBoxCode;
+                newUser.MaraBox.Tipo     = 10;
+                newUser.MaraBox.Password = newUser.generateHash(password);
 
                 // save the user
                 newUser.save(function(err) {
@@ -102,7 +102,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+        Usuario.findOne({ 'MaraBox.Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
@@ -144,7 +144,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+        Usuario.findOne({ 'MaraBox.Email' :  email }, function(err, usuario) {
 
             // if there are any errors, return the error
             if (err)
@@ -161,12 +161,12 @@ module.exports = function(passport) {
                 var newUser            = new Usuario();
 
                 // set the user's local credentials
-                newUser.Cedula = req.body.cedula;
-                newUser.Email    = email;
-                newUser.idBox  = getMaraBoxId();
-                newUser.idBoxCode = req.body.idBoxCode;
-                newUser.Tipo     = 5;
-                newUser.Password = newUser.generateHash(password);
+                newUser.MaraBox.Cedula = req.body.cedula;
+                newUser.MaraBox.Email    = email;
+                newUser.MaraBox.idBox  = getMaraBoxId();
+                newUser.MaraBox.idBoxCode = req.body.idBoxCode;
+                newUser.MaraBox.Tipo     = 5;
+                newUser.MaraBox.Password = newUser.generateHash(password);
 
                 // save the user
                 newUser.save(function(err) {
@@ -216,7 +216,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'Email' :  email }, function(err, usuario) {
+        Usuario.findOne({ 'MaraBox.Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
@@ -240,7 +240,7 @@ module.exports = function(passport) {
 
 function getMaraBoxId()
 {
-  Box.findOne({ 'Nombre' : 'MaraBox' }, function(err, box) {
+  Box.findOne({ 'MaraBox.Nombre' : 'MaraBox' }, function(err, box) {
             // if there are any errors, return the error before anything else
             if (err)
                 return null;

@@ -26,7 +26,7 @@ module.exports = function(passport) {
         process.nextTick(function() {
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioInfra.findOne({ 'IDAPP.Email' :  email }, function(err, usuario) {
 
             // if there are any errors, return the error
             if (err)
@@ -45,10 +45,9 @@ module.exports = function(passport) {
                 var newUser            = new UsuarioInfra();
 
                 // set the user's local credentials
-                newUser.Contrato = req.body.contrato;
-                newUser.Email    = email;
-                newUser.Tipo     = 1;
-                newUser.Password = newUser.generateHash(password);
+                newUser.IDAPP.Email    = email;
+                newUser.IDAPP.Tipo     = 1;
+                newUser.IDAPP.Password = newUser.generateHash(password);
 
                 // save the user
                 newUser.save(function(err) {
@@ -81,7 +80,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioInfra.findOne({ 'IDAPP.Email' :  email }, function(err, usuario) {
 
           // if there are any errors, return the error
           if (err)
@@ -98,9 +97,9 @@ module.exports = function(passport) {
               var newUser            = new UsuarioInfra();
 
               // set the user's local credential
-              newUser.Email    = "vjfs18@gmail.com";
-              newUser.Tipo     = 2;
-              newUser.Password = newUser.generateHash("IDAPP");
+              newUser.IDAPP.Email    = "vjfs18@gmail.com";
+              newUser.IDAPP.Tipo     = 2;
+              newUser.IDAPP.Password = newUser.generateHash("IDAPP");
 
               // save the user
               newUser.save(function(err) {
@@ -133,7 +132,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioIDAPP.findOne({ 'IDAPP.Email' :  email }, function(err, usuario) {
 
           // if there are any errors, return the error
           if (err)
@@ -150,9 +149,9 @@ module.exports = function(passport) {
               var newUser            = new UsuarioIDAPP();
 
               // set the user's local credential
-              newUser.Email    = email;
-              newUser.Tipo     = 3;
-              newUser.Password = newUser.generateHash(password);
+              newUser.IDAPP.Email    = email;
+              newUser.IDAPP.Tipo     = 3;
+              newUser.IDAPP.Password = newUser.generateHash(password);
 
               // save the user
               newUser.save(function(err) {
@@ -185,7 +184,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioCliente.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioCliente.findOne({ 'IDAPP.Email' :  email }, function(err, usuario) {
 
           // if there are any errors, return the error
           if (err)
@@ -201,10 +200,10 @@ module.exports = function(passport) {
               var newUser            = new UsuarioCliente();
 
               // set the user's local credentials
-              newUser.Contrato = req.body.contrato;
-              newUser.Email    = email;
-              newUser.Tipo     = 4;
-              newUser.Password = newUser.generateHash(password);
+              newUser.IDAPP.Contrato = req.body.contrato;
+              newUser.IDAPP.Email    = email;
+              newUser.IDAPP.Tipo     = 4;
+              newUser.IDAPP.Password = newUser.generateHash(password);
 
               // save the user
               newUser.save(function(err) {
