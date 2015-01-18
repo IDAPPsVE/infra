@@ -73,10 +73,10 @@ module.exports = function(app) {
     app.post('/registroContrato',function(req, res) {
 
       var nombreApp = req.body.app;
-      var contrato  = req.body.contrato;
+      var contratoN  = req.body.contrato;
 
       var contrato = new Contrato(); 		// create a new instance of the Bear model
-      contrato.Contrato          = req.body.contrato;
+      contrato.Contrato          = contratoN;
       contrato.Android           = req.body.android;
       contrato.iOS               = req.body.ios;
       contrato.Administrativo    = req.body.administrativo;
@@ -87,10 +87,9 @@ module.exports = function(app) {
       contrato.Telefono_Personal = req.body.telefonoContacto;
       contrato.Direccion         = req.body.direccion;
       contrato.Correo_Contacto   = req.body.correo;
-      contrato.Fecha_Facturacion = req.body.fechaFacturacion;
       contrato.Nombre_APP        = nombreApp;
-      contrato.Firmantes         = '';
-      contrato.Cedula_Firmantes  = [];
+      contrato.Firmantes         = req.body.firmantes;
+      contrato.Cedula_Firmantes  = req.body.cedulaFirmantes;
 
       // save the bear and check for errors
       contrato.save(function(err) {
