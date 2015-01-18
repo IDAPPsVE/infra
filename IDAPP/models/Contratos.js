@@ -16,8 +16,6 @@ var ContratosSchema = mongoose.Schema({
     Correo_Contacto   : String,
     Fecha_Contrato    : {type: Date, default: Date.now },
     Nombre_APP        : String,
-    Firmantes         : Number,
-    Cedula_Firmantes  : [mongoose.Schema.Types.Mixed],
   }
 });
 

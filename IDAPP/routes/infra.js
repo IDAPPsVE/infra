@@ -1,4 +1,5 @@
 var email = require('../controllers/mailController');
+var rs = require('../helpers/randomString');
 var Contacto    = require('../models/Contacto');
 var Contrato   = require('../models/Contratos');
 var ValidacionIDAPP  = require('../models/ValidacionIDAPP');
@@ -73,6 +74,7 @@ module.exports = function(app) {
     app.post('/registroContrato',function(req, res) {
 
       var nombreApp = req.body.app;
+      var correo = req.body.correo;
       var contratoN  = req.body.contrato;
 
       var contrato = new Contrato(); 		// create a new instance of the Bear model
@@ -83,13 +85,11 @@ module.exports = function(app) {
       contrato.Facturacion       = req.body.facturacion;
       contrato.RIF               = req.body.rif;
       contrato.Empresa           = req.body.empresa;
-      contrato.Telefono_Oficina  = req.body.telefonoOficina
+      contrato.Telefono_Oficina  = req.body.telefonoOficina;
       contrato.Telefono_Personal = req.body.telefonoContacto;
       contrato.Direccion         = req.body.direccion;
-      contrato.Correo_Contacto   = req.body.correo;
+      contrato.Correo_Contacto   = correo;
       contrato.Nombre_APP        = nombreApp;
-      contrato.Firmantes         = req.body.firmantes;
-      contrato.Cedula_Firmantes  = req.body.cedulaFirmantes;
 
       // save the bear and check for errors
       contrato.save(function(err) {
@@ -103,7 +103,7 @@ module.exports = function(app) {
           // Registrar box en Boxes
           // Luego, generar codigo de Box y Box Admin
           // Por ultimo, enviar correo al Usuario propietario de la app
-          guardarBoxEnBoxes(nombreApp,contrato);
+          guardarBoxEnBoxes(correo, nombreApp);
 
           res.render('../IDAPP/views/admin/registroContrato.ejs', { message:'Contrato registrado con éxito' });
         }
@@ -143,7 +143,7 @@ function obtenerContratoId(nombreApp)
     });
   }
 
-function guardarBoxEnBoxes(nombreApp)
+function guardarBoxEnBoxes(to, nombreApp)
 {
   var b = new B();
   b.Nombre = nombreApp;
@@ -156,11 +156,11 @@ function guardarBoxEnBoxes(nombreApp)
     else
     {
       var boxId = obtenerBoxId(nombreApp);
-      guardarBoxCode(boxId)
-      var boxCode = obtenerBoxCode();
-      guardarBoxAdmin(boxId)
-      var boxAdmin = obtenerBoxAdminCode();
-      enviarBoxYBoxAdminCode(boxId, boxAdmin);
+      guardarBoxCode(boxId);
+      var boxCode = obtenerBoxCode(boxId);
+      guardarBoxAdminCode(boxId);
+      var boxAdmin = obtenerBoxAdminCode(boxId);
+      enviarBoxYBoxAdminCode(to, boxCode, boxAdmin);
     }
   });
 }
@@ -184,19 +184,22 @@ function guardarBoxCode(boxId)
   var bc = new BC();
   bc.Codigo = s;
   bc.idBox = boxId;
-  bc.save(function(err) {});
+  bc.save(function(err) {
+    if (err)
+    {}
+  });
 }
 
-function obtenerBoxCode()
+function obtenerBoxCode(boxId)
 {
-  BC.findOne({ 'Nombre' : nombreApp }, function(err, boxCode) {
+  BC.findOne({ 'idBox' : boxId }, function(err, boxCode) {
     // if there are any errors, return the error before anything else
     if (err)
     {
       return null;
     }
     if (boxCode)
-      return boxCode._id;
+      return boxCode.Codigo;
     });
 }
 
@@ -206,19 +209,22 @@ function guardarBoxAdminCode(boxId)
   var bac = new BAC();
   bac.Codigo = s;
   bac.idBox = boxId;
-  bac.save(function(err) {});
+  bac.save(function(err) {
+    if (err)
+    {}
+  });
 }
 
-function obtenerBoxAdminCode()
+function obtenerBoxAdminCode(boxId)
 {
-  BAC.findOne({ 'Nombre' : nombreApp }, function(err, boxAdminCode) {
+  BAC.findOne({ 'idBox' : boxId }, function(err, boxAdminCode) {
     // if there are any errors, return the error before anything else
     if (err)
     {
       return null;
     }
     if (boxAdminCode)
-      return boxAdminCode._id;
+      return boxAdminCode.Codigo;
     });
 }
 
