@@ -24,7 +24,8 @@ mongoose.connect(configDB.url); // connect to our database
 
 var router = express.Router();
 
-require('./IDAPP/config/passport.js')(passport); // pass passport for configuration
+require('./IDAPP/config/passport.js')(passport);
+require('./HUB/MaraBox/passport.js')(passport);
 
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)

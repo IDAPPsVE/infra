@@ -39,14 +39,17 @@ exports.guardarCodigoValidacion = function(id,validacion)
 
 exports.getMaraBoxId = function()
 {
-  Box.findOne({ 'MaraBox.Nombre' : 'MaraBox' }, function(err, box) {
-            // if there are any errors, return the error before anything else
-            if (err)
-                return null;
-
-            return box._id;
-
-        });
+  Box.findOne({ 'IDAPP.Nombre' : 'MaraBox' }, function(err, box) 
+  {
+      if (err)
+      {
+        return null;
+      }
+      if(box)
+      {
+        return box._id;
+      }
+  });
 }
 
 exports.getUserId = function(cedula)
@@ -57,19 +60,10 @@ exports.getUserId = function(cedula)
             if (err) return null;
             else 
             {
-              console.log(usuario);
               if (usuario)
               {
-                console.log(usuario._id);
                 return usuario._id;
-
               }
-              else
-              {
-                return null;
-              }
-              
-              
             }
         });
 }

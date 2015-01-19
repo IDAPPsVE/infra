@@ -7,7 +7,7 @@ function hoy()
 
 function fecha(fecha)
 {
-    return moment(fecha);
+    return moment(new Date(fecha)).format("DD-MM-YYYY");
 }
 
 function formatearFecha(fecha)

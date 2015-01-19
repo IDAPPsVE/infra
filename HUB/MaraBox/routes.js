@@ -4,7 +4,7 @@ var base = process.env.PWD;
 var busboy = require('connect-busboy');
 var fs = require('fs-extra');
 
-
+var moment = require('moment');
 var rs = require(base + '/IDAPP/helpers/randomString');
 var f = require(base + '/IDAPP/helpers/dates');
 var h = require(base + '/HUB/MaraBox/helpers');
@@ -25,6 +25,7 @@ var Descanso = require(base + '/HUB/MaraBox/models/Descansos');
 var Clases = require(base + '/HUB/MaraBox/models/Clases');
 var Entrenadores = require(base + '/HUB/MaraBox/models/Entrenadores');
 
+var dominio = "http://infra-idappsve-1.c9.io"
 
 module.exports = function(app,passport) {
 
@@ -33,17 +34,10 @@ module.exports = function(app,passport) {
     //=========================================================
     //          Pagina de inicio y Perfiles de Usuario
     //=========================================================
-
-    app.get('/api/MaraBox/v0.0.1/test'), function(req, res)
-    {
-        return res.json({ code:'200', message:'Hola!' });
-    }
-
     app.get('/MaraBox/', function(req, res) {
-      return res.json({ code:'200', message:'Hola!' });
-      //res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
+      res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
     });
-
+    
     app.post('/MaraBox/', function(req, res) {
       return res.json({ code:'200', message:'Hola!' });
       //res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
@@ -61,6 +55,11 @@ module.exports = function(app,passport) {
     //                    Signup y Login
     //=========================================================
 
+    app.get('/MaraBox/logout', function(req, res) {
+        req.logout();
+        res.redirect('/MaraBox/');
+    });
+    
     // process the login form
     app.post('/MaraBox/login', function(req, res,next) {
       passport.authenticate('local-loginMaraBoxAdmin', function(err, user, info) {
@@ -93,13 +92,22 @@ module.exports = function(app,passport) {
 
     app.post('/MaraBox/signup', function(req, res,next) {
       passport.authenticate('local-signupMaraBoxAdmin', function(err, user, info) {
-        var randomString = rs.randomString(20);
-        h.guardarCodigoValidacion(user._id, randomString);
-        email.sendValidationCode(user.Email,randomString);
-        if (err){}
+        console.log(err,user,info);
+        if (user)
+        {
+          var randomString = rs.randomString(20);
+          h.guardarCodigoValidacion(user._id, randomString);
+          var url = dominio + '/MaraBox/ValidacionUsuario/' + randomString;
+          email.sendValidationCode(user.Email,url);
+          if (err){}
+          else
+          {
+            res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: "El usuario fue registrado con exito" });
+          }  
+        }
         else
         {
-          res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: "El usuario fue registrado con exito" });
+          res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: info });
         }
       })(req, res, next);
     });
@@ -173,27 +181,39 @@ module.exports = function(app,passport) {
       Usuario.find({ 'MaraBox.Tipo' : "4"}, function(erru, superU) {
           if (superU)
           {
+            console.log(superU);
             superU.forEach(function(a){
               var iu = h.getInfoUsuario(superU._id);
-              u4.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              if (iu)
+              {
+                u4.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              }
             });
           }
       });
       Usuario.find({ 'MaraBox.Tipo' : "5"}, function(erru, admin) {
           if (admin)
           {
+            console.log(admin);
             admin.forEach(function(a){
               var iu = h.getInfoUsuario(admin._id);
-              u5.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              if (iu)
+              {
+                u5.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              }
             });
           }
       });
       Usuario.find({ 'MaraBox.Tipo' : "6"}, function(erru, coach) {
           if (coach)
           {
+            console.log(coach);
             coach.forEach(function(a){
               var iu = h.getInfoUsuario(coach._id);
-              u6.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              if (iu)
+              {
+                u6.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              }
             });
           }
       });
@@ -209,7 +229,10 @@ module.exports = function(app,passport) {
           {
             admin.forEach(function(a){
               var iu = h.getInfoUsuario(admin._id);
-              u5.push({id:admin._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              if (iu)
+              {
+                u5.push({id:admin._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              }
             });
           }
       });
@@ -218,7 +241,10 @@ module.exports = function(app,passport) {
           {
             coach.forEach(function(a){
               var iu = h.getInfoUsuario(coach._id);
-              u6.push({id:coach._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              if (iu)
+              {
+                u6.push({id:coach._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+              }
             });
           }
       });
@@ -385,13 +411,13 @@ module.exports = function(app,passport) {
           {
             res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { message: 'Hubo un error, intente nuevamente' });
             // Enviar a todas las plataformas via push notifications
-            res.end();
+            //res.end();
           }
           else
           {
             res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { message: 'El evento fue guardado con exito' });
             // Enviar a todas las plataformas via push notifications
-            res.end();
+            //res.end();
           }
         });
         console.log('Done parsing form!');
@@ -429,46 +455,64 @@ module.exports = function(app,passport) {
     app.post('/MaraBox/admin/registroSolvencia', function(req, res) {
 
         var cedula = req.body.cedula;
-        var userid = h.getUserId(cedula);
+        var userid;
         var dh = 0;
-        var fi = f.fecha(req.body.fechaInicio);
-        var fc = f.fecha(req.body.fechaCulminacion);
+        var fi = moment(new Date(req.body.fechaInicio));
+        var fc = moment(new Date(req.body.fechaCulminacion));
 
-        var totalDias = fi.diff(fc, 'days');
+        var totalDias = fc.diff(fi, 'days');
 
-        Descanso.find(function(errd, descanso) {
-                if (errd){}
-                else{
-                  if(descanso)
-                  {
-                    var i = false;
-                    descanso.forEach(function(d){
-                      i = f.fecha(d.Fecha).isBetween(fi, fc);
-                      if (i)
-                      {
-                        dh++;
-                        i = false;
-                      }
-                    });
+        Usuario.findOne({ 'MaraBox.Cedula' :  cedula }, function(err, usuario) {
+            // if there are any errors, return the error before anything else
+            if (err) return null;
+            else 
+            {
+              if (usuario)
+              {
+                userid = usuario._id;
+                Descanso.find(function(errd, descanso) {
+                  if (errd){}
+                  else{
+                    if(descanso)
+                    {
+                      var i = false;
+                      descanso.forEach(function(d){
+                        i = f.fecha(d.Fecha).isBetween(fi, fc);
+                        if (i)
+                        {
+                          dh++;
+                          i = false;
+                        }
+                      });
+                    }
                   }
-                }
-              });
-
-        var solvencia = new Solvencia(); 		// create a new instance of the Bear model
-          solvencia.MaraBox.idUsuario = userid;
-          solvencia.MaraBox.FechaInicio = req.body.fechaInicio;
-          solvencia.MaraBox.FechaCulminacion = req.body.fechaCulminacion;
-          solvencia.MaraBox.DiasHabiles = totalDias + dh;
-
-          // save the bear and check for errors
-          solvencia.save(function(err) {
-            if (err)
-              res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
-            else
-              res.render(base + '/HUB/MaraBox/views/nuevaNotificacion.ejs', { message:'Registro guardado con exito' });
-
-              // Enviar a todas las plataformas via push notifications
-          });
+                });
+  
+                var dis = totalDias + dh;
+                console.log(userid, req.body.fechaInicio, req.body.fechaCulminacion, dis);
+                
+                var solvencia = new Solvencia(); 		// create a new instance of the Bear model
+                  solvencia.MaraBox.idUsuario = userid;
+                  solvencia.MaraBox.FechaInicio = req.body.fechaInicio;
+                  solvencia.MaraBox.FechaCulminacion = req.body.fechaCulminacion;
+                  solvencia.MaraBox.DiasHabiles = dis;
+        
+                  // save the bear and check for errors
+                  solvencia.save(function(err) {
+                    if (err)
+                    {
+                      res.render(base + '/HUB/MaraBox/views/registroSolvencia.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
+                    }
+                    else
+                    {
+                      res.render(base + '/HUB/MaraBox/views/registroSolvencia.ejs', { message:'Registro guardado con exito' });
+                    }
+        
+                      // Enviar a todas las plataformas via push notifications
+                  });
+              }
+            }
+        });
     });
 
     app.get('/MaraBox/admin/registroFeriado', function(req, res) {

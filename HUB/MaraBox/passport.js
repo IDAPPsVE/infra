@@ -3,8 +3,10 @@ var LocalStrategy   = require('passport-local').Strategy;
 var base = process.env.PWD;
 
 // load up the user model
+var h = require(base + '/HUB/MaraBox/helpers');
 var Usuario            = require('./models/Usuarios');
 var Box = require(base + '/IDAPP/models/Boxes');
+var BoxAdmin = require(base + '/IDAPP/models/BoxAdminCode');
 
 // expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -157,25 +159,52 @@ module.exports = function(passport) {
 
                 // if there is no user with that email
                 // create the user
-
-                var newUser            = new Usuario();
-
-                // set the user's local credentials
-                newUser.MaraBox.Cedula = req.body.cedula;
-                newUser.MaraBox.Email    = email;
-                newUser.MaraBox.idBox  = getMaraBoxId();
-                newUser.MaraBox.idBoxCode = req.body.idBoxCode;
-                newUser.MaraBox.Tipo     = 5;
-                newUser.MaraBox.Password = newUser.generateHash(password);
-
-                // save the user
-                newUser.save(function(err) {
-                    if (err)
+                BoxAdmin.findOne({ 'IDAPP.Codigo' : req.body.idBoxAdmin }, function(err, boxa) 
+                  {
+                      if (err)
                       {
-                        throw err;
+                        return null;
                       }
-                    return done(null, newUser, { code : '200'});
-                });
+                      console.log(boxa);
+                      if(boxa)
+                      {
+                        Box.findOne({ 'IDAPP.Nombre' : 'MaraBox' }, function(err, box) 
+                          {
+                              if (err)
+                              {
+                                return null;
+                              }
+                              if(box)
+                              {
+                                var boxid = box._id;
+                                var newUser            = new Usuario();
+        
+                                // set the user's local credentials
+                                newUser.MaraBox.Cedula = req.body.cedula;
+                                newUser.MaraBox.Email    = email;
+                                newUser.MaraBox.idBox  = boxid;
+                                newUser.MaraBox.idBoxCode = req.body.idBoxCode;
+                                newUser.MaraBox.Tipo     = 5;
+                                newUser.MaraBox.Password = newUser.generateHash(password);
+                
+                                // save the user
+                                newUser.save(function(err) {
+                                    if (err)
+                                      {
+                                        throw err;
+                                      }
+                                    return done(null, newUser, { code : '200'});
+                                });
+                              }
+                          });
+                    }
+                    else
+                    {
+                        return done(null, false, { code : '-4000', message: 'El codigo administrativo del box es invalido' });
+                    }
+
+
+                  });
             }
 
         });
@@ -240,7 +269,7 @@ module.exports = function(passport) {
 
 function getMaraBoxId()
 {
-  Box.findOne({ 'MaraBox.Nombre' : 'MaraBox' }, function(err, box) {
+  Box.findOne({ 'IDAPP.Nombre' : 'MaraBox' }, function(err, box) {
             // if there are any errors, return the error before anything else
             if (err)
                 return null;
