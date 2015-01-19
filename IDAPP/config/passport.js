@@ -97,9 +97,9 @@ module.exports = function(passport) {
               var newUser            = new UsuarioInfra();
 
               // set the user's local credential
-              newUser.IDAPP.Email    = "vjfs18@gmail.com";
+              newUser.IDAPP.Email    = email;
               newUser.IDAPP.Tipo     = 2;
-              newUser.IDAPP.Password = newUser.generateHash("IDAPP");
+              newUser.IDAPP.Password = newUser.generateHash(password);
 
               // save the user
               newUser.save(function(err) {
@@ -252,7 +252,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioInfra.findOne({ 'IDAPP.Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
@@ -283,11 +283,11 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioInfra.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioInfra.findOne({ 'IDAPP.Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
-
+            console.log(usuario);
             // if no user is found, return the message
             if (usuario.Email != email)
               return done(null, false, { code : '-5000', message: 'Usuario no registrado' });
@@ -311,7 +311,7 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioIDAPP.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioIDAPP.findOne({ 'IDAPP.Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
@@ -339,18 +339,22 @@ module.exports = function(passport) {
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-        UsuarioCliente.findOne({ 'Email' :  email }, function(err, usuario) {
+        UsuarioCliente.findOne({ 'IDAPP.Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
 
             // if no user is found, return the message
             if (usuario.Email != email)
+            {
               return done(null, false, { code : '-5000', message: 'Usuario no registrado' });
+            }
 
             // if the user is found but the password is wrong
             if (!usuario.validPassword(password))
+            {
                 return done(null, false, { code : '-2000', message: 'Password errado' });
+            }
 
             // all is well, return successful user
             return done(null, usuario,{ code : '200' });
@@ -361,7 +365,7 @@ module.exports = function(passport) {
 
 function verificarValidezContrato(contrato)
 {
-  Contratos.findOne({ 'Contrato' :  contrato }, function(err, c) {
+  Contratos.findOne({ 'IDAPP.Contrato' :  contrato }, function(err, c) {
 
     // if there are any errors, return the error
     if (err)

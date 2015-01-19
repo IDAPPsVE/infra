@@ -45,9 +45,11 @@ module.exports = function(app, passport) {
     });
 
     app.post('/signup', function(req, res,next) {
-      passport.authenticate('local-loginAdminSys', function(err, user, info) {
+      passport.authenticate('local-signupAdminSys', function(err, user, info) {
         var randomString = rs.randomString(20);
         var url = dominio + '/app/val/' + randomString;
+        
+        console.log(url);
         guardarCodigoValidacionPropietarioApp(user._id, randomString);
         email.sendValidationCode(user.Email,url);
 
@@ -86,9 +88,10 @@ module.exports = function(app, passport) {
     });
 
     app.post('/ias/staff/signup', function(req, res,next) {
-      passport.authenticate('local-loginIDAPPEmpleado', function(err, user, info) {
+      passport.authenticate('local-signupIDAPPEmpleado', function(err, user, info) {
         var randomString = rs.randomString(20);
         var url = dominio + '/admin/val/' + randomString;
+        
         guardarCodigoValidacionIDAPP(user._id, randomString);
         email.sendValidationCode(user.Email,url);
 
@@ -104,7 +107,7 @@ module.exports = function(app, passport) {
 
     app.post('/ias/admin/login', function(req, res,next) {
       passport.authenticate('local-loginIDAPP', function(err, user, info) {
-
+        console.log("Desde route ",user);
         var userNeededData = {'id':user._id,
                               'Email':user.Email,
                               'Tipo':user.Tipo,
@@ -115,7 +118,8 @@ module.exports = function(app, passport) {
             if(user.Tipo == 2)
               {
                 //Redirigir a donde debe
-                res.redirect('/admin/dashboard');
+                res.json({"Valor" : "sirvio"});
+                //res.redirect('/admin/dashboard');
               }
         });
       })(req, res, next);
@@ -145,6 +149,7 @@ module.exports = function(app, passport) {
     app.post('/ias/ss/login', function(req, res,next) {
       passport.authenticate('local-loginICARUS', function(err, user, info) {
 
+        console.log("Desde route ",user);
         var userNeededData = {'id':user._id,
                               'Email':user.Email,
                               'Tipo':user.Tipo,
@@ -188,8 +193,8 @@ module.exports = function(app, passport) {
 function guardarCodigoValidacionIDAPP(id,validacion)
 {
   var v = new Validacion();
-  v.idUsuario= id;
-  v.Validacion = validacion;
+  v.IDAPP.idUsuario= id;
+  v.IDAPP.Codigo = validacion;
   v.save(function(err) {
     if (err)
     {}
@@ -199,8 +204,8 @@ function guardarCodigoValidacionIDAPP(id,validacion)
 function guardarCodigoValidacionPropietarioApp(id,validacion)
 {
   var v = new ValidacionP();
-  v.idUsuario = id;
-  v.Validacion = validacion;
+  v.IDAPP.idUsuario = id;
+  v.IDAPP.Codigo = validacion;
   v.save(function(err) {
     if (err)
     {}

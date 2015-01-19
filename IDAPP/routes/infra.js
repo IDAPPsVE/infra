@@ -70,7 +70,7 @@ module.exports = function(app) {
         res.render('../IDAPP/views/registroContrato.ejs', { message:'' });
     });
 
-    app.post('/registroContrato',function(req, res) {
+    app.post('/admin/registroContrato',function(req, res) {
 
       var nombreApp = req.body.app;
       var correo = req.body.correo;
@@ -186,13 +186,14 @@ function guardarBoxEnBoxes(to, nombreApp)
   var b = new B();
   b.IDAPP.Nombre = nombreApp;
   b.IDAPP.idContrato = obtenerContratoId(nombreApp);
-  b.save(function(err) {
+  b.save(function(err,c) {
     if (err)
     {
 
     }
     else
     {
+      console.log("callback??",c);
       var boxId = obtenerBoxId(nombreApp);
       guardarBoxCode(boxId);
       var boxCode = obtenerBoxCode(boxId);
