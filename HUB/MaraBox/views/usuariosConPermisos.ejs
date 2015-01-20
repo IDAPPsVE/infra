@@ -21,25 +21,32 @@
       <h1>Superusuario</h1>
       <table>
         <tr><td>Cedula</td><td>Nombres</td><td>Apellidos</td></tr>
-        <% superU.forEach(function(a) { %>
-        <tr></td><td>a.cedula</td><td>a.nombre</td><td>a.apellido</td></tr>
-        <% }); %>
+        <%if (superU) { %>
+          <% superU.forEach(function(a) { %>
+            <tr><td><%= a.cedula %></td><td><%= a.nombre %></td><td><%= a.apellido %></td></tr>
+          <% }); %>
+        <% } %>
       </table>
+      <p><%= superU %></p>
                 
       <h1>Usuarios Administrativos</h1>
       <table>
         <tr><td>Cedula</td><td>Nombres</td><td>Apellidos</td></tr>
-        <% admin.forEach(function(a) { %>
-        <tr><td>a.cedula</td><td>a.nombre</td><td>a.apellido</td></tr>
-        <% }); %>
+        <%if (admin) { %>
+          <% admin.forEach(function(a) { %>
+            <tr><td><%= a.cedula %></td><td><%= a.nombre %></td><td><%= a.apellido %></td></tr>
+          <% }); %>
+        <% } %>
       </table>
       
       <h1>Entrenadores</h1>
       <table>
-        <tr><td>#</td><td>Cedula</td><td>Nombres</td><td>Apellidos</td></tr>
-        <% coach.forEach(function(a) { %>
-        <tr><td>a.cedula</td><td>a.nombre</td><td>a.apellido</td></tr>
-        <% }); %>
+        <tr><td>Cedula</td><td>Nombres</td><td>Apellidos</td></tr>
+        <%if (coach) { %>
+          <% coach.forEach(function(a) { %>
+            <tr><td><%= a.cedula %></td><td><%= a.nombre %></td><td><%= a.apellido %></td></tr>
+          <% }); %>
+        <% } %>
       </table>
   </div>
 

@@ -69,6 +69,10 @@ module.exports = function(app,passport) {
                               'isLoggedIn':'1'};
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
+          else
+          {
+            res.render(base + '/HUB/MaraBox/views/registrarInfoPersonal.ejs', { idUsuario : user._id, message: "El usuario fue registrado con exito, para finalizar regitra tu informacion personal" });
+          }
             if(user.Tipo == 4)
               {
                 res.redirect('/MaraBox/super/dashboard');
@@ -102,7 +106,7 @@ module.exports = function(app,passport) {
           if (err){}
           else
           {
-            res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: "El usuario fue registrado con exito" });
+            res.render(base + '/HUB/MaraBox/views/registrarInfoPersonal.ejs', { idUsuario : user._id, message: "El usuario fue registrado con exito, para finalizar regitra tu informacion personal" });
           }  
         }
         else
@@ -110,6 +114,35 @@ module.exports = function(app,passport) {
           res.render(base + '/HUB/MaraBox/views/signup.ejs', { message: info });
         }
       })(req, res, next);
+    });
+
+    app.get('/MaraBox/registroInfoUsuario', function(req, res) {
+      res.render(base + '/HUB/MaraBox/views/registrarInfoPersonal.ejs', { idUsuario : '', message: req.flash('loginMessage') });
+    });
+    
+    app.post('/MaraBox/registroInfoUsuario', function(req, res) {
+
+      var info = new InfoUsuario(); 		// create a new instance of the Bear model
+      info.MaraBox.idUsuario = req.body.id;
+      info.MaraBox.Nombres = req.body.nombres;
+      info.MaraBox.Apellidos = req.body.apellidos;
+      info.MaraBox.Ciudad = req.body.ciudad;
+      info.MaraBox.Estado = req.body.estado;
+      info.MaraBox.Direccion = req.body.estado;
+      info.MaraBox.Telefono = req.body.telefono;
+      info.MaraBox.FechaNacimiento = req.body.fechaNacimiento;
+      
+      // save the bear and check for errors
+      info.save(function(err) {
+        if (err)
+        {
+          res.render(base + '/HUB/MaraBox/views/registrarInfoPersonal.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
+        }
+        else
+        {
+          res.redirect('/MaraBox/');
+        }
+      });
     });
 
 
@@ -167,7 +200,6 @@ module.exports = function(app,passport) {
         });
     });
 
-
     //=========================================================
     //            Funciones de Superusuario
     //=========================================================
@@ -178,89 +210,117 @@ module.exports = function(app,passport) {
       var u5 = [];
       var u6 = [];
 
-      Usuario.find({ 'MaraBox.Tipo' : "4"}, function(erru, superU) {
-          if (superU)
+      //{ $and: [ { _id: someId }, { _id: anotherId } ] }
+      Usuario.find({ $or: [ { 'MaraBox.Tipo' : 4 }, { 'MaraBox.Tipo' : 5 }, { 'MaraBox.Tipo' : 6 } ]}, function(erru, usuario) {
+          if (usuario)
           {
-            console.log(superU);
-            superU.forEach(function(a){
-              var iu = h.getInfoUsuario(superU._id);
-              if (iu)
-              {
-                u4.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
-              }
+            var i = 0;
+            usuario.forEach(function(u){
+              InfoUsuario.findOne({ 'MaraBox.idUsuario' : u._id }, function(err, info) {
+                  if (err) return null;
+                  else 
+                  {
+                    if (info === null)
+                    {
+                      if (u.MaraBox.Tipo === 4)
+                      {
+                        u4.push({cedula:u.MaraBox.Cedula, nombre:"", apellido:"" });
+                      }
+                      if (u.MaraBox.Tipo === 5)
+                      {
+                        u5.push({cedula:u.MaraBox.Cedula, nombre:"", apellido:"" });
+                      }
+                      if (u.MaraBox.Tipo === 6)
+                      {
+                        u6.push({cedula:u.MaraBox.Cedula, nombre:"", apellido:"" });
+                      }
+                    }
+                    else
+                    {
+                      if (u.MaraBox.Tipo === 4)
+                      {
+                        u4.push({cedula:u.MaraBox.Cedula, nombre:info.MaraBox.Nombres, apellido:info.MaraBox.Apellidos });
+                      }
+                      if (u.MaraBox.Tipo === 5)
+                      {
+                        u5.push({cedula:u.MaraBox.Cedula, nombre:info.MaraBox.Nombres, apellido:info.MaraBox.Apellidos });
+                      }
+                      if (u.MaraBox.Tipo === 6)
+                      {
+                        u6.push({cedula:u.MaraBox.Cedula, nombre:info.MaraBox.Nombres, apellido:info.MaraBox.Apellidos });
+                      }
+                    }
+                    i++;
+                    if (i === usuario.length)
+                    {
+                      res.render(base + '/HUB/MaraBox/views/usuariosConPermisos.ejs', { superU : u4, admin : u5, coach : u6, message: req.flash('loginMessage') });
+                    }
+                  }
+              });
             });
           }
       });
-      Usuario.find({ 'MaraBox.Tipo' : "5"}, function(erru, admin) {
-          if (admin)
-          {
-            console.log(admin);
-            admin.forEach(function(a){
-              var iu = h.getInfoUsuario(admin._id);
-              if (iu)
-              {
-                u5.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
-              }
-            });
-          }
-      });
-      Usuario.find({ 'MaraBox.Tipo' : "6"}, function(erru, coach) {
-          if (coach)
-          {
-            console.log(coach);
-            coach.forEach(function(a){
-              var iu = h.getInfoUsuario(coach._id);
-              if (iu)
-              {
-                u6.push({cedula:iu[0], nombre:iu[1], apellido:iu[2] });
-              }
-            });
-          }
-      });
-
-        res.render(base + '/HUB/MaraBox/views/usuariosConPermisos.ejs', { superU : u4, admin : u5, coach : u6, message: req.flash('loginMessage') });
     });
 
     app.get('/MaraBox/super/cambiarPermisos', function(req, res) {
       var u5 = [];
       var u6 = [];
-      Usuario.find({ 'MaraBox.Tipo' : "5"}, function(erru, admin) {
-          if (admin)
+      Usuario.find({ $or: [ { 'MaraBox.Tipo' : 5 }, { 'MaraBox.Tipo' : 6 } ]}, function(erru, usuario) {
+          if (usuario)
           {
-            admin.forEach(function(a){
-              var iu = h.getInfoUsuario(admin._id);
-              if (iu)
-              {
-                u5.push({id:admin._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
-              }
+            var i = 0;
+            usuario.forEach(function(u){
+              InfoUsuario.findOne({ 'MaraBox.idUsuario' : u._id }, function(err, info) {
+                  if (err) return null;
+                  else 
+                  {
+                    if (info === null)
+                    {
+                      if (u.MaraBox.Tipo === 5)
+                      {
+                        u5.push({id:u._id, cedula:u.MaraBox.Cedula, nombre:"", apellido:"" });
+                      }
+                      if (u.MaraBox.Tipo === 6)
+                      {
+                        u6.push({id:u._id, cedula:u.MaraBox.Cedula, nombre:"", apellido:"" });
+                      }
+                    }
+                    else
+                    {
+                      if (u.MaraBox.Tipo === 5)
+                      {
+                        u5.push({id:u._id, cedula:u.MaraBox.Cedula, nombre:info.MaraBox.Nombres, apellido:info.MaraBox.Apellidos });
+                      }
+                      if (u.MaraBox.Tipo === 6)
+                      {
+                        u6.push({id:u._id, cedula:u.MaraBox.Cedula, nombre:info.MaraBox.Nombres, apellido:info.MaraBox.Apellidos });
+                      }
+                    }
+                    i++;
+                    if (i === usuario.length)
+                    {
+                      console.log("DESDE FUERA DE INFO inicio",{ admin : u5, coach : u6 }, "final");
+                      res.render(base + '/HUB/MaraBox/views/cambiarPermisos.ejs', { admin : u5, coach : u6, message: req.flash('loginMessage') });
+                    }
+                  }
+              });
             });
           }
       });
-      Usuario.find({ 'MaraBox.Tipo' : "6"}, function(erru, coach) {
-          if (coach)
-          {
-            coach.forEach(function(a){
-              var iu = h.getInfoUsuario(coach._id);
-              if (iu)
-              {
-                u6.push({id:coach._id, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
-              }
-            });
-          }
-      });
-        res.render(base + '/HUB/MaraBox/views/cambiarPermisos.ejs', { admin : u5, coach : u6, message: req.flash('loginMessage') });
     });
 
     app.post('/MaraBox/super/cambiarPermisos', function(req, res) {
+      console.log(req.body);
       Usuario.findById(req.body.id, function(erru, usuario) {
-         usuario.Tipo = req.body.tipo;
+        console.log(usuario);
+         usuario.MaraBox.Tipo = req.body.tipo;
          usuario.save(function(err) {
            if (err){
-             return res.redirect('/MaraBox/super/cambiarPermisos', { mesaage:'Ha ocurrido un problema, favor intente nuevamente' });
+             return res.render('/MaraBox/super/cambiarPermisos', { mesaage:'Ha ocurrido un problema, favor intente nuevamente' });
            }
            else
            {
-             return res.redirect('/MaraBox/super/cambiarPermisos', { mesaage:'Permiso cambiado satisfactoriamente' });
+             return res.render('/MaraBox/super/cambiarPermisos', { mesaage:'Permiso cambiado satisfactoriamente' });
            }
          });
       });
@@ -699,6 +759,7 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/admin/atletas/:id', function(req, res) {
 
     });
+    
 
 
 
@@ -779,7 +840,7 @@ module.exports = function(app,passport) {
         })
     });
 
-    app.get('/MaraBox/api/clase/:hora', function(req, res) {
+    app.post('/MaraBox/api/clase/:hora', function(req, res) {
 
         var totalAsistentes = 0;
         var disponible = 0;
@@ -849,7 +910,7 @@ module.exports = function(app,passport) {
       }
     });
 
-    app.get('/MaraBox/api/ejercicios', function(req, res)
+    app.post('/MaraBox/api/ejercicios', function(req, res)
     {
       Ejercicios.find(function(errE, ejercicios) {
           if (errE)
@@ -863,7 +924,7 @@ module.exports = function(app,passport) {
       });
     });
 
-    app.get('/MaraBox/api/ejercicios/:idEjercicio', function(req, res)
+    app.post('/MaraBox/api/ejercicios/:idEjercicio', function(req, res)
     {
       Ejercicios.findOne({ 'MaraBox.Email' :  req.params.idEjercicio }, function(errE, ejercicio) {
           if (errE)
@@ -877,7 +938,7 @@ module.exports = function(app,passport) {
       });
     });
 
-    app.get('/MaraBox/api/WOD', function(req, res) {
+    app.post('/MaraBox/api/WOD', function(req, res) {
         WOD.find(function(errE, wod) {
           if (errE)
           {

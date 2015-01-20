@@ -24,8 +24,8 @@
         <tr><td>Cedula</td><td>Nombres</td><td>Apellidos</td><td>Tipo de Usuario</td><td></td></tr>
         <% admin.forEach(function(a) { %>
             <form action="/MaraBox/super/cambiarPermisos" method="post">
-                <input type="hidden" name="id" value=a.id>
-                <tr><td>a.cedula</td><td>a.nombre</td><td>a.apellido</td>
+                <input type="hidden" name="id" value=<%= a.id %>>
+                <tr><td><%= a.cedula %></td><td><%= a.nombre %></td><td><%= a.apellido %></td>
                 <td><select class="tipo" data-style="btn-info" name="tipo">
                       <option value="5">Administrativo</option>
                       <option value="6">Entrenador</option>
@@ -41,8 +41,8 @@
         <tr><td>Cedula</td><td>Nombres</td><td>Apellidos</td><td>Tipo de Usuario</td><td></td></tr>
         <% coach.forEach(function(a) { %>
             <form action="/MaraBox/super/cambiarPermisos" method="post">
-                <input type="hidden" name="id" value=a.id>
-                <tr><td>a.cedula</td><td>a.nombre</td><td>a.apellido</td>
+                <input type="hidden" name="id" value=<%= a.id %>>
+                <tr><td><%= a.cedula %></td><td><%= a.nombre %></td><td><%= a.apellido %></td>
                 <td><select class="tipo" data-style="btn-info" name="tipo">
                       <option value="5">Administrativo</option>
                       <option value="6">Entrenador</option>

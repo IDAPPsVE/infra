@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../views/partials/head %>
+</head>
+<body class="container">
+
+  <header>
+    <% include ../views/partials/header %>
+  </header>
+
+  <div class="container">
+
+  <div class="col-sm-6 col-sm-offset-3">
+
+      <!-- show any messages that come back with authentication -->
+      <% if (message.length > 0) { %>
+          <div class="alert alert-danger"><%= message %></div>
+      <% } %>
+    
+      <form action="/MaraBox/registroInfoUsuario" method="post">
+          <%if (idUsuario) { %>
+              <input type="hidden" name="id" value=<%=idUsuario%>>
+          <% } %>
+          
+          <div class="form-group">
+              <label>Nombres</label>
+              <input type="text" class="form-control" name="nombres">
+          </div>
+          <div class="form-group">
+              <label>Apellidos</label>
+              <input type="text" class="form-control" name="apellidos">
+          </div>
+          <div class="form-group">
+              <label>Ciudad</label>
+              <input type="text" class="form-control" name="ciudad">
+          </div>
+          <div class="form-group">
+            <label>Estado</label>
+            <select class="tipo" data-style="btn-info" name="estado">
+                  <option value="Amazonas">Amazonas</option>
+                  <option value="Anzoategui">Anzoategui</option>
+                  <option value="Apure">Apure</option>
+                  <option value="Aragua">Aragua</option>
+                  <option value="Barinas">Barinas</option>
+                  <option value="Bolivar">Bolivar</option>
+                  <option value="Carabobo">Carabobo</option>
+                  <option value="Cojedes">Cojedes</option>
+                  <option value="Delta Amacuro">Delta Amacuro</option>
+                  <option value="Falcon">Falcon</option>
+                  <option value="Guarico">Guarico</option>
+                  <option value="Lara">Lara</option>
+                  <option value="Merida">Merida</option>
+                  <option value="Miranda">Miranda</option>
+                  <option value="Monagas">Monagas</option>
+                  <option value="Nueva Esparta">Nueva Esparta</option>
+                  <option value="Portuguesa">Portuguesa</option>
+                  <option value="Sucre">Sucre</option>
+                  <option value="Tachira">Tachira</option>
+                  <option value="Trujillo">Trujillo</option>
+                  <option value="Yaracuy">Yaracuy</option>
+                  <option value="Vargas">Vargas</option>
+                  <option value="Zulia">Zulia</option>
+            </select>
+          </div>
+          <div class="form-group">
+              <label>Direccion</label>
+              <input type="text" class="form-control" name="direccion">
+          </div>
+          <div class="form-group">
+              <label>Fecha de Nacimiento</label>
+              <input type="date" class="form-control" name="fechaNacimiento">
+          </div>
+          
+
+          <button type="submit" class="btn btn-warning btn-lg">Registrar Usuario</button>
+      </form>
+
+      <hr>
+
+      <p>Already have an account? <a href="/login">Login</a></p>
+      <p>Or go <a href="/">home</a>.</p>
+
+  </div>
+
+  </div>
+
+  <footer>
+    <% include ../views/partials/footer %>
+  </footer>
+
+</body>
+</html>
