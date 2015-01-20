@@ -18,9 +18,7 @@
           <div class="alert alert-danger"><%= message %></div>
       <% } %>
 
-      <form action="/MaraBox/admin/asignacionEntrenador" method="post">
-        
-          <input type="hidden" name="fecha" value=<%=fecha%>>
+      <form action="/MaraBox/admin/<%=fecha%>" method="post">
           
           <div class="form-group">
               <label>Entrenador</label>

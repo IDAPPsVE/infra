@@ -623,38 +623,47 @@ module.exports = function(app,passport) {
     });
 
     app.get('/MaraBox/admin/:fecha', function(req, res) {
+      var fecha = req.params.fecha;
+      
       Entrenadores.find(function(err, coach) {
         if (err) return console.error(err);
         else
         {
           if (coach)
           {
-            res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { fecha : req.params.fecha, entrenadores : coach, message: req.flash('loginMessage') });
+            res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { fecha : fecha, entrenadores : coach, message: req.flash('loginMessage') });
           }
         }
       });
     });
 
-    app.post('/MaraBox/admin/asignacionEntrenador', function(req, res) {
-      var clases = new Clases();
-      clases.MaraBox.idEntrenador = req.body.entrenador;
-      clases.MaraBox.Fecha = req.body.fecha;
-      clases.MaraBox.Hora = req.body.hora;
-
-      clases.save(function(err) {
+    app.post('/MaraBox/admin/:fecha', function(req, res) {
+      var fecha = req.params.fecha;
+  
+      console.log("Guardando clase");
+      var c = new Clases();
+      c.MaraBox.idEntrenador = req.body.entrenador;
+      c.MaraBox.Fecha = req.body.fecha;
+      c.MaraBox.Hora = req.body.hora;
+      c.save(function(err) {
             if (err)
-              res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
+            {
+              console.log("error guardando clase");
+              res.redirect('/MaraBox/admin/'+fecha);
+            }
             else
+            {
               Entrenadores.find(function(err, coach) {
                 if (err) return console.error(err);
                 else
                 {
                   if (coach)
                   {
-                    res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { fecha : req.params.fecha, entrenadores : coach, message: "El entrenador fue asignado con exito" });
+                    res.redirect('/MaraBox/admin/'+fecha);
                   }
                 }
               });
+            }
           });
     });
 
