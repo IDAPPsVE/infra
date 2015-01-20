@@ -638,17 +638,17 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/admin/:fecha', function(req, res) {
-      var fecha = req.params.fecha;
-  
+      var fecha = req.body.fecha;
+      
       console.log("Guardando clase");
       var c = new Clases();
       c.MaraBox.idEntrenador = req.body.entrenador;
-      c.MaraBox.Fecha = req.body.fecha;
+      c.MaraBox.Fecha = moment(req.body.fecha, 'DD-MM-YYYY');
       c.MaraBox.Hora = req.body.hora;
       c.save(function(err) {
             if (err)
             {
-              console.log("error guardando clase");
+              console.log("error guardando clase", err);
               res.redirect('/MaraBox/admin/'+fecha);
             }
             else
@@ -671,7 +671,7 @@ module.exports = function(app,passport) {
 
       var e = {};
       var datos = [];
-      Clases.find({ 'MaraBox.Fecha' : req.params.fecha, 'MaraBox.Hora' : req.params.hora }, function(err, clase) {
+      Clases.find({ 'MaraBox.Fecha' : moment(req.params.fecha, 'DD-MM-YYYY'), 'MaraBox.Hora' : req.params.hora }, function(err, clase) {
         if (err) return console.error(err);
         else
         {

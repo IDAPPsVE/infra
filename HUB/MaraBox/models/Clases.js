@@ -5,7 +5,7 @@ var ClasesSchema = mongoose.Schema({
 
     MaraBox : {
         Fecha        : Date,
-        Hora         : Date,
+        Hora         : String,
         idEntrenador : String,
         Cupo         : Number
     }
