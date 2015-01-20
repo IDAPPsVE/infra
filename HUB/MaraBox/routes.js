@@ -299,7 +299,6 @@ module.exports = function(app,passport) {
                     i++;
                     if (i === usuario.length)
                     {
-                      console.log("DESDE FUERA DE INFO inicio",{ admin : u5, coach : u6 }, "final");
                       res.render(base + '/HUB/MaraBox/views/cambiarPermisos.ejs', { admin : u5, coach : u6, message: req.flash('loginMessage') });
                     }
                   }
@@ -310,20 +309,46 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/super/cambiarPermisos', function(req, res) {
-      console.log(req.body);
-      Usuario.findById(req.body.id, function(erru, usuario) {
-        console.log(usuario);
-         usuario.MaraBox.Tipo = req.body.tipo;
-         usuario.save(function(err) {
-           if (err){
-             return res.render('/MaraBox/super/cambiarPermisos', { mesaage:'Ha ocurrido un problema, favor intente nuevamente' });
-           }
-           else
-           {
-             return res.render('/MaraBox/super/cambiarPermisos', { mesaage:'Permiso cambiado satisfactoriamente' });
-           }
-         });
-      });
+      
+      console.log("Tipo", req.body.tipo);
+      if ( req.body.tipo === '6' )
+      {
+        console.log("Guardando entrenador");
+        var e = new Entrenadores();
+        e.MaraBox.Nombre = req.body.nombre;
+        e.MaraBox.Apellido = req.body.apellido;
+        e.MaraBox.idUsuario = req.body.id;
+        e.save(function(e){
+          if (e){}
+          else{
+            console.log("Entrenador guardado");
+          }
+        });
+        Usuario.findById(req.body.id, function(erru, usuario) {
+           usuario.MaraBox.Tipo = req.body.tipo;
+           usuario.save(function(err) {
+             if (err){}
+             else
+             {
+               return res.redirect('/MaraBox/super/cambiarPermisos');
+             }
+           });
+        });
+      }
+      else
+      {
+        Usuario.findById(req.body.id, function(erru, usuario) {
+           usuario.MaraBox.Tipo = req.body.tipo;
+           usuario.save(function(err) {
+             if (err){}
+             else
+             {
+                return res.redirect('/MaraBox/super/cambiarPermisos');
+             }
+           });
+        });
+      }
+      
     });
 
     //=========================================================
