@@ -91,7 +91,7 @@ module.exports = function(app, passport) {
       passport.authenticate('local-signupIDAPPEmpleado', function(err, user, info) {
         var randomString = rs.randomString(20);
         var url = dominio + '/admin/val/' + randomString;
-        
+        console.log(url);
         guardarCodigoValidacionIDAPP(user._id, randomString);
         email.sendValidationCode(user.Email,url);
 
@@ -133,6 +133,7 @@ module.exports = function(app, passport) {
       passport.authenticate('local-signupIDAPP', function(err, user, info) {
         var randomString = rs.randomString(20);
         var url = dominio + '/admin/val/' + randomString;
+        console.log(url);
         guardarCodigoValidacionIDAPP(user._id, randomString);
         email.sendValidationCode(user.Email,url);
 
@@ -174,6 +175,7 @@ module.exports = function(app, passport) {
       passport.authenticate('local-signupICARUS', function(err, user, info) {
         var randomString = rs.randomString(20);
         var url = dominio + '/admin/val/' + randomString;
+        console.log(url);
         guardarCodigoValidacionIDAPP(user._id, randomString);
         email.sendValidationCode(user.Email,url);
 

@@ -17,18 +17,16 @@
       <% if (message.length > 0) { %>
           <div class="alert alert-danger"><%= message %></div>
       <% } %>
+       
+       <p>Clase: <strong><%= fecha %></strong></p>
+       <p>Horario: <strong><%= hora %></strong></p>
+      <div>Entrenador: <strong><%= entrenador.MaraBox.Nombre%> <%=entrenador.MaraBox.Apellido %></strong></div>
       
-      <div><strong></strong><%= e.MaraBox.Nombre%> <%=e.MaraBox.Apellido %></strong></div>
-      
-      <% ejercicios.forEach(function(ejercicios) { %>
-                  <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
-	              <% }); %>
-      
+      <h3>Asistentes</h3>
       <table>
-        <tr><td>#</td><td>Cedula</td><td>Nombres</td><td>Apellidos</td></tr>
+        <tr><td>Cedula</td><td>Nombres</td><td>Apellidos</td></tr>
         <% asistencia.forEach(function(a) { %>
-        <% var i = 0 %>
-        <tr><td><% i++ %></td><td>a.cedula</td><td>a.nombre</td><td>a.apellido</td></tr>
+          <tr><td><%= a.cedula %></td><td><%= a.nombre %></td><td><%= a.apellido %></td></tr>
         <% }); %>
       </table>
                 

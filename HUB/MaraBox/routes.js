@@ -102,6 +102,7 @@ module.exports = function(app,passport) {
           var randomString = rs.randomString(20);
           h.guardarCodigoValidacion(user._id, randomString);
           var url = dominio + '/MaraBox/ValidacionUsuario/' + randomString;
+          console.log(url);
           email.sendValidationCode(user.Email,url);
           if (err){}
           else
@@ -625,6 +626,7 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/admin/:fecha', function(req, res) {
       var fecha = req.params.fecha;
       
+      //Ver wod del dia en la fecha seleccionada
       Entrenadores.find(function(err, coach) {
         if (err) return console.error(err);
         else
@@ -695,6 +697,7 @@ module.exports = function(app,passport) {
                     if (erra) return console.error(erra);
                     else
                     {
+                      var al = asistencia.length;
                       console.log("Asistencia", asistencia);
                       if (asistencia)
                       {
@@ -707,6 +710,7 @@ module.exports = function(app,passport) {
                             if (u)
                             {
                               InfoUsuario.findOne({ 'MaraBox.idUsuario' : u._id }, function(err, info) {
+                                console.log("Info usuario",info);
                                 if (err) return null;
                                 else 
                                 {
@@ -719,9 +723,10 @@ module.exports = function(app,passport) {
                                     datos.push({ cedula:u.MaraBox.Cedula, nombre:info.MaraBox.Nombres, apellido:info.MaraBox.Nombres });
                                   }
                                   i++;
-                                  if (i === a.length)
+                                  console.log(i,al);
+                                  if (i === al)
                                   {
-                                    res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { entrenador : e, asistencia : datos, message: req.flash('loginMessage') });
+                                    res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { fecha : req.params.fecha, hora : req.params.hora, entrenador : e, asistencia : datos, message: req.flash('loginMessage') });
                                   }
                                 }
                               });
@@ -872,12 +877,6 @@ module.exports = function(app,passport) {
     //////////////////////////////////////////////////////
     // API
     //////////////////////////////////////////////////////
-
-    app.get('/MaraBox/api/prueba'), function(req, res)
-    {
-        return res.json({ code:'200', message:'Hola!' });
-    }
-
     app.post('/MaraBox/api/signup', function(req, res,next) {
       passport.authenticate('local-signupMaraBox', function(err, user, info) {
           if (err)
@@ -889,6 +888,7 @@ module.exports = function(app,passport) {
             var randomString = rs.randomString(10);
             h.guardarCodigoValidacion(user._id, randomString);
             var url = "/MaraBox/ValidacionUsuario/"+randomString;
+            console.log(url);
             email.sendValidationUsuarioMaraBox(user.Email,url);
 
             return res.json({ code:'200', message:'Su registro ha sido guardado con exito, debe validar su correo para poder utilizar la app' });
@@ -920,8 +920,8 @@ module.exports = function(app,passport) {
         res.json({ code : '200', message: 'Sesion terminada' });
     });
 
-    app.post('/MaraBox/api/validarAsistencia/:idClase/:idUsuario', function(req, res) {
-        Asistencia.findOne({ 'MaraBox.idClase' : req.params.idClase, 'MaraBox.idUsuario' : req.params.idUsuario }, function(err, asistencia) {
+    app.post('/MaraBox/api/validarAsistencia', function(req, res) {
+        Asistencia.findOne({ 'MaraBox.idClase' : req.body.idClase, 'MaraBox.idUsuario' : req.body.idUsuario }, function(err, asistencia) {
           if (err)
           {
             return res.json({ code : '-1000', message: 'No se pudo recibir los datos correctamente, intente de nuevo'});
@@ -946,50 +946,48 @@ module.exports = function(app,passport) {
         })
     });
 
-    app.post('/MaraBox/api/asistencia', function(req, res) {
-        console.log("Carlos envia ", req.body);
-        /*var totalAsistentes = 0;
+    app.get('/MaraBox/api/clase', function(req, res) {
+        var totalAsistentes = 0;
         var disponible = 0;
         var listaEspera = 0;
 
         var e = {};
-          Clases.find({ 'MaraBox.Fecha' : f.hoy(), 'MaraBox.Hora' : req.params.hora }, function(err, clase) {
+          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' : "06:00" }, function(err, clase) {
             if (err) return console.error(err);
             else
             {
               if (clase)
               {
-                Entrenadores.findById(clase.idEntrenador, function(erre, entrenador) {
+                Entrenadores.findById(clase.MaraBox.idEntrenador, function(erre, entrenador) {
                   if (erre) return console.error(erre);
                   else
                   {
                     if (entrenador)
                     {
                       e = entrenador;
+                      Asistencia.find({ 'MaraBox.idClase' : clase._id }).count(function(erra, c)
+                      {
+                         totalAsistentes = c;
+                         disponible = clase.MaraBox.Cupo - totalAsistentes;
+                          if (disponible === 0)
+                          {
+                              disponible = 0;
+                          }
+                          else if (disponible < 0)
+                          {
+                              listaEspera = -1 * disponible;
+                          }
+                          return res.json( { entrenador : { nombre : e.MaraBox.Nombre, apellido : e.MaraBox.Apellido, certificado : e.MaraBox.Certificado }, cupo : clase.MaraBox.Cupo, disponible : disponible, listaEspera : listaEspera, message: req.flash('loginMessage') });
+                      });
                     }
                   }
                 });
-
-                Asistencia.find({ 'MaraBox.idClase' : clase._id }).sort({ 'MaraBox.Creado' : 1 }).count(function(err, c)
-                {
-                   console.log('Count is ' + c);
-                   totalAsistentes = c;
-                });
-
-                disponible = clase.Cupo - totalAsistentes;
-                if (disponible === 0)
-                {
-                    disponible = 0;
-                }
-                else if (disponible < 0)
-                {
-                    listaEspera = -1 * disponible;
-                }
-
-                res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { entrenador : e, disponible : disponible, listaEspera : listaEspera, message: req.flash('loginMessage') });
               }
             }
-          });*/
+          });
+    });
+    
+    app.post('/MaraBox/api/asistencia/registrar', function(req, res) {
         Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
           console.log("Usuario",u);
           if (erru){}
@@ -1080,9 +1078,9 @@ module.exports = function(app,passport) {
       });
     });
 
-    app.post('/MaraBox/api/ejercicios/:idEjercicio', function(req, res)
+    app.post('/MaraBox/api/ejercicios/detalle', function(req, res)
     {
-      Ejercicios.findOne({ 'MaraBox.Email' :  req.params.idEjercicio }, function(errE, ejercicio) {
+      Ejercicios.findOne({ 'MaraBox.Email' :  req.body.idEjercicio }, function(errE, ejercicio) {
           if (errE)
           {
             res.json({ code : "-100", mensaje : "No se pudo obtener los datos" });
@@ -1095,7 +1093,7 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/WOD', function(req, res) {
-        WOD.find(function(errE, wod) {
+        WOD.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')) },function(errE, wod) {
           if (errE)
           {
             res.json({ code : "-100", mensaje : "No hay WOD registrado para hoy" });
