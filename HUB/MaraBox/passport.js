@@ -106,22 +106,24 @@ module.exports = function(passport) {
         // we are checking to see if the user trying to login already exists
         Usuario.findOne({ 'MaraBox.Email' :  email }, function(err, usuario) {
             // if there are any errors, return the error before anything else
-            console.log(err,usuario,email,password);
             if (err)
+            {
                 return done(err);
-
-            // if no user is found, return the message
-            if (usuario.Email != email)
+            }
+            
+            if (usuario === null) // if no user is found, return the message
+            {
               return done(null, false, { code : '-5000', message: 'Usuario no registrado' });
-
-            // if the user is found but the password is wrong
-            if (!usuario.validPassword(password))
+            }
+            else if (!usuario.validPassword(password)) // if the user is found but the password is wrong
+            {
                 return done(null, false, { code : '-2000', message: 'Password errado' });
-
-            // all is well, return successful user
-            return done(null, usuario,{ code : '200' });
-
-
+            }
+            else
+            {
+                // all is well, return successful user
+                return done(null, usuario,{ code : '200' }); 
+            }
         });
 
     }));
@@ -243,8 +245,6 @@ module.exports = function(passport) {
         passReqToCallback : true // allows us to pass back the entire request to the callback
     },
     function(req, email, password, done) { // callback with email and password from our form
-
-        console.log(email,password);
         
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
@@ -266,12 +266,9 @@ module.exports = function(passport) {
             }
             else
             {
-             // all is well, return successful user
-             console.log(null, usuario,{ code : '200' })
+              console.log("Sesion",req.session);
               return done(null, usuario,{ code : '200' }); 
             }
-
-
         });
 
     }));

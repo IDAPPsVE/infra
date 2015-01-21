@@ -43,11 +43,11 @@ module.exports = function(app,passport) {
       //res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.get('/MaraBox/super/dashboard', function(req, res) {
+    app.get('/MaraBox/super/dashboard', h.isLoggedIn, function(req, res) {
       res.render(base + '/HUB/MaraBox/views/dashboard-super.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.get('/MaraBox/admin/dashboard', function(req, res) {
+    app.get('/MaraBox/admin/dashboard', h.isLoggedIn, function(req, res) {
       res.render(base + '/HUB/MaraBox/views/dashboard.ejs', { message: req.flash('loginMessage') });
     });
 
@@ -57,6 +57,10 @@ module.exports = function(app,passport) {
 
     app.get('/MaraBox/logout', function(req, res) {
         req.logout();
+        res.redirect('/MaraBox/');
+    });
+    
+    app.get('/MaraBox/login', function(req, res) {
         res.redirect('/MaraBox/');
     });
     
@@ -74,11 +78,11 @@ module.exports = function(app,passport) {
           {
             res.render(base + '/HUB/MaraBox/views/registrarInfoPersonal.ejs', { idUsuario : user._id, message: "El usuario fue registrado con exito, para finalizar regitra tu informacion personal" });
           }
-            if(user.Tipo == 4)
+            if(user.MaraBox.Tipo == 4)
               {
                 res.redirect('/MaraBox/super/dashboard');
               }
-            else if((user.Tipo == 5) || (user.Tipo == 6))
+            else if((user.MaraBox.Tipo == 5) || (user.MaraBox.Tipo == 6))
             {
               res.redirect('/MaraBox/admin/dashboard');
             }
