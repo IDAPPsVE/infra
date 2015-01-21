@@ -43,11 +43,11 @@ module.exports = function(app,passport) {
       //res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.get('/MaraBox/super/dashboard', h.isLoggedIn, function(req, res) {
+    app.get('/MaraBox/super/dashboard', isLoggedIn, function(req, res, next) {
       res.render(base + '/HUB/MaraBox/views/dashboard-super.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.get('/MaraBox/admin/dashboard', h.isLoggedIn, function(req, res) {
+    app.get('/MaraBox/admin/dashboard', isLoggedIn, function(req, res, next) {
       res.render(base + '/HUB/MaraBox/views/dashboard.ejs', { message: req.flash('loginMessage') });
     });
 
@@ -67,17 +67,17 @@ module.exports = function(app,passport) {
     // process the login form
     app.post('/MaraBox/login', function(req, res,next) {
       passport.authenticate('local-loginMaraBoxAdmin', function(err, user, info) {
-        console.log(err,user,info);
         var userNeededData = {'id':user._id,
-                              'Email':user.Email,
-                              'Tipo':user.Tipo,
-                              'isLoggedIn':'1'};
+                              'Email':user.MaraBox.Email,
+                              'Tipo':user.MaraBox.Tipo,
+                              'isLoggedIn':'1',
+                              'SessionId' : req.sessionID,
+        };
         req.login(userNeededData, function(err) {
+          console.log("REQ USER",req.user,err);
           if (err) { return next(err); }
           else
           {
-            res.render(base + '/HUB/MaraBox/views/registrarInfoPersonal.ejs', { idUsuario : user._id, message: "El usuario fue registrado con exito, para finalizar regitra tu informacion personal" });
-          }
             if(user.MaraBox.Tipo == 4)
               {
                 res.redirect('/MaraBox/super/dashboard');
@@ -90,6 +90,8 @@ module.exports = function(app,passport) {
             {
               res.render(base + '/HUB/MaraBox/views/index.ejs', { message: "Disculpe, el usuario ingresado no tiene los privilegios suficiente para ingresar al sistema. Puede usar la aplicacion para Android o iPhone" });
             }
+            //res.render(base + '/HUB/MaraBox/views/registrarInfoPersonal.ejs', { idUsuario : user._id, message: "El usuario fue registrado con exito, para finalizar regitra tu informacion personal" });
+          }
         });
       })(req, res, next);
     });
@@ -108,7 +110,7 @@ module.exports = function(app,passport) {
           h.guardarCodigoValidacion(user._id, randomString);
           var url = dominio + '/MaraBox/ValidacionUsuario/' + randomString;
           console.log(url);
-          email.sendValidationCode(user.Email,url);
+          email.sendValidationCode(user.MaraBox.Email,url);
           if (err){}
           else
           {
@@ -902,22 +904,24 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/login', function(req, res, next) {
-      return res.json({code:'200'});
-      /*passport.authenticate('local-loginMarabox', function(err, user, info) {
-
+      passport.authenticate('local-loginMaraBox', function(err, user, info) {
+      console.log(err,user,info);
+        if (err){}
         var userNeededData = {'id':user._id,
-                              'Email':user.Email,
-                              'Tipo':user.Tipo,
-                              'isLoggedIn':'1'};
-        req.login(userNeededData, function(err) {
-          if (err) { return next(err); }
+                              'Email':user.MaraBox.Email,
+                              'Tipo':user.MaraBox.Tipo,
+                              'isLoggedIn':'1',
+                              'SessionId' : req.sessionID,
+        };
+        req.login(userNeededData, function(errl) {
+          if (errl) { return next(err); }
 
-            if(user.Tipo == 10)
-            {
-              return res.json({code:'200','data':userNeededData});
-            }
+            //if(user.MaraBox.Tipo == 10)
+            //{
+              return res.json({code:'200','datos':userNeededData});
+            //}
         });
-      })(req, res, next);*/
+      })(req, res, next);
     });
 
     app.get('/MaraBox/api/logout', function(req, res) {
@@ -998,9 +1002,9 @@ module.exports = function(app,passport) {
     
     app.post('/MaraBox/api/asistencia/registrar', function(req, res) {
         Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
-          console.log("Usuario",u);
+          
           if (erru){}
-          if (u)
+          if (u != null)
           {
             if (u.MaraBox.Cedula)
             {
@@ -1009,7 +1013,7 @@ module.exports = function(app,passport) {
                 console.log("Solvencia",solvencia);
                 if (errs) return null;
 
-                if(solvencia)
+                if(solvencia != null)
                 {
                   var fechaMasDias = f.agregarFechas(solvencia.MaraBox.FechaInicio,solvencia.MaraBox.DiasHabiles);
                   var solvente = f.entre(solvencia.MaraBox.FechaInicio, fechaMasDias);
@@ -1054,8 +1058,12 @@ module.exports = function(app,passport) {
                   }
                   else
                   {
-                    return res.json({ code : '-1000', message:'El usuario no aparece registrado en el registro de solvencias del Box, por favor dirijase a caja para solventar este problema', regman : 2});
+                    return res.json({ code : '-1000', message:'El usuario no aparece registrado en el registro de solvencias del Box, por favor dirijase a caja para solventar este problema'});
                   }
+                }
+                else
+                {
+                  return res.json({ code : '-1000', message:'El usuario no aparece registrado en el registro de solvencias del Box, por favor dirijase a caja para solventar este problema'});
                 }
                 
             });
@@ -1126,5 +1134,22 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/api/progreso', function(req, res) {
 
     });
+    
+}
+
+function isLoggedIn(req, res, next) {
+
+    // if user is authenticated in the session, carry on
+    if (req.user)
+    {
+        console.log("Si esta logueado con el id", req.sessionID);
+        return next();
+    }
+    else
+    {
+        // if they aren't redirect them to the home page
+        console.log("No estas logueado");
+        return res.redirect('/MaraBox/');  
+    }
     
 }

@@ -25,13 +25,16 @@ module.exports = function(app, passport) {
       passport.authenticate('local-loginAdminSys', function(err, user, info) {
 
         var userNeededData = {'id':user._id,
-                              'Email':user.Email,
-                              'Tipo':user.Tipo,
-                              'isLoggedIn':'1'};
+                              'Email':user.IDAPP.Email,
+                              'Tipo':user.IDAPP.Tipo,
+                              'isLoggedIn':'1',
+                              'SessionId' : req.sessionID,
+          
+        };
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
 
-            if(user.Tipo == 4)
+            if(user.IDAPP.Tipo == 4)
               {
                 //Redirigir a donde debe
                 res.redirect('/admin/dashboard');
@@ -51,7 +54,7 @@ module.exports = function(app, passport) {
         
         console.log(url);
         guardarCodigoValidacionPropietarioApp(user._id, randomString);
-        email.sendValidationCode(user.Email,url);
+        email.sendValidationCode(user.IDAPP.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -68,13 +71,15 @@ module.exports = function(app, passport) {
       passport.authenticate('local-loginIDAPPEmpleado', function(err, user, info) {
 
         var userNeededData = {'id':user._id,
-                              'Email':user.Email,
-                              'Tipo':user.Tipo,
-                              'isLoggedIn':'1'};
+                              'Email':user.IDAPP.Email,
+                              'Tipo':user.IDAPP.Tipo,
+                              'isLoggedIn':'1',
+                              'SessionId' : req.sessionID,
+        };
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
 
-            if(user.Tipo == 3)
+            if(user.IDAPP.Tipo == 3)
               {
                 //Redirigir a donde debe
                 res.redirect('/admin/dashboard');
@@ -93,7 +98,7 @@ module.exports = function(app, passport) {
         var url = dominio + '/admin/val/' + randomString;
         console.log(url);
         guardarCodigoValidacionIDAPP(user._id, randomString);
-        email.sendValidationCode(user.Email,url);
+        email.sendValidationCode(user.IDAPP.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -109,13 +114,15 @@ module.exports = function(app, passport) {
       passport.authenticate('local-loginIDAPP', function(err, user, info) {
         console.log("Desde route ",user);
         var userNeededData = {'id':user._id,
-                              'Email':user.Email,
-                              'Tipo':user.Tipo,
-                              'isLoggedIn':'1'};
+                              'Email':user.IDAPP.Email,
+                              'Tipo':user.IDAPP.Tipo,
+                              'isLoggedIn':'1',
+                              'SessionId' : req.sessionID,
+        };
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
 
-            if(user.Tipo == 2)
+            if(user.IDAPP.Tipo == 2)
               {
                 //Redirigir a donde debe
                 res.json({"Valor" : "sirvio"});
@@ -135,7 +142,7 @@ module.exports = function(app, passport) {
         var url = dominio + '/admin/val/' + randomString;
         console.log(url);
         guardarCodigoValidacionIDAPP(user._id, randomString);
-        email.sendValidationCode(user.Email,url);
+        email.sendValidationCode(user.IDAPP.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -152,13 +159,15 @@ module.exports = function(app, passport) {
 
         console.log("Desde route ",user);
         var userNeededData = {'id':user._id,
-                              'Email':user.Email,
-                              'Tipo':user.Tipo,
-                              'isLoggedIn':'1'};
+                              'Email':user.IDAPP.Email,
+                              'Tipo':user.IDAPP.Tipo,
+                              'isLoggedIn':'1',
+                              'SessionId' : req.sessionID,
+        };
         req.login(userNeededData, function(err) {
           if (err) { return next(err); }
 
-            if(user.Tipo == 1)
+            if(user.IDAPP.Tipo == 1)
               {
                 //Redirigir a donde debe
                 res.redirect('/admin/dashboard');
@@ -177,7 +186,7 @@ module.exports = function(app, passport) {
         var url = dominio + '/admin/val/' + randomString;
         console.log(url);
         guardarCodigoValidacionIDAPP(user._id, randomString);
-        email.sendValidationCode(user.Email,url);
+        email.sendValidationCode(user.IDAPP.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 

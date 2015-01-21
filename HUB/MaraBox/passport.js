@@ -65,74 +65,11 @@ module.exports = function(passport) {
                     return done(null, newUser, { code : '200'});
                 });
             }
-
         });
-
-        });
-
-    }));
-
-
-     // =========================================================================
-    // LOCAL LOGIN =============================================================
-    // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
-
-    // required for persistent login sessions
-    // passport needs ability to serialize and unserialize users out of session
-
-    // used to serialize the user for the session
-    passport.serializeUser(function(usuario, done) {
-      done(null, usuario);
-    });
-
-    // used to deserialize the user
-    passport.deserializeUser(function(id, done) {
-      Usuario.findById(id.id, function(err, usuario) {
-          done(err, usuario);
-      });
-    });
-
-    passport.use('local-loginMaraBox', new LocalStrategy({
-        // by default, local strategy uses username and password, we will override with email
-        usernameField : 'email',
-        passwordField : 'password',
-        passReqToCallback : true // allows us to pass back the entire request to the callback
-    },
-    function(req, email, password, done) { // callback with email and password from our form
-
-        // find a user whose email is the same as the forms email
-        // we are checking to see if the user trying to login already exists
-        Usuario.findOne({ 'MaraBox.Email' :  email }, function(err, usuario) {
-            // if there are any errors, return the error before anything else
-            if (err)
-            {
-                return done(err);
-            }
-            
-            if (usuario === null) // if no user is found, return the message
-            {
-              return done(null, false, { code : '-5000', message: 'Usuario no registrado' });
-            }
-            else if (!usuario.validPassword(password)) // if the user is found but the password is wrong
-            {
-                return done(null, false, { code : '-2000', message: 'Password errado' });
-            }
-            else
-            {
-                // all is well, return successful user
-                return done(null, usuario,{ code : '200' }); 
-            }
         });
 
     }));
-    
-    // =========================================================================
-    // LOCAL SIGNUP ============================================================
-    // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
+
 
     passport.use('local-signupMaraBoxAdmin', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
@@ -220,24 +157,55 @@ module.exports = function(passport) {
      // =========================================================================
     // LOCAL LOGIN =============================================================
     // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
-
-    // required for persistent login sessions
-    // passport needs ability to serialize and unserialize users out of session
-
-    // used to serialize the user for the session
+    
     passport.serializeUser(function(usuario, done) {
+      console.log("SerializeUser",usuario);
       done(null, usuario);
     });
 
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
+      console.log("DeserializeUser",id);
       Usuario.findById(id.id, function(err, usuario) {
           done(err, usuario);
       });
     });
 
+    passport.use('local-loginMaraBox', new LocalStrategy({
+        // by default, local strategy uses username and password, we will override with email
+        usernameField : 'email',
+        passwordField : 'password',
+        passReqToCallback : true // allows us to pass back the entire request to the callback
+    },
+    function(req, email, password, done) { // callback with email and password from our form
+
+        // find a user whose email is the same as the forms email
+        // we are checking to see if the user trying to login already exists
+        Usuario.findOne({ 'MaraBox.Email' :  email }, function(err, usuario) {
+            // if there are any errors, return the error before anything else
+            console.log(usuario);
+            if (err)
+            {
+                return done(err);
+            }
+            
+            if (usuario === null) // if no user is found, return the message
+            {
+              return done(null, false, { code : '-5000', message: 'Usuario no registrado' });
+            }
+            else if (!usuario.validPassword(password)) // if the user is found but the password is wrong
+            {
+                return done(null, false, { code : '-2000', message: 'Password errado' });
+            }
+            else
+            {
+                // all is well, return successful user
+                return done(null, usuario,{ code : '200' }); 
+            }
+        });
+
+    }));
+    
     passport.use('local-loginMaraBoxAdmin', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
@@ -266,7 +234,6 @@ module.exports = function(passport) {
             }
             else
             {
-              console.log("Sesion",req.session);
               return done(null, usuario,{ code : '200' }); 
             }
         });

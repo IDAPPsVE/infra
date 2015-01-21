@@ -41,10 +41,13 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: {
-    maxAge: 1800000, //previously set to just 1800 - which was too low
+    maxAge: 2419200000,
     httpOnly: true
-  }
+  },
+//  store: sessionStore,
 }));
+
+
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session

@@ -17,12 +17,14 @@ exports.isLoggedIn = function(req, res, next) {
     // if user is authenticated in the session, carry on
     if (req.isAuthenticated())
     {
+        console.log("Si esta logueado con el id", req.sessionID);
         return next();
     }
     else
     {
         // if they aren't redirect them to the home page
-        return res.redirect('/MaraBox/', { message : 'Debes ingresar para poder acceder a los datos solicitados'});  
+        console.log("No estas logueado");
+        return res.redirect('/MaraBox/');  
     }
     
 }
