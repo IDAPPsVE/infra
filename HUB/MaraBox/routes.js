@@ -63,6 +63,7 @@ module.exports = function(app,passport) {
     // process the login form
     app.post('/MaraBox/login', function(req, res,next) {
       passport.authenticate('local-loginMaraBoxAdmin', function(err, user, info) {
+        console.log(err,user,info);
         var userNeededData = {'id':user._id,
                               'Email':user.Email,
                               'Tipo':user.Tipo,
@@ -946,19 +947,21 @@ module.exports = function(app,passport) {
         })
     });
 
-    app.get('/MaraBox/api/clase', function(req, res) {
+    app.post('/MaraBox/api/clase', function(req, res) {
+      console.log("Carlos envia",req.body);
         var totalAsistentes = 0;
         var disponible = 0;
         var listaEspera = 0;
 
         var e = {};
-          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' : "06:00" }, function(err, clase) {
+          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
             if (err) return console.error(err);
             else
             {
               if (clase)
               {
                 Entrenadores.findById(clase.MaraBox.idEntrenador, function(erre, entrenador) {
+                  console.log(entrenador);
                   if (erre) return console.error(erre);
                   else
                   {
@@ -967,6 +970,7 @@ module.exports = function(app,passport) {
                       e = entrenador;
                       Asistencia.find({ 'MaraBox.idClase' : clase._id }).count(function(erra, c)
                       {
+                        console.log(c)
                          totalAsistentes = c;
                          disponible = clase.MaraBox.Cupo - totalAsistentes;
                           if (disponible === 0)
@@ -977,7 +981,8 @@ module.exports = function(app,passport) {
                           {
                               listaEspera = -1 * disponible;
                           }
-                          return res.json( { entrenador : { nombre : e.MaraBox.Nombre, apellido : e.MaraBox.Apellido, certificado : e.MaraBox.Certificado }, cupo : clase.MaraBox.Cupo, disponible : disponible, listaEspera : listaEspera, message: req.flash('loginMessage') });
+                          console.log({ code : '200', datos : { entrenador : { nombre : e.MaraBox.Nombre, apellido : e.MaraBox.Apellido, certificado : e.MaraBox.Certificado }, cupo : clase.MaraBox.Cupo, disponible : disponible, listaEspera : listaEspera}, message: req.flash('loginMessage') });
+                          return res.json( { code : '200', datos : { entrenador : { nombre : e.MaraBox.Nombre, apellido : e.MaraBox.Apellido, certificado : e.MaraBox.Certificado }, cupo : clase.MaraBox.Cupo, disponible : disponible, listaEspera : listaEspera}, message: req.flash('loginMessage') });
                       });
                     }
                   }

@@ -21,7 +21,7 @@ UsuarioIDAPPSchema.methods.generateHash = function(password) {
 
 // checking if password is valid
 UsuarioIDAPPSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.Password);
+    return bcrypt.compareSync(password, this.IDAPP.Password);
 };
 
 // create the model for users and expose it to our app

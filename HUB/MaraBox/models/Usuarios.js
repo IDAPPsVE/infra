@@ -23,7 +23,7 @@ UsuarioAppSchema.methods.generateHash = function(password) {
 
 // checking if password is valid
 UsuarioAppSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.Password);
+    return bcrypt.compareSync(password, this.MaraBox.Password);
 };
 
 // create the model for users and expose it to our app
