@@ -21,15 +21,15 @@
             <% if (regman == 1) { %>
               <a href="/MaraBox/admin/registroPrimerUsuario">Registrar aqui</a>
             <% } %>
+            <% if (regman == 2) { %>
+              <a href="/MaraBox/admin/registroSolvencia">Registrar aqui</a>
+            <% } %>
           </div>
       <% } %>
 
       <!-- LOGIN FORM -->
-      <form action="/MaraBox/admin/registroAsistencia" method="post">
+      <form action="/MaraBox/admin/clase/asistencia/registro/manual" method="post">
         
-          <input type="hidden" name="fecha" value=<%=fecha%>>
-          <input type="hidden" name="hora" value=<%=hora%>>
-          
           <div class="form-group">
               <label>Cedula</label>
               <input type="text" class="form-control" name="cedula">

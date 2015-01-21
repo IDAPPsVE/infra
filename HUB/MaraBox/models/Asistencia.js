@@ -6,7 +6,7 @@ var AsistenciaSchema = mongoose.Schema({
     MaraBox : {
         idUsuario   : String,
         idBox       : String,
-        idClase     : Date,
+        idClase     : String,
         Validado    : Number,
         Creado      : {type: Date, default: Date.now },
     }

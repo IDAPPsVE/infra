@@ -671,36 +671,66 @@ module.exports = function(app,passport) {
 
       var e = {};
       var datos = [];
+      
       Clases.find({ 'MaraBox.Fecha' : moment(req.params.fecha, 'DD-MM-YYYY'), 'MaraBox.Hora' : req.params.hora }, function(err, clase) {
         if (err) return console.error(err);
         else
         {
-          console.log(clase);
-          if (clase)
+          if (clase === null)
           {
-            Entrenadores.findById(clase.idEntrenador, function(erre, entrenador) {
+            return res.render('/MaraBox/admin/asistencia/' + moment(req.params.fecha).format('DD-MM-YYYY') + '/' +req.params.hora);
+          }
+          else
+          {
+            Entrenadores.findById(clase[0].MaraBox.idEntrenador, function(erre, entrenador) {
               if (erre) return console.error(erre);
               else
               {
-                console.log(entrenador);
+                console.log("Entrenado", entrenador);
                 if (entrenador)
                 {
                   e = entrenador;
-                }
-              }
-            });
-            Asistencia.find({ 'MaraBox.idClase' : clase._id }, function(erra, asistencia) {
-              if (erra) return console.error(erra);
-              else
-              {
-                console.log(asistencia);
-                if (asistencia)
-                {
-                  asistencia.forEach(function(a){
-                    var iu = h.getInfoUsuario(asistencia.idUsuario);
-                    datos.push({entrenador:e, cedula:iu[0], nombre:iu[1], apellido:iu[2] });
+                  var i = 0;
+                  Asistencia.find({ 'MaraBox.idClase' : clase[0]._id }, function(erra, asistencia) {
+                    if (erra) return console.error(erra);
+                    else
+                    {
+                      console.log("Asistencia", asistencia);
+                      if (asistencia)
+                      {
+                        asistencia.forEach(function(a){
+                          Usuario.findById(a.MaraBox.idUsuario, function(erru, u) {
+                            if (erru)
+                            {
+                            }
+                            console.log("Usuario", u);
+                            if (u)
+                            {
+                              InfoUsuario.findOne({ 'MaraBox.idUsuario' : u._id }, function(err, info) {
+                                if (err) return null;
+                                else 
+                                {
+                                  if (info === null)
+                                  {
+                                    datos.push({ cedula:u.MaraBox.Cedula, nombre:"", apellido:"" });
+                                  }
+                                  else
+                                  {
+                                    datos.push({ cedula:u.MaraBox.Cedula, nombre:info.MaraBox.Nombres, apellido:info.MaraBox.Nombres });
+                                  }
+                                  i++;
+                                  if (i === a.length)
+                                  {
+                                    res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { entrenador : e, asistencia : datos, message: req.flash('loginMessage') });
+                                  }
+                                }
+                              });
+                            }
+                          });
+                        });
+                      }
+                    }
                   });
-                  res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { entrenador : e, asistencia : datos, message: req.flash('loginMessage') });
                 }
               }
             });
@@ -709,51 +739,92 @@ module.exports = function(app,passport) {
       });
     });
 
-    app.get('/MaraBox/admin/registroAsistencia', function(req, res) {
+    app.get('/MaraBox/admin/clase/asistencia/registro/manual', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.post('/MaraBox/admin/registroAsistencia', function(req, res) {
-
-        var cedula = h.getUserId(cedula);
-        if(!cedula)
-        {
-          res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos', regman : 1 });
-        }
-        else
-        {
-          var idu = h.getUserId(req.body.cedula);
-          var solvente = h.verificarSolvencia(idu);
-
-          if (solvente)
+    app.post('/MaraBox/admin/clase/asistencia/registro/manual', function(req, res) {
+        Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
+          console.log("Usuario",u);
+          if (erru){}
+          if (u)
           {
-            var asistencia = new Asistencia();
-            asistencia.MaraBox.idUsuario = idu;
-            asistencia.MaraBox.idBox = h.getMaraBoxId();
-            asistencia.MaraBox.idClase = h.getClaseId(req.body.hora);
+            if (u.MaraBox.Cedula)
+            {
+              var idu = u._id;
+              Solvencia.findOne({ 'MaraBox.idUsuario' : idu }, function(errs, solvencia) {
+                console.log("Solvencia",solvencia);
+                if (errs) return null;
 
-            // save the bear and check for errors
-            asistencia.save(function(err) {
-              if (err)
-                res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no pudo ser registrado' });
-              else
-                res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'Usuario registrado para el entrenamiento del dia '+req.body.fecha+' hora '+req.body.hora });
+                if(solvencia)
+                {
+                  var fechaMasDias = f.agregarFechas(solvencia.MaraBox.FechaInicio,solvencia.MaraBox.DiasHabiles);
+                  var solvente = f.entre(solvencia.MaraBox.FechaInicio, fechaMasDias);
+                  if (solvente)
+                  {
+                    Box.findOne({ 'IDAPP.Nombre' : 'MaraBox' }, function(errb, box) 
+                    {
+                      console.log("Box",box);
+                        if (errb)
+                        {
+                          return null;
+                        }
+                        if(box)
+                        {
+                          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
+                            if (errc) return null;
+                            else 
+                            {
+                              if (clase)
+                              {
+                                var asistencia = new Asistencia();
+                                asistencia.MaraBox.idUsuario = idu;
+                                asistencia.MaraBox.idBox = box._id;
+                                asistencia.MaraBox.idClase = clase._id;
+                    
+                                // save the bear and check for errors
+                                asistencia.save(function(err) {
+                                  if (err)
+                                    res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no pudo ser registrado', regman : 0 });
+                                  else
+                                    res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'Usuario registrado para el entrenamiento del dia de hoy a las '+req.body.hora, regman : 0 });
+                                });
+                
+                              }
+                              else
+                              {
+                                res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'Disculpe, pero no hay clase abierta para la hora indicada en el sistema, favor comunicarse con el box.', regman : 0 });
+                              }
+                            }
+                          });
+                        }
+                    });
+                  }
+                  else
+                  {
+                    res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no aparece registrado en el registro de solvencias del Box, por favor actualice los datos de la solvencia del usuario para poder continuar con el registro.', regman : 2});
+                  }
+                }
+                
             });
+              
+            }
+            else
+            {
+              res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos', regman : 1 });
+            }
           }
-          else
-          {
-            res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no aparece registrado en el registro de solvencias del Box, por favor actualice los datos de la solvencia del usuario para poder continuar con el registro.' });
-          }
-        }
+        });
     });
 
     app.get('/MaraBox/admin/registro/usuario/nuevo', function(req, res) {
         res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.post('/MaraBox/admin/registroPrimerUsuario', function(req, res) {
+    app.post('/MaraBox/admin/registro/usuario/nuevo', function(req, res) {
         var usuario = Usuario();
         usuario.MaraBox.Cedula = req.body.cedula;
+        usuario.MaraBox.Tipo = 10;
         usuario.save(function(err) {
             if (err)
               res.render(base + '/HUB/MaraBox/views/registroPrimerUsuario.ejs', { message:'El registro no pudo ser guardado, intente nuevamente' });
@@ -825,8 +896,9 @@ module.exports = function(app,passport) {
         })(req, res, next);
     });
 
-    app.post('/MaraBox/api/login', function(req, res,next) {
-      passport.authenticate('local-loginMarabox', function(err, user, info) {
+    app.post('/MaraBox/api/login', function(req, res, next) {
+      return res.json({code:'200'});
+      /*passport.authenticate('local-loginMarabox', function(err, user, info) {
 
         var userNeededData = {'id':user._id,
                               'Email':user.Email,
@@ -840,7 +912,7 @@ module.exports = function(app,passport) {
               return res.json({code:'200','data':userNeededData});
             }
         });
-      })(req, res, next);
+      })(req, res, next);*/
     });
 
     app.get('/MaraBox/api/logout', function(req, res) {
@@ -874,9 +946,9 @@ module.exports = function(app,passport) {
         })
     });
 
-    app.post('/MaraBox/api/clase/:hora', function(req, res) {
-
-        var totalAsistentes = 0;
+    app.post('/MaraBox/api/asistencia', function(req, res) {
+        console.log("Carlos envia ", req.body);
+        /*var totalAsistentes = 0;
         var disponible = 0;
         var listaEspera = 0;
 
@@ -917,33 +989,83 @@ module.exports = function(app,passport) {
                 res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', { entrenador : e, disponible : disponible, listaEspera : listaEspera, message: req.flash('loginMessage') });
               }
             }
-          });
-    });
+          });*/
+        Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
+          console.log("Usuario",u);
+          if (erru){}
+          if (u)
+          {
+            if (u.MaraBox.Cedula)
+            {
+              var idu = u._id;
+              Solvencia.findOne({ 'MaraBox.idUsuario' : idu }, function(errs, solvencia) {
+                console.log("Solvencia",solvencia);
+                if (errs) return null;
 
-    app.post('/MaraBox/api/asistencia', function(req, res) {
-      var idu = h.getUserId(req.body.cedula);
-      var solvente = h.verificarSolvencia(idu);
-
-      if (solvente)
-      {
-        var asistencia = new Asistencia();
-        asistencia.MaraBox.idUsuario = idu;
-        asistencia.MaraBox.idBox = h.getMaraBoxId();
-        asistencia.MaraBox.idClase = h.getClaseId(req.body.hora);
-
-        asistencia.save(function(err) {
-          if (err)
-            res.json({ code : '-1000', message: 'No se pudo guardar los datos, intente nuevamente' });
-          else
-            res.json({ code : '200', message: 'Asistencia guardada con exito' });
+                if(solvencia)
+                {
+                  var fechaMasDias = f.agregarFechas(solvencia.MaraBox.FechaInicio,solvencia.MaraBox.DiasHabiles);
+                  var solvente = f.entre(solvencia.MaraBox.FechaInicio, fechaMasDias);
+                  if (solvente)
+                  {
+                    Box.findOne({ 'IDAPP.Nombre' : 'MaraBox' }, function(errb, box) 
+                    {
+                      console.log("Box",box);
+                        if (errb)
+                        {
+                          return null;
+                        }
+                        if(box)
+                        {
+                          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
+                            if (errc) return null;
+                            else 
+                            {
+                              if (clase)
+                              {
+                                var asistencia = new Asistencia();
+                                asistencia.MaraBox.idUsuario = idu;
+                                asistencia.MaraBox.idBox = box._id;
+                                asistencia.MaraBox.idClase = clase._id;
+                    
+                                // save the bear and check for errors
+                                asistencia.save(function(err) {
+                                  if (err){}
+                                  else return res.json({ code : '200', message : 'Usuario registrado para el entrenamiento del dia de hoy a las '+req.body.hora});
+                                    
+                                });
+                
+                              }
+                              else
+                              {
+                                return res.json({ code : '-100', message:'Disculpe, pero no hay clase abierta para la hora indicada en el sistema, favor comunicarse con el box.'});
+                              }
+                            }
+                          });
+                        }
+                    });
+                  }
+                  else
+                  {
+                    return res.json({ code : '-1000', message:'El usuario no aparece registrado en el registro de solvencias del Box, por favor dirijase a caja para solventar este problema', regman : 2});
+                  }
+                }
+                
+            });
+              
+            }
+            else
+            {
+              res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos', regman : 1 });
+            }
+          }
         });
-      }
-      else
-      {
-        res.json({ code : '-100', message: 'A la fecha usted no se encuentra solvente, por favor dirijase a caja para solventar este incoveniente' });
-      }
     });
-
+    
+    app.post('/MaraBox/api/asistencia/cancelar', function(req, res) {
+      
+    });
+    
     app.post('/MaraBox/api/ejercicios', function(req, res)
     {
       Ejercicios.find(function(errE, ejercicios) {
@@ -997,4 +1119,5 @@ module.exports = function(app,passport) {
     app.get('/MaraBox/api/progreso', function(req, res) {
 
     });
+    
 }
