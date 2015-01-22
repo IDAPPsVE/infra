@@ -437,6 +437,7 @@ module.exports = function(app,passport) {
       wod.MaraBox.WarmUp = dictWU;
       wod.MaraBox.WOD = dictWD;
       wod.MaraBox.BuyOut = dictBO;
+      wod.MaraBox.Fecha = moment(moment().format('YYYY-MM-DD'));
 
       // save the bear and check for errors
       wod.save(function(err) {
@@ -457,6 +458,63 @@ module.exports = function(app,passport) {
       });
     });
 
+    app.get('/MaraBox/admin/ver/wod/hoy', function(req, res) {
+      var buyout = [];
+      var warmup = [];
+      var wo = [];
+      WOD.findOne({'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD'))}, function(errw,wod) {
+        if(errw)
+        {
+          
+        }
+        
+        if(wod != null)
+        {
+          Ejercicios.find(function(errE, ejercicios) {
+            if (errE){}
+            if (ejercicios != null)
+            {
+              wod.MaraBox.BuyOut.forEach(function(b){
+                ejercicios.forEach(function(e){
+                  if (b.idEjercicio == e._id)
+                  {
+                    console.log(e);
+                    buyout.push({ejercicio:e.MaraBox.Nombre,cantidad:b.Cantidad});
+                  }
+                });
+              });
+              wod.MaraBox.WarmUp.forEach(function(wu){
+                ejercicios.forEach(function(e){
+                  if (wu.idEjercicio == e._id)
+                  {
+                    console.log(e);
+                    warmup.push({ejercicio:e.MaraBox.Nombre,cantidad:wu.Cantidad});
+                  }
+                });
+              });
+              wod.MaraBox.WOD.forEach(function(w){
+                ejercicios.forEach(function(e){
+                  if (w.idEjercicio == e._id)
+                  {
+                    console.log(e);
+                    wo.push({ejercicio:e.MaraBox.Nombre,cantidad:w.Cantidad});
+                  }
+                });
+              });
+              res.json({WarmUp:warmup,Wod:wo,BuyOut:buyout});
+            }
+          });
+        }
+          
+      });
+      
+      //res.render(base + '/HUB/MaraBox/views/wod.ejs', { message: 'El WOD fue guardado con exito', ejercicios:ejercicios });
+    });
+    
+    app.post('/MaraBox/admin/ver/wod/hoy', function(req, res) {
+      
+    });
+    
     app.get('/MaraBox/eventos', function(req, res) {
       Evento.find(function(err, ev) {
         if (err) {
@@ -745,8 +803,6 @@ module.exports = function(app,passport) {
           });
         }
       });
-      
-      
     });
     
     app.get('/MaraBox/admin/asistencia/:fecha/:hora', function(req, res) {

@@ -9,7 +9,7 @@ var WODSchema = mongoose.Schema({
     WarmUp   : [mongoose.Schema.Types.Mixed],
     WOD      : [mongoose.Schema.Types.Mixed],
     BuyOut   : [mongoose.Schema.Types.Mixed],
-    Fecha    : {type: Date, default: Date.now },
+    Fecha    : Date,
   }
   
 });
