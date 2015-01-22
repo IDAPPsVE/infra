@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <% include ../views/partials/head %>
-</head>
-<body class="container">
-
-    <% include ../views/partials/dashHeader %>
-    
-      <div class="col-sm-9 main">
-        </br>
-      <!-- show any messages that come back with authentication -->
+ <% include ../views/partials/dashHeader %>
+  
+  <article class="col-md-8 maincontent">
+				<header class="page-header">
+					<h1 class="page-title">Nuevo evento</h1>
+				</header>
       <% if (message.length > 0) { %>
           <div class="bg-info"><%= message %></div>
       <% } %>
@@ -76,16 +70,16 @@
               <input type='file' id="uploadImage" class="form-control" name="poster"/>
               <img id="img" src="" />
           </div>
-          <button type="submit" class="btn btn-warning btn-lg">Registrar Evento</button>
+          <button type="submit" class="btn btn-primary">Registrar Evento</button>
       </form>
+</article>
+			<!-- /Article -->
 
-      <hr>
- </div>
- </div>
- </div>
+		</div>
+	</div>	<!-- /container -->
+
   <footer>
     <% include ../views/partials/dashFooter %>
   </footer>
-
 </body>
-</html> 
+</html>

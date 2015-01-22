@@ -1,19 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <% include ../views/partials/head %>
-</head>
-<body class="container">
-
-  <header>
-    <% include ../views/partials/header %>
-  </header>
-
-  <div class="container">
-
-  <div class="col-sm-6 col-sm-offset-3">
-
-      <!-- show any messages that come back with authentication -->
+ <% include ../views/partials/dashHeader %>
+  
+  <article class="col-md-8 maincontent">
+				<header class="page-header">
+					<h1 class="page-title">Registro de nuevo usuario</h1>
+				</header>
       <% if (message.length > 0) { %>
           <div class="bg-info"><%= message %></div>
       <% } %>
@@ -73,21 +63,17 @@
           </div>
           
 
-          <button type="submit" class="btn btn-warning btn-lg">Registrar Usuario</button>
+          <button type="submit" class="btn btn-primary">Registrar Usuario</button>
       </form>
 
-      <hr>
+      </article>
+			<!-- /Article -->
 
-      <p>Already have an account? <a href="/login">Login</a></p>
-      <p>Or go <a href="/">home</a>.</p>
-
-  </div>
-
-  </div>
+		</div>
+	</div>	<!-- /container -->
 
   <footer>
-    <% include ../views/partials/footer %>
+    <% include ../views/partials/dashFooter %>
   </footer>
-
 </body>
 </html>

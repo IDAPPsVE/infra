@@ -1,51 +1,112 @@
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          
-          <a class="navbar-brand" href="/MaraBox/admin/dashboard">MaraBox</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="/">IDAPP</a></li>
-            <li><a href="/MaraBox/logout">Salir</a></li>
-          </ul>
-          
-        </div>
-      </div>
-    </nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"    content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	
+	<title>MaraBox - Administracion</title>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-3 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="active"><a href="/MaraBox/admin/dashboard">Inicio</a></li>
-          </ul>
-          
-          <h4>Administracion del Box</h4>
-          <ul class="nav nav-sidebar">
-            <li><a href="/MaraBox/admin/registro/usuario/nuevo">Registro de Usuario Nuevo</a></li>
-            <li><a href="/MaraBox/admin/registroSolvencia">Registro de Solvencia</a></li>
-            <li><a href="/MaraBox/admin/clase/asistencia/registro/manual">Registro de Asistencia</a></li>
-          </ul>
-          
-          <ul class="nav nav-sidebar">
-            <li><a href="/MaraBox/admin/clases">Ver Clases</a></li>
-            <li><a href="/MaraBox/admin/crearClases">Crear clase</a></li>
-            <li><a href="/MaraBox/admin/nuevoWod">Crear WOD</a></li>
-            <li><a href="/MaraBox/admin/ver/lista/Asistencia">Ver lista de asistencia</a></li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li><a href="/MaraBox/admin/nuevaNotificacion">Enviar Notificaciones a usuarios</a></li>
-            <li><a href="/MaraBox/admin/nuevaEvento">Crear nuevo Evento</a></li>
-            <li><a href="/MaraBox/eventos">Ver Eventos</a></li>
-            <li><a href="/MaraBox/admin/registroFeriado">Anunciar Cierre temporal del Box</a></li>
-          </ul>
-          
-          <h4></h4>
-          <ul class="nav nav-sidebar">
-            <li><a href="/MaraBox/super/privilegiados">Ver permisos asignados</a></li>
-            <li><a href="/MaraBox/super/cambiarPermisos">Cambiar Permisos</a></li>
-          </ul>
-        </div>
-        
-        
+	<link rel="shortcut icon" href="assets/images/gt_favicon.png">
+	
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/public/css/mb.css">
+  
+  <script type="text/javascript" src='/public/js/jquery-1.11.2.min.js'></script>
+  <script type="text/javascript" src='/public/js/mb.js'></script>
+  <style>
+  	body 	{ padding-top:50px; }
+  </style>
+
+	<link rel="stylesheet" media="screen" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	<script src="assets/js/html5shiv.js"></script>
+	<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+	<!-- Fixed navbar -->
+	<div class="navbar navbar-inverse navbar-fixed-top headroom" >
+		<div class="container">
+			<div class="navbar-header">
+				<!-- Button for smallest screens -->
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"><span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+				<a class="navbar-brand" id="logo" href="/MaraBox">IDAPP</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav pull-right">
+					<li><a href="/MaraBox/admin/dashboard">MaraBox</a></li>
+					<li><a href="/">IDAPP</a></li>
+          <li><a href="/MaraBox/logout">Salir</a></li>
+				</ul>
+			</div><!--/.nav-collapse -->
+		</div>
+	</div> 
+	<!-- /.navbar -->
+
+	<header id="head" class="secondary"></header>
+
+	<!-- container -->
+	<div class="container">
+		
+		<ol class="breadcrumb">
+			<li><a href="index.html">Home</a></li>
+			<li class="active">Left Sidebar</li>
+		</ol>
+
+		<div class="row">
+		  
+		    <aside class="col-md-4 sidebar sidebar-left">
+
+				<div class="row widget">
+					<div class="col-xs-12">
+						<li class="active"><a class="linkSidebar" href="/MaraBox/admin/dashboard">Inicio</a></li>
+					</div>
+				</div>
+				<div class="row widget">
+					<div class="col-xs-12">
+						<h4>Administracion del Box</h4>
+            <ul class="nav nav-sidebar">
+              <li><a class="linkSidebar" href="/MaraBox/admin/registro/usuario/nuevo">Registro de Usuario Nuevo</a></li>
+              <li><a class="linkSidebar" href="/MaraBox/admin/registroSolvencia">Registro de Solvencia</a></li>
+              <li><a class="linkSidebar" href="/MaraBox/admin/clase/asistencia/registro/manual">Registro de Asistencia</a></li>
+            </ul>
+					</div>
+				</div>
+				<div class="row widget">
+					<div class="col-xs-12">
+						<h4>Administracion de clases</h4>
+						<ul class="nav nav-sidebar">
+              <li><a class="linkSidebar" href="/MaraBox/admin/clases">Ver Clases</a></li>
+              <li><a class="linkSidebar" href="/MaraBox/admin/crearClases">Crear clase</a></li>
+              <li><a class="linkSidebar" href="/MaraBox/admin/nuevoWod">Crear WOD</a></li>
+              <li><a class="linkSidebar" href="/MaraBox/admin/ver/lista/Asistencia">Ver lista de asistencia</a></li>
+            </ul>
+					</div>
+				</div>
+				<div class="row widget">
+					<div class="col-xs-12">
+						<h4>Notificaciones</h4>
+						<ul class="nav nav-sidebar">
+              <li><a class="linkSidebar" href="/MaraBox/admin/nuevaNotificacion">Enviar Notificaciones a usuarios</a></li>
+              <li><a class="linkSidebar" href="/MaraBox/admin/nuevaEvento">Crear nuevo Evento</a></li>
+              <li><a class="linkSidebar" href="/MaraBox/eventos">Ver Eventos</a></li>
+              <li><a class="linkSidebar" href="/MaraBox/admin/registroFeriado">Anunciar Cierre temporal del Box</a></li>
+            </ul>
+					</div>
+				</div>
+				<div class="row widget">
+					<div class="col-xs-12">
+						<h4>Permisos</h4>
+						<ul class="nav nav-sidebar">
+              <li><a class="linkSidebar" href="/MaraBox/super/privilegiados">Ver permisos asignados</a></li>
+              <li><a class="linkSidebar" href="/MaraBox/super/cambiarPermisos">Cambiar Permisos</a></li>
+            </ul>
+					</div>
+				</div>
+
+			</aside>

@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <% include ../views/partials/head %>
-</head>
-<body class="container">
-
-    <% include ../views/partials/dashHeader %>
+ <% include ../views/partials/dashHeader %>
   
-      <div class="col-sm-9 main">
-        </br>
-      <!-- show any messages that come back with authentication -->
+  <article class="col-md-8 maincontent">
+				<header class="page-header">
+					<h1 class="page-title">Registro de asistencia</h1>
+				</header>
       <% if (message.length > 0) { %>
           <div class="bg-info"><%= message %>
             <% if (regman == 1) { %>
@@ -48,16 +42,17 @@
                   <option value="20:00">08:00 pm</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-warning btn-lg">Registrar Asistencia</button>
+          <button type="submit" class="btn btn-primary">Registrar Asistencia</button>
       </form>
 
-      <hr>
-      </div>
-      </div>
-      </div>
+      </article>
+			<!-- /Article -->
+
+		</div>
+	</div>	<!-- /container -->
+
   <footer>
     <% include ../views/partials/dashFooter %>
   </footer>
-
 </body>
 </html>

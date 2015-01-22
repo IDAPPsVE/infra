@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <% include ../views/partials/head %>
-</head>
-<body class="container">
-
-    <% include ../views/partials/dashHeader %>
-
-      <div class="col-sm-9 main">
-        </br>
-      <!-- show any messages that come back with authentication -->
+ <% include ../views/partials/dashHeader %>
+  
+  <article class="col-md-8 maincontent">
+				<header class="page-header">
+					<h1 class="page-title">Lista de asistencia</h1>
+				</header>
       <% if (message.length > 0) { %>
           <div class="bg-info"><%= message %></div>
       <% } %>
@@ -25,13 +19,15 @@
           <tr><td><%= a.cedula %></td><td><%= a.nombre %></td><td><%= a.apellido %></td></tr>
         <% }); %>
       </table>
-      </div>
-      </div>
-      </div>
+</article>
+			<!-- /Article -->
+
+		</div>
+	</div>	<!-- /container -->
+
   <footer>
     <% include ../views/partials/dashFooter %>
   </footer>
-
 </body>
 </html>
 

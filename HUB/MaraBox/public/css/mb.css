@@ -1,3 +1,17 @@
+@font-face {
+    font-family: mohave;
+    src: url("/public/fonts/Mohave.otf");
+}
+
+@font-face {
+    font-family: simplifica;
+    src: url("/public/fonts/Simplifica.ttf");
+}
+
+@font-face {
+    font-family: economica;
+    src: url("/public/fonts/Economica_Std.ttf");
+}
 #imagePreview {
     width: 180px;
     height: 180px;
@@ -6,4 +20,18 @@
     -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, .3);
     display: inline-block;
     color:white;
+}
+
+#logo {
+    font-family: economica;
+    font-size : 40px;
+    padding : 20px;
+}
+
+.linkSidebar {
+    color : #2C3E50;
+}
+
+.submitButton{
+    background-color : #34495E;
 }

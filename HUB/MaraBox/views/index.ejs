@@ -4,16 +4,11 @@
   <% include ../views/partials/head %>
 </head>
 <body class="container">
-
-  <header>
-    <% include ../views/partials/header %>
-  </header>
-
-  <div class="col-sm-6 col-sm-offset-3">
-
-      <h1><span class="fa fa-sign-in"></span> Login</h1>
-
-      <!-- show any messages that come back with authentication -->
+  
+  <article class="col-md-8 maincontent">
+				<header class="page-header">
+					<h1 class="page-title">Login</h1>
+				</header>
       <% if (message.length > 0) { %>
           <div class="bg-info"><%= message %></div>
       <% } %>
@@ -30,18 +25,21 @@
               <input type="password" class="form-control" name="password">
           </div>
 
-          <button type="submit" class="btn btn-warning btn-lg">Login</button>
+          <button type="submit" class="btn btn-primary">Login</button>
       </form>
 
       <hr>
 
       <p>Si formas parte del Staff de MaraBox y no tienes cuenta, <a href="/MaraBox/signup">registrate aqui</a></p>
 
-  </div>
+  </article>
+			<!-- /Article -->
+
+		</div>
+	</div>	<!-- /container -->
 
   <footer>
-    <% include ../views/partials/footer %>
+    <% include ../views/partials/dashFooter %>
   </footer>
-
 </body>
 </html>

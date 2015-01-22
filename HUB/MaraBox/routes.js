@@ -725,6 +725,7 @@ module.exports = function(app,passport) {
       c.MaraBox.idEntrenador = req.body.entrenador;
       c.MaraBox.Fecha = moment(req.body.fecha, 'DD-MM-YYYY');
       c.MaraBox.Hora = req.body.hora;
+      c.MaraBox.Cupo = req.body.cupo;
       c.save(function(err) {
             if (err)
             {

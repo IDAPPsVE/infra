@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <% include ../views/partials/head %>
-</head>
-<body class="container">
-
+ <% include ../views/partials/dashHeader %>
   
-    <% include ../views/partials/dashHeader %>
-  
-      <div class="col-sm-6 main">
-        </br>
-      <!-- show any messages that come back with authentication -->
+  <article class="col-md-8 maincontent">
+				<header class="page-header">
+					<h1 class="page-title">Nueva Clase.</h1>
+				</header>
       <% if (message.length > 0) { %>
           <div class="bg-info"><%= message %></div>
       <% } %>
@@ -83,15 +76,14 @@
           
           <button type="submit" class="btn btn-primary">Guardar WOD</button>
       </form>
+</article>
+			<!-- /Article -->
 
-      <hr>
-</div>
-</div>
-    </div>
-    
+		</div>
+	</div>	<!-- /container -->
+
   <footer>
     <% include ../views/partials/dashFooter %>
   </footer>
-
 </body>
 </html>
