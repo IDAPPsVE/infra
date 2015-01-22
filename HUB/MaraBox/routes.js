@@ -43,11 +43,11 @@ module.exports = function(app,passport) {
       //res.render(base + '/HUB/MaraBox/views/index.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.get('/MaraBox/super/dashboard', isLoggedIn, function(req, res, next) {
+    app.get('/MaraBox/super/dashboard', function(req, res, next) {
       res.render(base + '/HUB/MaraBox/views/dashboard-super.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.get('/MaraBox/admin/dashboard', isLoggedIn, function(req, res, next) {
+    app.get('/MaraBox/admin/dashboard', function(req, res, next) {
       res.render(base + '/HUB/MaraBox/views/dashboard.ejs', { message: req.flash('loginMessage') });
     });
 
@@ -66,31 +66,34 @@ module.exports = function(app,passport) {
     
     // process the login form
     app.post('/MaraBox/login', function(req, res,next) {
-      passport.authenticate('local-loginMaraBoxAdmin', function(err, user, info) {
+      passport.authenticate('local-loginMaraBoxAdmin', function(errl, user, info) {
+        console.log(errl,user,info);
+        if (errl){}
         var userNeededData = {'id':user._id,
                               'Email':user.MaraBox.Email,
                               'Tipo':user.MaraBox.Tipo,
                               'isLoggedIn':'1',
                               'SessionId' : req.sessionID,
         };
-        req.login(userNeededData, function(err) {
-          console.log("REQ USER",req.user,err);
-          if (err) { return next(err); }
+        req.login(userNeededData, function(errl) {
+          if (errl) { return next(errl); }
           else
           {
-            if(user.MaraBox.Tipo == 4)
-              {
-                res.redirect('/MaraBox/super/dashboard');
-              }
-            else if((user.MaraBox.Tipo == 5) || (user.MaraBox.Tipo == 6))
+            if (user.MaraBox.Tipo == 4)
             {
-              res.redirect('/MaraBox/admin/dashboard');
+              console.log("Tipo 4");
+              return res.redirect('/MaraBox/super/dashboard');
             }
-            else
+            if (user.MaraBox.Tipo == 5)
             {
-              res.render(base + '/HUB/MaraBox/views/index.ejs', { message: "Disculpe, el usuario ingresado no tiene los privilegios suficiente para ingresar al sistema. Puede usar la aplicacion para Android o iPhone" });
+              console.log("Tipo 5");
+              return res.redirect('/MaraBox/admin/dashboard');
             }
-            //res.render(base + '/HUB/MaraBox/views/registrarInfoPersonal.ejs', { idUsuario : user._id, message: "El usuario fue registrado con exito, para finalizar regitra tu informacion personal" });
+            if (user.MaraBox.Tipo == 6)
+            {
+              console.log("Tipo 6");
+              return res.redirect('/MaraBox/admin/dashboard');
+            }
           }
         });
       })(req, res, next);
@@ -208,17 +211,16 @@ module.exports = function(app,passport) {
         });
     });
 
+
     //=========================================================
     //            Funciones de Superusuario
     //=========================================================
-
     app.get('/MaraBox/super/privilegiados', function(req, res) {
 
       var u4 = [];
       var u5 = [];
       var u6 = [];
 
-      //{ $and: [ { _id: someId }, { _id: anotherId } ] }
       Usuario.find({ $or: [ { 'MaraBox.Tipo' : 4 }, { 'MaraBox.Tipo' : 5 }, { 'MaraBox.Tipo' : 6 } ]}, function(erru, usuario) {
           if (usuario)
           {
@@ -630,6 +632,16 @@ module.exports = function(app,passport) {
           });
     });
 
+    app.get('/MaraBox/admin/clases', function(req,res)
+    {
+      
+    });
+    
+    app.get('/MaraBox/admin/crearClases', function(req,res)
+    {
+      
+    });
+    
     app.get('/MaraBox/admin/:fecha', function(req, res) {
       var fecha = req.params.fecha;
       
@@ -676,6 +688,11 @@ module.exports = function(app,passport) {
           });
     });
 
+    app.get('/MaraBox/admin/listaAsistencia', function(req, res) {
+    
+      
+    });
+    
     app.get('/MaraBox/admin/asistencia/:fecha/:hora', function(req, res) {
 
       var e = {};

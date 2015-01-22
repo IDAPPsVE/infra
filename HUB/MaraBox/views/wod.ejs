@@ -5,51 +5,46 @@
 </head>
 <body class="container">
 
-  <header>
-    <% include ../views/partials/header %>
-  </header>
-
-  <div class="container">
-
-  <div class="col-sm-6 col-sm-offset-3">
-
-      <h1><span class="fa fa-sign-in"></span> Signup</h1>
-
+  
+    <% include ../views/partials/dashHeader %>
+  
+      <div class="col-sm-6 main">
+        </br>
       <!-- show any messages that come back with authentication -->
       <% if (message.length > 0) { %>
-          <div class="alert alert-danger"><%= message %></div>
+          <div class="bg-info"><%= message %></div>
       <% } %>
-
+      
       <!-- LOGIN FORM -->
       <form action="/MaraBox/admin/nuevoWod" method="post">
         
           <div class="form-group">
             <label>Nombre del WOD</label>
-            <input type="text" id="nombrewod" name="nombreWOD"/>
+            <input type="text" class="form-control" id="nombrewod" name="nombreWOD"/>
           </div>
           
           <div class="form-group">
             <label>Time Cap</label>
-            <input type="text" id="timecap" name="timecap"/>
+            <input type="text" class="form-control" id="timecap" name="timecap"/>
           </div>
           
           <div class="form-group" id="wug">
             <label>Warm Up</label>
-            <select class="warmup" data-style="btn-info" name="warmup">
+            <select class="warmup form-control" data-style="btn-info" name="warmup">
               <optgroup label="Warm Up">
                 <% ejercicios.forEach(function(ejercicios) { %>
                   <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
 	              <% }); %>
               </optgroup>
             </select>
-            <input type="text" id="cwu" name="cwu[]"/>
+            <input type="text" class="form-control" id="cwu" name="cwu[]"/>
           </div>
-          <a href="#" id="remwu">Remove</a>
-          <h2><a href="#" id="addwu">Add Another Input Box</a></h2>
+          <a href="#" class="btn btn-default btn-lg active" id="remwu">Remove</a>
+          <a href="#" class="btn btn-default btn-lg active" id="addwu">Add Another Input Box</a>
           
           <div class="form-group">
             <label>Tipo de Wod</label>
-            <select class="tipo" data-style="btn-info" name="tipow">
+            <select class="tipo form-control" data-style="btn-info" name="tipow">
               <optgroup label="Tipo">
                   <option value="sencillo">Sencillo</option>
                   <option value="amrap">AMRAP</option>
@@ -60,46 +55,42 @@
           
           <div class="form-group" id="wdg">
             <label>WOD</label>
-            <select class="wod" data-style="btn-info" name="wod">
+            <select class="wod form-control" data-style="btn-info" name="wod">
               <optgroup label="WOD">
                 <% ejercicios.forEach(function(ejercicios) { %>
                   <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
 	              <% }); %>
               </optgroup>
             </select>
-            <input type="text" id="cwd" name="cwd[]"/>
+            <input type="text" class="form-control" id="cwd" name="cwd[]"/>
           </div>
-          <a href="#" id="remwd">Remove</a>
-          <h2><a href="#" id="addwd">Add Another Input Box</a></h2>
+          <a href="#" class="btn btn-default btn-lg active" id="remwd">Remove</a>
+          <a href="#" class="btn btn-default btn-lg active" id="addwd">Add Another Input Box</a>
           
           <div class="form-group" id="bog">
             <label>Buy Out</label>
-            <select class="buyout" data-style="btn-info" name="buyout">
+            <select class="buyout form-control" data-style="btn-info" name="buyout">
               <optgroup label="Buy Out">
                 <% ejercicios.forEach(function(ejercicios) { %>
                   <option value=<%= ejercicios._id %>><%= ejercicios.MaraBox.Nombre %></option>
 	              <% }); %>
               </optgroup>
             </select>
-            <input type="text" id="cbo" name="cbo[]"/>
+            <input type="text" class="form-control" id="cbo" name="cbo[]"/>
           </div>
-          <a href="#" id="rembo">Remove</a>
-          <h2><a href="#" id="addbo">Add Another Input Box</a></h2>
+          <a href="#" class="btn btn-default btn-lg active" id="rembo">Remove</a>
+          <a href="#" class="btn btn-default btn-lg active" id="addbo">Add Another Input Box</a>
           
-          <button type="submit" class="btn btn-warning btn-lg">Guardar WOD</button>
+          <button type="submit" class="btn btn-primary">Guardar WOD</button>
       </form>
 
       <hr>
-
-      <p>Already have an account? <a href="/login">Login</a></p>
-      <p>Or go <a href="/">home</a>.</p>
-
-  </div>
-
-  </div>
-
+</div>
+</div>
+    </div>
+    
   <footer>
-    <% include ../views/partials/footer %>
+    <% include ../views/partials/dashFooter %>
   </footer>
 
 </body>
