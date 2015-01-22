@@ -61,6 +61,7 @@ module.exports = function(app,passport) {
     });
     
     app.get('/MaraBox/login', function(req, res) {
+      console.log(moment(new Date()));
         res.redirect('/MaraBox/');
     });
     
@@ -688,8 +689,63 @@ module.exports = function(app,passport) {
           });
     });
 
-    app.get('/MaraBox/admin/listaAsistencia', function(req, res) {
+    app.get('/MaraBox/admin/ver/lista/Asistencia', function(req, res) {
+      res.render(base + '/HUB/MaraBox/views/seleccionListaClase.ejs', { message: req.flash('loginMessage') });
+    });
     
+    app.post('/MaraBox/admin/ver/lista/Asistencia', function(req, res) {
+    
+      var datos = [];
+
+      Clases.findOne({ 'MaraBox.Fecha' : req.body.fecha, 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
+        console.log("Clases",err,clase);
+        if (err){}
+        
+        if(clase != null)
+        {
+          Asistencia.find({ 'MaraBox.idClase' : clase._id }, function(erra, asistencia) {
+            console.log("Asistencia",erra,asistencia);
+            if (erra){}
+            if(asistencia != null)
+            {
+              asistencia.forEach(function(a){
+                Usuario.findById(a.MaraBox.idUsuario, function(erru, usuario) {
+                  if (erru){}
+                  if (usuario != null)
+                  {
+                    InfoUsuario.findOne({ 'MaraBox.idUsuario' : a.MaraBox.idUsuario }, function(err, info) {
+                      if (err) return null;
+                      else 
+                      {
+                        if (info === null)
+                        {
+                          datos.push({cedula:usuario.MaraBox.Cedula, nombre:"", apellido:"" });
+                        }
+                        else
+                        {
+                          datos.push({cedula:usuario.MaraBox.Cedula, nombre:info.MaraBox.Nombres, apellido:info.MaraBox.Apellidos });
+                        }
+                        
+                        Entrenadores.findById(clase.MaraBox.idEntrenador, function(err, coach) {
+                          if (err) return console.error(err);
+                          else
+                          {
+                            if (coach != null)
+                            {
+                              return res.render(base + '/HUB/MaraBox/views/listaAsistenciaClase.ejs', {entrenador:coach,fecha:req.body.fecha, hora:req.body.hora, asistencia:datos, message: req.flash('loginMessage') });
+                            }
+                          }
+                        });
+                      }
+                    }); 
+                  }
+                });
+              }); 
+            }
+          });
+        }
+      });
+      
       
     });
     
@@ -924,6 +980,10 @@ module.exports = function(app,passport) {
       passport.authenticate('local-loginMaraBox', function(err, user, info) {
       console.log(err,user,info);
         if (err){}
+        if(user)
+        {
+          
+        }
         var userNeededData = {'id':user._id,
                               'Email':user.MaraBox.Email,
                               'Tipo':user.MaraBox.Tipo,
@@ -1095,7 +1155,35 @@ module.exports = function(app,passport) {
     });
     
     app.post('/MaraBox/api/asistencia/cancelar', function(req, res) {
-      
+      Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
+          
+          if (erru){}
+          if (u != null)
+          {
+            if (u.MaraBox.Cedula)
+            {
+              var idu = u._id;
+              
+              Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
+                if (errc) return null;
+                else 
+                {
+                  if (clase != null)
+                  {
+                    console.log("Antes de remover");
+                    Asistencia.remove({ 'MaraBox.idUsuario' : idu, 'MaraBox.idClase' :  clase._id }, function(erra) {
+                      if(!erra)
+                      {
+                        console.log("Removido");
+                        return res.json({ code : '200', message:'Asistencia cancelada'});
+                      }
+                    });
+                  }
+                }
+              });
+            }
+          }
+        });
     });
     
     app.post('/MaraBox/api/ejercicios', function(req, res)
