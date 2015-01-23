@@ -695,13 +695,10 @@ module.exports = function(app,passport) {
 
     app.get('/MaraBox/admin/clases', function(req,res)
     {
-
+      res.render(base + '/HUB/MaraBox/views/seleccionFechaNuevaClase.ejs', { message: req.flash('loginMessage') });
     });
 
-    app.get('/MaraBox/admin/crearClases', function(req,res)
-    {
 
-    });
 
     app.get('/MaraBox/admin/:fecha', function(req, res) {
       var fecha = req.params.fecha;
@@ -758,7 +755,7 @@ module.exports = function(app,passport) {
 
       var datos = [];
 
-      Clases.findOne({ 'MaraBox.Fecha' : req.body.fecha, 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
+      Clases.findOne({ 'MaraBox.Fecha' : moment(req.body.fecha, 'DD-MM-YYYY'), 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
         console.log("Clases",err,clase);
         if (err){}
 
