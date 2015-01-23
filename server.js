@@ -1,10 +1,9 @@
 // server.js
 
 // set up ======================================================================
-// get all the tools we need
 var express  = require('express');
 var app      = express();
-var port     = process.env.PORT || 15454;
+var port     = process.env.PORT || 5858;
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
