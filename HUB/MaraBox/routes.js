@@ -612,13 +612,14 @@ module.exports = function(app,passport) {
         var cedula = req.body.cedula;
         var userid;
         var dh = 0;
-        var fi = moment(new Date(req.body.fechaInicio));
-        var fc = moment(new Date(req.body.fechaCulminacion));
+        var fi = moment(req.body.fechaInicio, 'DD-MM-YYYY');
+        var fc = moment(req.body.fechaCulminacion, 'DD-MM-YYYY');
 
         var totalDias = fc.diff(fi, 'days');
-
+        console.log(totalDias);
         Usuario.findOne({ 'MaraBox.Cedula' :  cedula }, function(err, usuario) {
             // if there are any errors, return the error before anything else
+            console.log(err);
             if (err) return null;
             else
             {
@@ -648,8 +649,8 @@ module.exports = function(app,passport) {
 
                 var solvencia = new Solvencia(); 		// create a new instance of the Bear model
                   solvencia.MaraBox.idUsuario = userid;
-                  solvencia.MaraBox.FechaInicio = req.body.fechaInicio;
-                  solvencia.MaraBox.FechaCulminacion = req.body.fechaCulminacion;
+                  solvencia.MaraBox.FechaInicio = fi;
+                  solvencia.MaraBox.FechaCulminacion = fc;
                   solvencia.MaraBox.DiasHabiles = dis;
 
                   // save the bear and check for errors
