@@ -1,5 +1,5 @@
  <% include ../views/partials/dashHeader %>
-  
+
   <article class="col-md-8 maincontent">
 				<header class="page-header">
 					<h1 class="page-title">Registro de nuevo usuario</h1>
@@ -7,12 +7,10 @@
       <% if (message.length > 0) { %>
           <div class="bg-info"><%= message %></div>
       <% } %>
-    
+
       <form action="/MaraBox/registroInfoUsuario" method="post">
-          <%if (idUsuario) { %>
-              <input type="hidden" name="id" value=<%=idUsuario%>>
-          <% } %>
           
+
           <div class="form-group">
               <label>Nombres</label>
               <input type="text" class="form-control" name="nombres">
@@ -61,7 +59,7 @@
               <label>Fecha de Nacimiento</label>
               <input type="date" class="form-control" name="fechaNacimiento">
           </div>
-          
+
 
           <button type="submit" class="btn btn-primary">Registrar Usuario</button>
       </form>
