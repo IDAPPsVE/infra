@@ -438,7 +438,7 @@ module.exports = function(app,passport) {
       wod.MaraBox.WarmUp = dictWU;
       wod.MaraBox.WOD = dictWD;
       wod.MaraBox.BuyOut = dictBO;
-      wod.MaraBox.Fecha = moment(moment().format('YYYY-MM-DD'));
+      wod.MaraBox.Fecha = moment(moment().format('DD-MM-YYYY'));
 
       // save the bear and check for errors
       wod.save(function(err) {
@@ -463,7 +463,7 @@ module.exports = function(app,passport) {
       var buyout = [];
       var warmup = [];
       var wo = [];
-      WOD.findOne({'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD'))}, function(errw,wod) {
+      WOD.findOne({'MaraBox.Fecha' : moment(moment().format('DD-MM-YYYY'))}, function(errw,wod) {
         if(errw)
         {
 
@@ -528,7 +528,7 @@ module.exports = function(app,passport) {
     });
 
     app.get('/MaraBox/admin/nuevaEvento', function(req, res) {
-        res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage') });
+        res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { fecha : moment(req.body.fecha, 'DD-MM-YYYY'), hora : req.params.hora, message: req.flash('loginMessage') });
     });
 
     app.post('/MaraBox/admin/nuevaEvento', function(req, res) {
@@ -542,8 +542,8 @@ module.exports = function(app,passport) {
         if(fieldname == "ciudad") c = val;
         if(fieldname == "estado") es = val;
         if(fieldname == "direccion") d = val;
-        if(fieldname == "fechaInicio") fi = val;
-        if(fieldname == "fechaCulminacion") fc = val;
+        if(fieldname == "fechaInicio") fi = moment(val, 'DD-MM-YYYY');
+        if(fieldname == "fechaCulminacion") fc = moment(val, 'DD-MM-YYYY');
         if(fieldname == "costo") cos = val;
       });
 
@@ -591,6 +591,7 @@ module.exports = function(app,passport) {
         var notificacion = new Notificacion(); 		// create a new instance of the Bear model
           notificacion.MaraBox.Titulo = req.body.titulo;
           notificacion.MaraBox.Mensaje = req.body.mensaje;
+          notificacion.MaraBox.Fecha = moment(moment().format('DD-MM-YYYY'));
 
           // save the bear and check for errors
           notificacion.save(function(err) {
@@ -677,7 +678,7 @@ module.exports = function(app,passport) {
 
     app.post('/MaraBox/admin/registroFeriado', function(req, res) {
           var descanso = new Descanso();
-          descanso.MaraBox.Fecha = req.body.fecha;
+          descanso.MaraBox.Fecha = moment(req.body.fecha, 'DD-MM-YYYY');
           descanso.MaraBox.DiaCompleto = req.body.diaCompleto;
           descanso.MaraBox.Hora = req.body.hora;
           descanso.MaraBox.Motivo = req.body.motivo;
@@ -701,7 +702,7 @@ module.exports = function(app,passport) {
 
 
     app.get('/MaraBox/admin/:fecha', function(req, res) {
-      var fecha = req.params.fecha;
+      var fecha = moment(req.body.fecha, 'DD-MM-YYYY');
 
       //Ver wod del dia en la fecha seleccionada
       Entrenadores.find(function(err, coach) {
@@ -755,7 +756,7 @@ module.exports = function(app,passport) {
 
       var datos = [];
 
-      Clases.findOne({ 'MaraBox.Fecha' : moment(req.body.fecha, 'DD-MM-YYYY'), 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
+      Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('DD-MM-YYYY')), 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
         console.log("Clases",err,clase);
         if (err){}
 
@@ -810,7 +811,7 @@ module.exports = function(app,passport) {
       var e = {};
       var datos = [];
 
-      Clases.find({ 'MaraBox.Fecha' : moment(req.params.fecha, 'DD-MM-YYYY'), 'MaraBox.Hora' : req.params.hora }, function(err, clase) {
+      Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('DD-MM-YYYY')), 'MaraBox.Hora' : req.params.hora }, function(err, clase) {
         if (err) return console.error(err);
         else
         {
@@ -820,7 +821,7 @@ module.exports = function(app,passport) {
           }
           else
           {
-            Entrenadores.findById(clase[0].MaraBox.idEntrenador, function(erre, entrenador) {
+            Entrenadores.findById(clase.MaraBox.idEntrenador, function(erre, entrenador) {
               if (erre) return console.error(erre);
               else
               {
@@ -829,7 +830,7 @@ module.exports = function(app,passport) {
                 {
                   e = entrenador;
                   var i = 0;
-                  Asistencia.find({ 'MaraBox.idClase' : clase[0]._id }, function(erra, asistencia) {
+                  Asistencia.find({ 'MaraBox.idClase' : clase._id }, function(erra, asistencia) {
                     if (erra) return console.error(erra);
                     else
                     {
@@ -912,7 +913,7 @@ module.exports = function(app,passport) {
                         }
                         if(box)
                         {
-                          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
+                          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('DD-MM-YYYY')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
                             if (errc) return null;
                             else
                             {
@@ -922,6 +923,7 @@ module.exports = function(app,passport) {
                                 asistencia.MaraBox.idUsuario = idu;
                                 asistencia.MaraBox.idBox = box._id;
                                 asistencia.MaraBox.idClase = clase._id;
+                                asistencia.MaraBox.Creado = moment(moment().format('DD-MM-YYYY'));
 
                                 // save the bear and check for errors
                                 asistencia.save(function(err) {
@@ -1095,7 +1097,7 @@ module.exports = function(app,passport) {
         var listaEspera = 0;
 
         var e = {};
-          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
+          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('DD-MM-YYYY')), 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
             if (err) return console.error(err);
             else
             {
@@ -1161,7 +1163,7 @@ module.exports = function(app,passport) {
                         }
                         if(box)
                         {
-                          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
+                          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('DD-MM-YYYY')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
                             if (errc) return null;
                             else
                             {
@@ -1171,6 +1173,7 @@ module.exports = function(app,passport) {
                                 asistencia.MaraBox.idUsuario = idu;
                                 asistencia.MaraBox.idBox = box._id;
                                 asistencia.MaraBox.idClase = clase._id;
+                                asistencia.MaraBox.Creado = moment(moment().format('DD-MM-YYYY'));
 
                                 // save the bear and check for errors
                                 asistencia.save(function(err) {
@@ -1220,7 +1223,7 @@ module.exports = function(app,passport) {
             {
               var idu = u._id;
 
-              Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
+              Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('DD-MM-YYYY')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
                 if (errc) return null;
                 else
                 {
@@ -1271,7 +1274,7 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/WOD', function(req, res) {
-        WOD.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')) },function(errE, wod) {
+        WOD.findOne({ 'MaraBox.Fecha' : moment(moment().format('DD-MM-YYYY')) },function(errE, wod) {
           if (errE)
           {
             res.json({ code : "-100", mensaje : "No hay WOD registrado para hoy" });

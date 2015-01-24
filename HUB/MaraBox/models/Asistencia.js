@@ -8,7 +8,7 @@ var AsistenciaSchema = mongoose.Schema({
         idBox       : String,
         idClase     : String,
         Validado    : Number,
-        Creado      : {type: Date, default: Date.now },
+        Creado      : Date,
     }
 });
 
