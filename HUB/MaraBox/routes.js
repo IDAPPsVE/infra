@@ -1090,7 +1090,7 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/clase', function(req, res) {
-      console.log("Carlos envia",req.body);
+      console.log("Carlos envia",req.body, moment(moment().format('YYYY-MM-DD')));
         var totalAsistentes = 0;
         var disponible = 0;
         var listaEspera = 0;
