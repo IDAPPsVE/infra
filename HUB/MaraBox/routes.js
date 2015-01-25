@@ -1096,8 +1096,7 @@ module.exports = function(app,passport) {
         var listaEspera = 0;
 
         var e = {};
-        console.log(moment(moment().format('YYYY-MM-DD'), 'YYYY-MM-DD'));
-          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD'), 'DD-MM-YYYY') , 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
+          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')) , 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
             console.log(err,clase);
             if (err) return console.error(err);
             else
@@ -1142,7 +1141,7 @@ module.exports = function(app,passport) {
 
     app.post('/MaraBox/api/asistencia/registrar', function(req, res) {
         Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
-
+          console.log("Usuario",erru,u);
           if (erru){}
           if (u != null)
           {
@@ -1150,7 +1149,7 @@ module.exports = function(app,passport) {
             {
               var idu = u._id;
               Solvencia.findOne({ 'MaraBox.idUsuario' : idu }, function(errs, solvencia) {
-                console.log("Solvencia",solvencia);
+                console.log("Solvencia",errs,solvencia);
                 if (errs) return null;
 
                 if(solvencia != null)
@@ -1161,7 +1160,7 @@ module.exports = function(app,passport) {
                   {
                     Box.findOne({ 'IDAPP.Nombre' : 'MaraBox' }, function(errb, box)
                     {
-                      console.log("Box",box);
+                      console.log("Box",errb,box);
                         if (errb)
                         {
                           return null;
@@ -1169,6 +1168,7 @@ module.exports = function(app,passport) {
                         if(box)
                         {
                           Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' :  req.body.hora }, function(errc, clase) {
+                            console.log("Clase",errc,clase);
                             if (errc) return null;
                             else
                             {
@@ -1219,7 +1219,7 @@ module.exports = function(app,passport) {
 
     app.post('/MaraBox/api/asistencia/cancelar', function(req, res) {
       Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
-
+        console.log("Usuario",erru,u);
           if (erru){}
           if (u != null)
           {
