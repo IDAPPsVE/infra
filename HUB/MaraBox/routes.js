@@ -1091,7 +1091,7 @@ module.exports = function(app,passport) {
 
     app.post('/MaraBox/api/clase', function(req, res) {
 
-      return res.json( { code : '200', datos : { entrenador : { nombre : "Claudio", apellido : "Moreau", certificado : e.MaraBox.Certificado }, cupo : 20, disponible : 20, listaEspera : 0}, message: req.flash('loginMessage') });
+      return res.json( { code : '200', datos : { entrenador : { nombre : "Claudio", apellido : "Moreau", certificado : '' }, cupo : 20, disponible : 20, listaEspera : 0}, message: '' });
       /*console.log("Carlos envia",req.body, moment(moment().format('YYYY-MM-DDT04:30:00.000Z')));
         var totalAsistentes = 0;
         var disponible = 0;
@@ -1142,7 +1142,7 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/asistencia/registrar', function(req, res) {
-      return res.json({ code : '200', message : 'Usuario registrado para el entrenamiento del dia de hoy a las '+req.body.hora});
+      return res.json({ code : '200', message : 'Usuario registrado para el entrenamiento del dia de hoy'});
       /*Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
           console.log("Usuario",erru,u);
           if (erru){}
@@ -1222,6 +1222,7 @@ module.exports = function(app,passport) {
 
     app.post('/MaraBox/api/asistencia/cancelar', function(req, res) {
       res.json({ code : '200', message:'Asistencia cancelada'});
+
       /*Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
         console.log("Usuario",erru,u);
           if (erru){}
