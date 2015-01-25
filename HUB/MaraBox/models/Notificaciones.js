@@ -5,7 +5,7 @@ var NotificacionesSchema = mongoose.Schema({
   MaraBox : {
     Titulo  : String,
     Mensaje : String,
-    Fecha   : { type: Date, default: Date.now },
+    Fecha   : Date,
   }
   
 });
