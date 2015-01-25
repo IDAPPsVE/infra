@@ -25,7 +25,7 @@ var Descanso = require(base + '/HUB/MaraBox/models/Descansos');
 var Clases = require(base + '/HUB/MaraBox/models/Clases');
 var Entrenadores = require(base + '/HUB/MaraBox/models/Entrenadores');
 
-var dominio = "http://infra-idappsve-1.c9.io"
+var dominio = "http://104.131.92.103:5858"
 
 module.exports = function(app,passport) {
 
@@ -118,6 +118,7 @@ module.exports = function(app,passport) {
           if (err){}
           else
           {
+            console.log(user._id);
             res.render(base + '/HUB/MaraBox/views/registrarInfoPersonal.ejs', { idUsuario : user._id, message: "El usuario fue registrado con exito, para finalizar regitra tu informacion personal" });
           }
         }
@@ -528,7 +529,7 @@ module.exports = function(app,passport) {
     });
 
     app.get('/MaraBox/admin/nuevaEvento', function(req, res) {
-        res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { fecha : req.params.fecha, hora : req.params.hora, message: req.flash('loginMessage') });
+        res.render(base + '/HUB/MaraBox/views/nuevoEvento.ejs', { fecha : moment(req.body.fecha, 'DD-MM-YYYY'), hora : req.params.hora, message: req.flash('loginMessage') });
     });
 
     app.post('/MaraBox/admin/nuevaEvento', function(req, res) {
@@ -677,7 +678,7 @@ module.exports = function(app,passport) {
 
     app.post('/MaraBox/admin/registroFeriado', function(req, res) {
           var descanso = new Descanso();
-          descanso.MaraBox.Fecha = req.body.fecha;
+          descanso.MaraBox.Fecha = moment(req.body.fecha, 'DD-MM-YYYY');
           descanso.MaraBox.DiaCompleto = req.body.diaCompleto;
           descanso.MaraBox.Hora = req.body.hora;
           descanso.MaraBox.Motivo = req.body.motivo;
@@ -1095,14 +1096,16 @@ module.exports = function(app,passport) {
         var listaEspera = 0;
 
         var e = {};
-          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')), 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
+        console.log(moment(moment().format('YYYY-MM-DD'), 'YYYY-MM-DD'));
+          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD'), 'DD-MM-YYYY') , 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
+            console.log(err,clase);
             if (err) return console.error(err);
             else
             {
               if (clase)
               {
                 Entrenadores.findById(clase.MaraBox.idEntrenador, function(erre, entrenador) {
-                  console.log(entrenador);
+                  console.log(erre,entrenador);
                   if (erre) return console.error(erre);
                   else
                   {
@@ -1111,7 +1114,7 @@ module.exports = function(app,passport) {
                       e = entrenador;
                       Asistencia.find({ 'MaraBox.idClase' : clase._id }).count(function(erra, c)
                       {
-                        console.log(c)
+                        console.log(erra,c)
                          totalAsistentes = c;
                          disponible = clase.MaraBox.Cupo - totalAsistentes;
                           if (disponible === 0)
@@ -1125,6 +1128,10 @@ module.exports = function(app,passport) {
                           console.log({ code : '200', datos : { entrenador : { nombre : e.MaraBox.Nombre, apellido : e.MaraBox.Apellido, certificado : e.MaraBox.Certificado }, cupo : clase.MaraBox.Cupo, disponible : disponible, listaEspera : listaEspera}, message: req.flash('loginMessage') });
                           return res.json( { code : '200', datos : { entrenador : { nombre : e.MaraBox.Nombre, apellido : e.MaraBox.Apellido, certificado : e.MaraBox.Certificado }, cupo : clase.MaraBox.Cupo, disponible : disponible, listaEspera : listaEspera}, message: req.flash('loginMessage') });
                       });
+                    }
+                    else
+                    {
+                      return res.json( { code : '-100', message: "No hay entrenador asignado para esta clase" });
                     }
                   }
                 });
