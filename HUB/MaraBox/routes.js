@@ -1090,13 +1090,13 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/clase', function(req, res) {
-      console.log("Carlos envia",req.body, moment(moment().format('YYYY-MM-DD')));
+      console.log("Carlos envia",req.body, moment(moment().format('YYYY-MM-DDT04:30:00.000Z')));
         var totalAsistentes = 0;
         var disponible = 0;
         var listaEspera = 0;
 
         var e = {};
-          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DD')) , 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
+          Clases.findOne({ 'MaraBox.Fecha' : moment(moment().format('YYYY-MM-DDT04:30:00.000Z')) , 'MaraBox.Hora' : req.body.hora }, function(err, clase) {
             console.log(err,clase);
             if (err) return console.error(err);
             else
