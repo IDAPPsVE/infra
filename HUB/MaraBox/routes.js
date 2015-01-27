@@ -1416,7 +1416,7 @@ module.exports = function(app,passport) {
                     {
                       var i = false;
                       descanso.forEach(function(d){
-                        i = f.fecha(d.Fecha).isBetween(fi, fc);
+                        i = f.fecha(d.MaraBox.Fecha).isBetween(fi, fc);
                         if (i)
                         {
                           dh++;
