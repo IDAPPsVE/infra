@@ -185,37 +185,46 @@ function guardarBoxEnBoxes(to, nombreApp)
   console.log("guardarBoxEnBoxes(to, nombreApp)",to, nombreApp);
   var b = new B();
   b.IDAPP.Nombre = nombreApp;
-  b.IDAPP.idContrato = obtenerContratoId(nombreApp);
-  b.save(function(err,c) {
-    if (err)
-    {
-
-    }
-    else
-    {
-      console.log("callback??",c);
-      var boxId = obtenerBoxId(nombreApp);
-      guardarBoxCode(boxId);
-      var boxCode = obtenerBoxCode(boxId);
-      guardarBoxAdminCode(boxId);
-      var boxAdmin = obtenerBoxAdminCode(boxId);
-      //enviarBoxYBoxAdminCode(to, boxCode, boxAdmin);
-    }
-  });
-}
-
-function obtenerBoxId(nombreApp)
-{
-  B.findOne({ 'IDAPP.Nombre' : nombreApp }, function(err, box) {
+  Contrato.findOne({ 'IDAPP.Nombre' : nombreApp}, function(err, contrato) {
     // if there are any errors, return the error before anything else
     if (err)
     {
       return null;
     }
-    if (box)
-      console.log("obtenerBoxId(nombreApp)",box._id);
-      return box._id;
+    if (contrato)
+      b.IDAPP.idContrato = contrato._id;
+      b.save(function(err,c) {
+        if (err)
+        {
+    
+        }
+        else
+        {
+          console.log("callback??",c);
+          var boxId = obtenerBoxId(nombreApp);
+          B.findOne({ 'IDAPP.Nombre' : nombreApp }, function(err, box) {
+            // if there are any errors, return the error before anything else
+            if (err)
+            {
+              return null;
+            }
+            if (box)
+              console.log("obtenerBoxId(nombreApp)",box._id);
+              guardarBoxCode(box._id);
+              //var boxCode = obtenerBoxCode(box._id);
+              guardarBoxAdminCode(box._id);
+              //var boxAdmin = obtenerBoxAdminCode(box._id);
+              //enviarBoxYBoxAdminCode(to, boxCode, boxAdmin);
+            });
+        }
+      });
     });
+  
+}
+
+function obtenerBoxId(nombreApp)
+{
+  
 }
 
 function guardarBoxCode(boxId)
