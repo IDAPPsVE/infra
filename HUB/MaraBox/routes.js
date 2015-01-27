@@ -1143,8 +1143,8 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/asistencia/registrar', function(req, res) {
-      return res.json({ code : '200', message : 'Usuario registrado para el entrenamiento del dia de hoy'});
-      /*Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
+      //return res.json({ code : '200', message : 'Usuario registrado para el entrenamiento del dia de hoy'});
+      Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
           console.log("Usuario",erru,u);
           if (erru){}
           if (u != null)
@@ -1215,10 +1215,10 @@ module.exports = function(app,passport) {
             }
             else
             {
-              res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos', regman : 1 });
+              //res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos', regman : 1 });
             }
           }
-        });*/
+        });
     });
 
     app.post('/MaraBox/api/asistencia/cancelar', function(req, res) {
@@ -1342,6 +1342,53 @@ module.exports = function(app,passport) {
       });
     });
     
+    app.get('/MaraBox/admin/:fecha', function(req, res) {
+      var fecha = req.params.fecha;
+
+      //Ver wod del dia en la fecha seleccionada
+      Entrenadores.find(function(err, coach) {
+        if (err) return console.error(err);
+        else
+        {
+          if (coach)
+          {
+            res.render(base + '/HUB/MaraBox/views/asignacionCoach.ejs', { fecha : fecha, entrenadores : coach, message: req.flash('loginMessage') });
+          }
+        }
+      });
+    });
+
+    app.post('/MaraBox/api/nuevaClase', function(req, res) {
+      var fecha = req.body.fecha;
+
+      console.log("Guardando clase");
+      var c = new Clases();
+      c.MaraBox.idEntrenador = req.body.entrenador;
+      c.MaraBox.Fecha = moment(req.body.fecha, 'DD-MM-YYYY');
+      c.MaraBox.Hora = req.body.hora;
+      c.MaraBox.Cupo = req.body.cupo;
+      c.save(function(err) {
+            if (err)
+            {
+              console.log("error guardando clase", err);
+              //res.redirect('/MaraBox/admin/'+fecha);
+            }
+            else
+            {
+              Entrenadores.find(function(err, coach) {
+                if (err) return console.error(err);
+                else
+                {
+                  if (coach)
+                  {
+                    //res.redirect('/MaraBox/admin/'+fecha);
+                    return res.json({'code':'200'});
+                  }
+                }
+              });
+            }
+          });
+    });
     app.post('/MaraBox/api/usuarioid', function(req, res) 
     {
       Usuario.findOne({ 'MaraBox.Cedula' :  req.body.cedula }, function(err, usuario) {
