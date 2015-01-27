@@ -15,6 +15,7 @@ var Asistencia = require(base + '/HUB/MaraBox/models/Asistencia');
 var Usuario = require(base + '/HUB/MaraBox/models/Usuarios');
 var InfoUsuario = require(base + '/HUB/MaraBox/models/InfoUsuarios');
 var Box = require(base + '/IDAPP/models/Boxes');
+var BoxAdmin = require(base + '/IDAPP/models/BoxAdminCode');
 var Ejercicios = require(base + '/HUB/MaraBox/models/Ejercicios');
 var WOD = require(base + '/HUB/MaraBox/models/WOD');
 var Evento = require(base + '/HUB/MaraBox/models/Eventos');
@@ -1308,6 +1309,57 @@ module.exports = function(app,passport) {
 
     });
 
+    //////////////////////////////////////////////////////
+    // API PRUEBAS
+    //////////////////////////////////////////////////////
+    app.post('/MaraBox/api/boxid', function(req, res) 
+    {
+      Box.findOne({ 'IDAPP.Nombre' : 'MaraBox' }, function(errb, box)
+      {
+        if(errb)
+        {
+          console.log(errb);
+        }
+        if (box)
+        {
+          return res.json({'code':'200',box:box});
+        }
+      });
+    });
+    
+    app.post('/MaraBox/api/boxadminid', function(req, res) 
+    {
+      BoxAdmin.findOne({ 'IDAPP.idBox' : req.body.boxid }, function(errb, box)
+      {
+        if(errb)
+        {
+          console.log(errb);
+        }
+        if (box)
+        {
+          return res.json({'code':'200',box:box});
+        }
+      });
+    });
+    
+    app.post('/MaraBox/api/usuarioid', function(req, res) 
+    {
+      Usuario.findOne({ 'MaraBox.Cedula' :  req.body.cedula }, function(err, usuario) {
+            // if there are any errors, return the error before anything else
+            if (err)
+            {
+              console.log(err);
+            }
+            else 
+            {
+              if (usuario)
+              {
+                return res.json({'code':'200','usuario':usuario});
+              }
+            }
+        });  
+    });
+    
 }
 
 function isLoggedIn(req, res, next) {
@@ -1325,4 +1377,5 @@ function isLoggedIn(req, res, next) {
         return res.redirect('/MaraBox/');
     }
 
+    
 }
