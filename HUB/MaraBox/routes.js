@@ -1389,6 +1389,72 @@ module.exports = function(app,passport) {
             }
           });
     });
+    
+    app.post('/MaraBox/api/solvencia', function(req, res) {
+
+        var cedula = req.body.cedula;
+        var userid;
+        var dh = 0;
+        var fi = moment(req.body.fechaInicio, 'DD-MM-YYYY');
+        var fc = moment(req.body.fechaCulminacion, 'DD-MM-YYYY');
+
+        var totalDias = fc.diff(fi, 'days');
+        console.log(totalDias);
+        Usuario.findOne({ 'MaraBox.Cedula' :  cedula }, function(err, usuario) {
+            // if there are any errors, return the error before anything else
+            console.log(err);
+            if (err) return null;
+            else
+            {
+              if (usuario)
+              {
+                userid = usuario._id;
+                Descanso.find(function(errd, descanso) {
+                  if (errd){}
+                  else{
+                    if(descanso)
+                    {
+                      var i = false;
+                      descanso.forEach(function(d){
+                        i = f.fecha(d.Fecha).isBetween(fi, fc);
+                        if (i)
+                        {
+                          dh++;
+                          i = false;
+                        }
+                      });
+                    }
+                  }
+                });
+
+                var dis = totalDias + dh;
+                console.log(userid, req.body.fechaInicio, req.body.fechaCulminacion, dis);
+
+                var solvencia = new Solvencia(); 		// create a new instance of the Bear model
+                  solvencia.MaraBox.idUsuario = userid;
+                  solvencia.MaraBox.FechaInicio = fi;
+                  solvencia.MaraBox.FechaCulminacion = fc;
+                  solvencia.MaraBox.DiasHabiles = dis;
+
+                  // save the bear and check for errors
+                  solvencia.save(function(err) {
+                    if (err)
+                    {
+                      //res.render(base + '/HUB/MaraBox/views/registroSolvencia.ejs', { message:'El mensaje no pudo ser enviado, intente nuevamente' });
+                    }
+                    else
+                    {
+                      //res.render(base + '/HUB/MaraBox/views/registroSolvencia.ejs', { message:'Registro guardado con exito' });
+                      return res.json({'code':'200'});
+                    }
+
+                      // Enviar a todas las plataformas via push notifications
+                  });
+              }
+            }
+        });
+    });
+    
     app.post('/MaraBox/api/usuarioid', function(req, res) 
     {
       Usuario.findOne({ 'MaraBox.Cedula' :  req.body.cedula }, function(err, usuario) {
