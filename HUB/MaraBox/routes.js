@@ -114,7 +114,7 @@ module.exports = function(app,passport) {
           h.guardarCodigoValidacion(user._id, randomString);
           var url = dominio + '/MaraBox/ValidacionUsuario/' + randomString;
           console.log(url);
-          email.sendValidationCode(user.MaraBox.Email,url);
+          //email.sendValidationCode(user.MaraBox.Email,url);
           if (err){}
           else
           {
@@ -1026,7 +1026,7 @@ module.exports = function(app,passport) {
             h.guardarCodigoValidacion(user._id, randomString);
             var url = "/MaraBox/ValidacionUsuario/"+randomString;
             console.log(url);
-            email.sendValidationUsuarioMaraBox(user.Email,url);
+            //email.sendValidationUsuarioMaraBox(user.Email,url);
 
             return res.json({ code:'200', message:'Su registro ha sido guardado con exito, debe validar su correo para poder utilizar la app' });
           }

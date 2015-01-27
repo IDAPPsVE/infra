@@ -54,7 +54,7 @@ module.exports = function(app, passport) {
         
         console.log(url);
         guardarCodigoValidacionPropietarioApp(user._id, randomString);
-        email.sendValidationCode(user.IDAPP.Email,url);
+        //email.sendValidationCode(user.IDAPP.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -98,7 +98,7 @@ module.exports = function(app, passport) {
         var url = dominio + '/admin/val/' + randomString;
         console.log(url);
         guardarCodigoValidacionIDAPP(user._id, randomString);
-        email.sendValidationCode(user.IDAPP.Email,url);
+        //email.sendValidationCode(user.IDAPP.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -142,7 +142,7 @@ module.exports = function(app, passport) {
         var url = dominio + '/admin/val/' + randomString;
         console.log(url);
         guardarCodigoValidacionIDAPP(user._id, randomString);
-        email.sendValidationCode(user.IDAPP.Email,url);
+        //email.sendValidationCode(user.IDAPP.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
@@ -186,7 +186,7 @@ module.exports = function(app, passport) {
         var url = dominio + '/admin/val/' + randomString;
         console.log(url);
         guardarCodigoValidacionIDAPP(user._id, randomString);
-        email.sendValidationCode(user.IDAPP.Email,url);
+        //email.sendValidationCode(user.IDAPP.Email,url);
 
         return res.json({'err':err,'user':user,'info':info});
 
