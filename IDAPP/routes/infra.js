@@ -199,7 +199,7 @@ function guardarBoxEnBoxes(to, nombreApp)
       var boxCode = obtenerBoxCode(boxId);
       guardarBoxAdminCode(boxId);
       var boxAdmin = obtenerBoxAdminCode(boxId);
-      enviarBoxYBoxAdminCode(to, boxCode, boxAdmin);
+      //enviarBoxYBoxAdminCode(to, boxCode, boxAdmin);
     }
   });
 }
