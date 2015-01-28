@@ -1,3 +1,3 @@
 module.exports = {
-    'url' : 'mongodb://idapp-develop:IDAPP-Javier-Carlos@ds051160.mongolab.com:51160/idapp'
+    'url' : 'mongodb://idapp-develop:IDAPP-Javier-Carlos@ds053648.mongolab.com:53648/idapp'
 };
