@@ -1035,7 +1035,8 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/login', function(req, res, next) {
-      passport.authenticate('local-loginMaraBox', function(err, user, info) {
+      return res.json({code:'200','datos':userNeededData});
+      /*passport.authenticate('local-loginMaraBox', function(err, user, info) {
       console.log(err,user,info);
         if (err){}
         if(user)
@@ -1056,7 +1057,7 @@ module.exports = function(app,passport) {
               return res.json({code:'200','datos':userNeededData});
             //}
         });
-      })(req, res, next);
+      })(req, res, next);*/
     });
 
     app.get('/MaraBox/api/logout', function(req, res) {
@@ -1143,8 +1144,8 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/asistencia/registrar', function(req, res) {
-      //return res.json({ code : '200', message : 'Usuario registrado para el entrenamiento del dia de hoy'});
-      Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
+      return res.json({ code : '200', message : 'Usuario registrado para el entrenamiento del dia de hoy'});
+      /*Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
           console.log("Usuario",erru,u);
           if (erru){}
           if (u != null)
@@ -1218,11 +1219,11 @@ module.exports = function(app,passport) {
               //res.render(base + '/HUB/MaraBox/views/registroAsistencia.ejs', { message:'El usuario no esta registrado en la base de datos', regman : 1 });
             }
           }
-        });
+        });*/
     });
 
     app.post('/MaraBox/api/asistencia/cancelar', function(req, res) {
-      res.json({ code : '200', message:'Asistencia cancelada'});
+      return res.json({ code : '200', message:'Asistencia cancelada'});
 
       /*Usuario.findOne({ 'MaraBox.Cedula' : req.body.cedula }, function(erru, u) {
         console.log("Usuario",erru,u);
