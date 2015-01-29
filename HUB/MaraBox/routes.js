@@ -1035,7 +1035,7 @@ module.exports = function(app,passport) {
     });
 
     app.post('/MaraBox/api/login', function(req, res, next) {
-      return res.json({code:'200','datos':userNeededData});
+      return res.json({code:'200'});
       /*passport.authenticate('local-loginMaraBox', function(err, user, info) {
       console.log(err,user,info);
         if (err){}
